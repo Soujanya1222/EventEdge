@@ -5,8 +5,12 @@ const couponSchema=new mongoose.Schema({
         require:true
     },
 
-    discount:{type:Number,require:true},
-    expiry:{type:Date,require:true},
+    discount:{
+        type:Number,
+        require:true},
+    expiry:{
+        type:Date,
+        require:true},
     organiserId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
