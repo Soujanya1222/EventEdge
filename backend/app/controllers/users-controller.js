@@ -1,0 +1,167 @@
+const User=require('../models/user-model')
+const Event=require('../models/event-model')
+const bcryptjs=require('bcryptjs')
+const jwt=require('jsonwebtoken')
+const {userRegisterValidatorSchema,userLoginValidatorSchema}=require('../validations/user-validation')
+const adminCltr={}
+const userCltr={}
+userCltr.register=async(req,res)=>{
+    const body=req.body;
+    const {error,value}=userRegisterValidatorSchema.validate(body,{abortEarly:false})
+    if(error){
+        return res.status(400).json({error:error.details})
+    }
+    const userEmail=await User.findOne({email:value.email})
+    if(userEmail){
+        return res.status(400).json("Email already taken")
+    }
+    try{
+        const user=new User(value)
+        const salt=await bcryptjs.genSalt();
+        const hash=await bcryptjs.hash(user.password,salt)
+        user.password=hash;
+
+        //admin check
+        if(user.role==='admin'){
+            const adminExist=await User.findOne({role:"admin"})
+                if(adminExist){
+                    return res.status(403).json({message:"You are not Admin"})
+                }
+            
+        }
+        
+        await user.save();
+        res.status(201).json(user)
+
+    }catch(err){
+        console.log(err)
+        res.status(500).json("something went wrong")
+    }
+
+}
+
+
+//Login 
+userCltr.login=async(req,res)=>{
+    const body=req.body;
+    const {error,value}=userLoginValidatorSchema.validate(body,{abortEarly:false})
+    if(error){
+        return res.status(401).json({error:error.details})
+    }
+    try{
+        const user=await User.findOne({email:value.email})
+        if(!user){
+            return res.status(401).json({error:"invalid Email/Password"})
+        }
+        const isPasswordMatch=await bcryptjs.compare(value.password,user.password)
+        if(!isPasswordMatch){
+            return res.status(400).json({error:"Invalid Email/Password"})
+        }
+        const tokenData={userId:user._id,role:user.role}
+        console.log(tokenData)
+        const token=jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn:'50d'})
+        res.json({token:token})
+        //res.status(200).json(user)
+
+    }catch(err){
+        console.log(err.message)
+        res.status(500).json({err:"something went wrong"})
+
+    }
+
+}
+adminCltr.getAllUser=async(req,res)=>{
+    try{
+        const user=await User.find({role:"attendee"});
+        res.json(user)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({err:"something went wrong"})
+    }
+}
+
+adminCltr.getAllOragniser=async(req,res)=>{
+    try{
+        const user=await User.find({role:"organiser"});
+        res.json(user)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({err:"something went wrong"})
+    }
+}
+
+adminCltr.getAllEvents=async(req,res)=>{
+    try{
+        const events=await Event.find({});
+        res.json(events)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({err:"something went wrong"})
+    }
+}
+
+adminCltr.approveOrganiser=async(req,res)=>{
+    const id=req.params.id
+    //const {approve}=req.body
+    //console.log(approve)
+    try{
+        const  user=await User.findByIdAndUpdate(id,{isApproved:true},{new:true})
+        res.json({message:"Organiser Aprroved",user})
+    }catch(err){
+        console.log(err)
+         res.status(500).json({err:"something went wrong"})
+    }
+}
+
+adminCltr.changeRole=async(req,res)=>{
+    const id = req.params.id;
+  const { role } = req.body;
+    try{
+        if(!['organiser','attendee'].includes(role)){
+            return res.status(400).json({err:"Invalid Role"})
+        }
+        const user=await User.findByIdAndUpdate(id,{role},{new:true})
+         if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+        res.json({message:"Role Updated",user})
+    }catch(err){
+        console.log(err)
+         res.status(500).json({err:"something went wrong"})
+    }   
+}
+
+adminCltr.deleteUser=async(req,res)=>{
+    const id=req.params.id
+    try{
+        const user=await User.findByIdAndDelete(id)
+        res.json(user)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({err:"Something went wrong"})
+    }
+}
+
+adminCltr.accountUpdate=async(req,res)=>{
+    const id=req.params.id
+    const body=req.body
+    try{
+        const user=await User.findByIdAndUpdate(id,body,{new:true})
+        res.json(user)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({err:"Something went wrong"})
+
+    }
+}
+
+userCltr.account=async(req,res)=>{
+    try{
+        const user=await User.findById(req.userId)
+        res.json(user)
+
+    }catch(err){
+        res.status(500).json({err:"something went wrong"})
+    }
+}
+module.exports={adminCltr,userCltr}
