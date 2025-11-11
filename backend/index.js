@@ -18,6 +18,7 @@ const paymentCltr = require('./app/controllers/payment-controller');
 const ticketCltr = require('./app/controllers/ticket-controller');
 const reviewCltr = require('./app/controllers/review-controller');
 
+
 //Sign Up /In
 app.post('/users/register',userCltr.register)
 app.post('/user/login',userCltr.login)
@@ -43,7 +44,7 @@ app.delete('/event/:id',authenticateUser,roleAuth(['organiser']),eventCltr.remov
 
 
 //Coupon Routes
-app.post('/coupon/create',couponCltr.create)
+app.post('/coupon/create',authenticateUser,roleAuth(['organiser']),couponCltr.create)
 app.get('/coupon',couponCltr.list)
 app.put('/coupon/:id',couponCltr.update)
 app.delete('/coupon/:id',couponCltr.remove)
@@ -61,6 +62,8 @@ app.post('/ticket/create',ticketCltr.create)
 app.get('/ticket',ticketCltr.list)
 app.put('/ticket/:id',ticketCltr.update)
 app.delete('/ticket/:id',ticketCltr.remove)
+
+app.post('/book', authenticateUser, ticketCltr.bookTicket)
 
 
 //Review routes
