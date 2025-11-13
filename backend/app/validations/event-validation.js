@@ -5,7 +5,7 @@ const eventValidationSchema=Joi.object({
     category:Joi.string().trim().required(),
     datetime:Joi.date().required(),
     venue:Joi.string().trim().required(),
-    organiserId:Joi.number(),
+    organiserId:Joi.string(),
     location:Joi.object({
     type: Joi.string().valid('Point').required(),
     coordinates: Joi.array().items(
@@ -15,6 +15,6 @@ const eventValidationSchema=Joi.object({
     price:Joi.number().required().min(1),
     totalTickets:Joi.number().required(),
     soldTickets:Joi.number().required(),
-    image:Joi.array().required(),
+    image: Joi.array().items(Joi.string())
 })
 module.exports={eventValidationSchema}

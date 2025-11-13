@@ -1,3 +1,4 @@
+const { required } = require('joi');
 const mongoose=require('mongoose')
 const EventSchema=new mongoose.Schema({
     title:{
@@ -36,10 +37,12 @@ const EventSchema=new mongoose.Schema({
         type:Number,require:true},
     totalTickets:{type:Number,require:true},
     soldTickets:{type:Number,require:true},
-    image:{
-        type:Array,
-        require:true},
+    image: {
+        type: [String],
+        required: true,
+},
 },{timestamps:true})
+EventSchema.index({ location: "2dsphere" }); // Create geospatial index on location field
 const Event=mongoose.model("Event",EventSchema)
 module.exports=Event
 

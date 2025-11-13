@@ -4,6 +4,7 @@ const app=express();
 require('dotenv').config();
 const port=process.env.PORT
 
+
 app.use(express.json())
 app.use(cors())
 const configureDB=require('./config/db')
@@ -17,6 +18,7 @@ const couponCltr = require('./app/controllers/coupon-controller');
 const paymentCltr = require('./app/controllers/payment-controller');
 const ticketCltr = require('./app/controllers/ticket-controller');
 const reviewCltr = require('./app/controllers/review-controller');
+const upload=require('./app/middlewares/multer');
 
 
 //Sign Up /In
@@ -37,10 +39,11 @@ app.put('/admin/update/:id',authenticateUser,roleAuth(['admin']),adminCltr.accou
 
 
 //Event Routes
-app.post('/events/create',authenticateUser,roleAuth(['organiser']),eventCltr.create)
+app.post('/events/create',authenticateUser,roleAuth(['organiser']),upload.array('images'),eventCltr.create)
 app.get('/events',authenticateUser,roleAuth(['organiser']),eventCltr.list)
 app.put('/event/:id',authenticateUser,roleAuth(['organiser']),eventCltr.update)
 app.delete('/event/:id',authenticateUser,roleAuth(['organiser']),eventCltr.remove)
+app.get("/nearby", authenticateUser, eventCltr.nearby);
 
 
 //Coupon Routes
@@ -71,6 +74,7 @@ app.post('/review/create',reviewCltr.create)
 app.get('/review',reviewCltr.list)
 app.put('/review/:id',reviewCltr.update)
 app.delete('/review/:id',reviewCltr.remove)
+
 
 app.listen(port,()=>{
     console.log("server is running on the port",port)
