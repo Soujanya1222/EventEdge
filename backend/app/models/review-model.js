@@ -3,16 +3,17 @@ const reviewSchema=new mongoose.Schema({
     attendeeId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        require:true
+        required:true
     },
     eventId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Event",
-        require:true
+        required:true
     },
     rating:{
         type:Number,
-        require:true},
+        required:true
+    },
     comment:{
         type:String,
         }

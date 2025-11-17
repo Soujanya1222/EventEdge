@@ -2,28 +2,27 @@ const mongoose=require('mongoose')
 const couponSchema=new mongoose.Schema({
     code:{
         type:String,
-        require:true
+        required:true
     },
 
     discount:{
         type:Number,
-        require:true},
+        required:true},
     expiry:{
         type:Date,
-        require:true},
+        required:true},
     organiserId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        require:true
+        required:true
     },
     usedBy:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        require:true
     }],
-    EventId:{
+    eventId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Event",require:true
+        ref:"Event",required:true
     }
 })
 const Coupon=mongoose.model('Coupon',couponSchema)

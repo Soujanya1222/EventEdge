@@ -21,6 +21,16 @@ reviewCltr.list=async(req,res)=>{
     }
 }
 
+reviewCltr.getOne=async(req,res)=>{
+    const id=req.params.id
+    try{
+        const review=await Review.findById(id)
+        res.json(review)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({err:"Something went wrong"})
+    }
+}
 reviewCltr.update=async(req,res)=>{
     const id=req.params.id
     const body=req.body

@@ -3,20 +3,23 @@ const mongoose=require('mongoose')
 const EventSchema=new mongoose.Schema({
     title:{
         type:String,
-        require:true},
+        required:true
+    },
     description:{
         type:String,
-        require:true},
+        required:true
+    },
     category:
     {type:String,
-        require:true},
+        required:true
+    },
     datetime:{
         type:Date,
-        require:true
+        required:true
     },
     venue:{
         type:String,
-        require:true
+        required:true
     },
     location: {
         type: {                     
@@ -26,7 +29,7 @@ const EventSchema=new mongoose.Schema({
         },
         coordinates: {
             type: [Number],
-            required: true
+            index:'2dsphere'  //[lng,lat]
          }
     },
     organiserId:{
@@ -34,20 +37,22 @@ const EventSchema=new mongoose.Schema({
         ref:"User"
     },
     price:{
-        type:Number,require:true},
-    totalTickets:{type:Number,require:true},
-    soldTickets:{type:Number,require:true},
+        type:Number,required:true
+    },
+    totalTickets:{
+        type:Number,
+        required:true
+
+    },
+    soldTickets:{
+        type:Number,
+        required:true
+    },
     image: {
         type: [String],
         required: true,
 },
 },{timestamps:true})
-EventSchema.index({ location: "2dsphere" }); // Create geospatial index on location field
+EventSchema.index({ location: "2dsphere" }); 
 const Event=mongoose.model("Event",EventSchema)
 module.exports=Event
-
-
-/* "location": {
-  "type": "Point",
-  "coordinates": [-74.0060, 40.7128]  // [longitude, latitude]
-}*/

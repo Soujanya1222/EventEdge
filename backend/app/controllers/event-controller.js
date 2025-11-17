@@ -2,6 +2,10 @@ const Event=require('../models/event-model')
 const geolib=require('geolib')
 const {eventValidationSchema}=require('../validations/event-validation')
 const eventCltr={}
+const {deleteOldImages}=require('../middlewares/cloudinary')
+
+
+
 eventCltr.create=async(req,res)=>{
    const body=req.body;
    const {error,value}=eventValidationSchema.validate(body,{abortEarly:true})
@@ -9,26 +13,18 @@ eventCltr.create=async(req,res)=>{
     return res.status(400).json({error:error.details})
    }
    try{
-    // //const event=await Event.create({...body,organiserId:req.userId})
     const eventInDb=await Event.findOne({title:value.title, organiserId:req.userId})
     if(eventInDb){
         return res.status(400).json({err:"Event already exists"})
     }
-    // // if(event){
-    // //     return res.status(400).json({err:"Event already exists"})
-    // // }
-
-    // const event=await Event(value)
-    // event.organiserId=req.userId
-    // await event.save()
-    // res.status(200).json(event)
 
     const images = req.files.map((file) => file.path);
     const event=await Event({...value,
       organiserId: req.userId,   
-      image: images})
+      image: images
+    })
       await event.save();
-    res.status(201).json({
+      res.status(201).json({
       message: "Event created successfully",
       event,
     });
@@ -39,9 +35,8 @@ eventCltr.create=async(req,res)=>{
 }
 eventCltr.list = async (req, res) => {
   try {
-    console.log('Fetching events from DB...');
     const events = await Event.find();
-    console.log('Events found:', events);
+    // console.log('Events found:', events);
     res.json(events);
   } catch (err) {
     console.error('Error fetching events:', err);
@@ -50,6 +45,16 @@ eventCltr.list = async (req, res) => {
 };
 
 
+eventCltr.getOne=async(req,res)=>{
+  const id=req.params.id;
+  try{
+    const events=await Event.findById(id);
+    res.status(200).json(events);
+  }catch(err){
+    console.log(err);
+    res.status(500).json({err:"Something went wrong"})
+  }
+}
 
 eventCltr.update=async(req,res)=>{
     const id=req.params.id
@@ -59,11 +64,20 @@ eventCltr.update=async(req,res)=>{
         return res.status(400).json({error:error.details})
     }
     try{
-        const event=await Event.findByIdAndUpdate({_id:id,organiserId:req.userId},value,{new:true})
-         if(!event){
-            return res.status(404).json({error:"Record Not Found"})
+      const event=await Event.findById(id)
+       if(!event){
+        return res.status(404).json({error:"Event not found"})
+      }
+      let updateData={...value}
+      if(req.files && req.files.length>0){
+        if(event.image&&event.image.length>0){
+          await deleteOldImages(event.image);
         }
-        res.json(event)
+        const newImages=req.files.map((file)=>file.path);
+        updateData.image=newImages;
+      }
+      const updated=await Event.findByIdAndUpdate(id,updateData,{new:true,runValidators:true})
+      res.json(updated)
     }catch(err){
       console.log(err)
       res.status(500).json({err:"Something went wrong"})
@@ -95,7 +109,7 @@ eventCltr.nearby=async (req, res) => {
         latitude: parseFloat(latitude),
         longitude: parseFloat(longitude)
       }
-        const maxDistance=parseFloat(distance)
+        const maxDistance=parseFloat(distance)*1000
         const allEvents=await Event.find();
         const nearbyEvents=allEvents.filter(event=>{
             if(!event.location ||!event.location.coordinates) return false;
@@ -107,6 +121,8 @@ eventCltr.nearby=async (req, res) => {
             event._doc.distanceFromUser=eventDistance;
             return eventDistance<=maxDistance
         })
+
+
         res.json({
             userLocation,
             count:nearbyEvents.length,

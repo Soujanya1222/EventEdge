@@ -1,24 +1,28 @@
+const { required } = require('joi')
 const mongoose=require('mongoose')
 const paymentSchema=new mongoose.Schema({
     attendeeId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        require:true
+        required:true
     },
     eventId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Event",
-        require:true
+        required:true
     },
     amount:{
         type:Number,
-        require:true},
+        required:true
+    },
     platformFee:{
         type:Number,
-        require:true},
+        required:true
+    },
     status:{
         type:String,
-        enum:['success','failed','pending']
+        enum:['success','failed','pending'],
+        required:true
     },
     paymentDate:{
         type:Date,

@@ -3,6 +3,7 @@ const Event=require('../models/event-model')
 const bcryptjs=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const {userRegisterValidatorSchema,userLoginValidatorSchema}=require('../validations/user-validation')
+const { use } = require('react')
 const adminCltr={}
 const userCltr={}
 userCltr.register=async(req,res)=>{
@@ -57,7 +58,7 @@ userCltr.login=async(req,res)=>{
         if(!isPasswordMatch){
             return res.status(400).json({error:"Invalid Email/Password"})
         }
-        const tokenData={userId:user._id,role:user.role}
+        const tokenData={userId:user._id,role:user.role,isApproved:user.isApproved}
         console.log(tokenData)
         const token=jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn:'50d'})
         res.json({token:token})
@@ -70,6 +71,21 @@ userCltr.login=async(req,res)=>{
     }
 
 }
+
+//users Account
+
+userCltr.account=async(req,res)=>{
+    try{
+        const user=await User.findById(req.userId)
+        res.json(user)
+
+    }catch(err){
+        res.status(500).json({err:"something went wrong"})
+    }
+}
+
+// const isAdmin=(req)=>req.role==='admin';
+
 adminCltr.getAllUser=async(req,res)=>{
     try{
         const user=await User.find({role:"attendee"});
@@ -102,11 +118,20 @@ adminCltr.getAllEvents=async(req,res)=>{
 
 adminCltr.approveOrganiser=async(req,res)=>{
     const id=req.params.id
-    //const {approve}=req.body
-    //console.log(approve)
+    if(req.role!=='admin'){
+        return res.status(403).json({error:"Only admin can approve organiser"})
+    }
     try{
-        const  user=await User.findByIdAndUpdate(id,{isApproved:true},{new:true})
-        res.json({message:"Organiser Aprroved",user})
+        const  user=await User.findById(id)
+        if(!user){
+            return res.status(404).json({err:"User not found"})
+        }
+        if(user.role!=="organiser"){
+            return res.status(400).json({err:"This user is not an organiser"})
+        }
+        user.isApproved=true;
+        await user.save()
+        res.json({message:"Organiser Aprroved ",user})
     }catch(err){
         console.log(err)
          res.status(500).json({err:"something went wrong"})
@@ -135,7 +160,13 @@ adminCltr.deleteUser=async(req,res)=>{
     const id=req.params.id
     try{
         const user=await User.findByIdAndDelete(id)
-        res.json(user)
+        if(!user){
+            return res.status(404).json({err:"User not found"})
+        }
+        if(user.role==='organiser'){
+            await Event.deleteMany({organiserId:user._id})
+        }
+        res.json({message:"User and related events deleted successfully",user})
     }catch(err){
         console.log(err)
         res.status(500).json({err:"Something went wrong"})
@@ -145,9 +176,16 @@ adminCltr.deleteUser=async(req,res)=>{
 adminCltr.accountUpdate=async(req,res)=>{
     const id=req.params.id
     const body=req.body
+    
     try{
         const user=await User.findByIdAndUpdate(id,body,{new:true})
-        res.json(user)
+        const salt=await bcryptjs.genSalt();
+        const hash=await bcryptjs.hash(user.password,salt)
+        user.password=hash;
+          
+        await user.save();
+        res.status(201).json(user)
+
     }catch(err){
         console.log(err)
         res.status(500).json({err:"Something went wrong"})
@@ -155,13 +193,5 @@ adminCltr.accountUpdate=async(req,res)=>{
     }
 }
 
-userCltr.account=async(req,res)=>{
-    try{
-        const user=await User.findById(req.userId)
-        res.json(user)
 
-    }catch(err){
-        res.status(500).json({err:"something went wrong"})
-    }
-}
 module.exports={adminCltr,userCltr}

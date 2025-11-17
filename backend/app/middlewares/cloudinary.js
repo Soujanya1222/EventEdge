@@ -10,9 +10,14 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'events', // folder name in Cloudinary
+    folder: 'events', 
     allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
   },
 });
-
-module.exports = { cloudinary, storage };
+const deleteOldImages = async (images = []) => {
+  for (const url of images) {
+    const publicId = url.split('/').pop().split('.')[0];
+    await cloudinary.uploader.destroy(publicId);
+  }
+};
+module.exports = { cloudinary, storage,deleteOldImages };

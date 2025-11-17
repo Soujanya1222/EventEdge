@@ -9,6 +9,7 @@ const authenticateUser=(req,res,next)=>{
         //console.log("tokendata",tokenData)
         req.userId=tokenData.userId
         req.role=tokenData.role
+        req.isApproved=tokenData.isApproved
         next()
     }catch(err){
         console.log(err.message)

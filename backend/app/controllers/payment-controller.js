@@ -28,6 +28,17 @@ paymentCltr.list=async(req,res)=>{
     }
 }
 
+paymentCltr.getOne=async(req,res)=>{
+    const id=req.params.id
+    try{
+        const payment=await Payment.findById(id)
+        res.json(payment)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({err:"Something went wrong"})
+    }
+}
+
 paymentCltr.update=async(req,res)=>{
     const id=req.params.id
     const body=req.body

@@ -3,25 +3,25 @@ const ticketSchema=new mongoose.Schema({
     attendeeId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        require:true
+        required:true
     },
     eventId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Event",
-        require:true
+        required:true
     },
     paymentId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Payment",
-        require:true
+        required:true
     },
     qrCode:{
         type:String,
-        require:true},
+        required:true},
     bookedAt:{
         type:Date,
         default:Date.now,
-        require:true
+        required:true
     }
 },{timestamps:true})
 const Ticket=mongoose.model('Ticket',ticketSchema)
