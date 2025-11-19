@@ -50,8 +50,7 @@ app.delete('/event/:id',authenticateUser,roleAuth(['organiser']),eventCltr.remov
 app.get("/nearby", authenticateUser, eventCltr.nearby);
 
 
-//Payment Routes
-app.post('/payment/create',authenticateUser,paymentCltr.create)
+
 
 //Review routes
 app.post('/review/create',authenticateUser,reviewCltr.create)

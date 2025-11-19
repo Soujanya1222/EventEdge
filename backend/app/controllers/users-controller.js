@@ -3,7 +3,6 @@ const Event=require('../models/event-model')
 const bcryptjs=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 const {userRegisterValidatorSchema,userLoginValidatorSchema}=require('../validations/user-validation')
-const { use } = require('react')
 const adminCltr={}
 const userCltr={}
 userCltr.register=async(req,res)=>{
