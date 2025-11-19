@@ -5,6 +5,6 @@ const couponValidationSchema=Joi.object({
     expiry:Joi.date().greater('now').required(),
     organiserId:Joi.string(),
     usedBy:Joi.array().items(Joi.string().length(24)),
-    EventId:Joi.string()
+    eventId:Joi.string()
 })
 module.exports={couponValidationSchema}

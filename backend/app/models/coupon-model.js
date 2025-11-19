@@ -14,7 +14,6 @@ const couponSchema=new mongoose.Schema({
     organiserId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        required:true
     },
     usedBy:[{
         type:mongoose.Schema.Types.ObjectId,
