@@ -44,8 +44,27 @@ couponCltr.list=async(req,res)=>{
 
 //Attendee can use the coupon
 couponCltr.applyCoupon=async(req,res)=>{
+    const {code,eventId}=req.body;
     try{
-        const {code,eventId}=req.body;
+       const coupon=await Coupon.findOne({code})
+       if(!coupon){
+        return res.status(400).json({error:"Invalid Coupon"})
+       } 
+       if(new Date()>coupon.expiry){
+        return res.status(400).json({error:"Coupon has expired"})
+       }
+       if(coupon.eventId.toString()!==eventId){
+        return res.status(400).json({error:"Coupon not valid for this event"})
+       }
+       if(coupon.usedBy.includes(req.userId)){
+        return res.status(400).json({error:"You used the coupon already"})
+       }
+       coupon.usedBy.push(req.userId)
+       await coupon.save()
+       res.json({
+        message:"Coupon applied Successfully ",
+        discount:coupon.discount,
+       })
         
 
     }catch(err){
@@ -66,9 +85,6 @@ couponCltr.update=async(req,res)=>{
     const {error,value}=couponValidationSchema.validate(body,{abortEarly:true})
     if(error){
         return res.status(400).json({error:error.details})
-    }
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(400).json({ err: "Invalid coupon ID" })
     }
     try{
         const coupon=await Coupon.findByIdAndUpdate({_id:id,organiserId:req.userId},value,{new:true})

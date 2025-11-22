@@ -17,11 +17,15 @@ const ticketSchema=new mongoose.Schema({
     },
     qrCode:{
         type:String,
-        required:true},
+    },
     bookedAt:{
         type:Date,
         default:Date.now,
         required:true
+    },
+    checkedIn:{
+        type:Boolean,
+        default:false
     }
 },{timestamps:true})
 const Ticket=mongoose.model('Ticket',ticketSchema)

@@ -23,6 +23,7 @@ const reviewCltr = require('./app/controllers/review-controller');
 const upload=require('./app/middlewares/multer');
 const paymentCltr = require('./app/controllers/payment-controller');
 const couponCltr = require('./app/controllers/coupon-controller');
+const ticketCltr = require('./app/controllers/ticket-controller');
 
 
 //Sign Up /In
@@ -51,9 +52,17 @@ app.delete('/event/:id',authenticateUser,roleAuth(['organiser']),eventCltr.remov
 app.get("/nearby", authenticateUser, eventCltr.nearby);
 
 
+//Ticket Routes
+app.post('/ticket/book',authenticateUser,ticketCltr.book)
+app.delete('/ticket/cancel/:id',authenticateUser,ticketCltr.cancel)
+app.get('/ticket',ticketCltr.list)
+app.post('/ticket/verify',ticketCltr.verifyQR)
+
 //Coupon Routes
 app.post('/coupon/create',authenticateUser,couponCltr.create);
 app.get('/coupons',authenticateUser,roleAuth(['organiser']),couponCltr.list);
+app.put('/coupon/:id',authenticateUser,couponCltr.update);
+app.post('/coupon/apply',authenticateUser,couponCltr.applyCoupon)
 
 
 //Review routes

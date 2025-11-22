@@ -119,8 +119,14 @@ eventCltr.nearby=async (req, res) => {
                 {latitude:eventLat,longitude:eventLng}
             )
             event._doc.distanceFromUser=eventDistance;
-            return eventDistance<=maxDistance
-        })
+            if (eventDistance>maxDistance) return null;
+            return {
+              ...event._doc,
+              getDistanceFromUser:eventDistance,
+              googleMapsUrl: `https://www.google.com/maps?q=${eventLat},${eventLng}`,
+              directionUrl: `https://www.google.com/maps/dir/?api=1&origin=${userLocation.latitude},${userLocation.longitude}&destination=${eventLat},${eventLng}`
+            }
+        }).filter(Boolean);
 
 
         res.json({

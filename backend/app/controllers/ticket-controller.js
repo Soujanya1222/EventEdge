@@ -6,68 +6,118 @@ const QRCode = require('qrcode')
 
 const{ticketValidationSchema}=require('../validations/ticket-validation')
 const ticketCltr={}
-ticketCltr.create=async(req,res)=>{
+
+ticketCltr.book=async(req,res)=>{
     const body=req.body
     const {error,value}=ticketValidationSchema.validate(body,{abortEarly:true})
     if(error){
         return res.status(400).json({error:error.details})
     }
     try{
-        const ticket=new Ticket(value)
-        await ticket.save()
-        res.json(ticket)
-    }catch(err){
-        console.log(err)
-        res.status(500).json(err)
-    }
-}
-ticketCltr.list=async(req,res)=>{
-    try{
-        const ticket=await Ticket.find()
-        res.json(ticket)
+       const attendeeId=req.userId;
+        const event=await Event.findById(value.eventId);
+        if(!event){
+            return res.status(404).json({error:"Event not found"})
+        }
+       const existing=await Ticket.findOne({
+        attendeeId,
+        eventId:value.eventId
+       })
+       if(existing){
+        return res.status(400).json({error:"Ticket already booked"})
+       }
+       const qrData=`USER:${attendeeId}|EVENT:${value.eventId}`
+       const qrImage=await QRCode.toDataURL(qrData)
+
+       const ticket=await Ticket.create({
+        attendeeId,
+        eventId:value.eventId,
+        paymentId:value.paymentId,
+        qrCode:qrImage
+       })
+
+       res.status(201).json({
+        message:"Ticket booked Successfully",
+        ticket
+       })
     }catch(err){
         console.log(err)
         res.status(500).json({err:"Something went wrong"})
     }
 }
 
-ticketCltr.getOne=async(req,res)=>{
-  const id=req.params.id
-  try{
-    const ticket=await Ticket.findById(id)
-    res.json(ticket)
-  }catch(err){
-     console.log(err)
-        res.status(500).json(err)
-  }
-}
-
-ticketCltr.update=async(req,res)=>{
-    const id=req.params.id
-    const body=req.body
-    const {error,value}=ticketValidationSchema.validate(body,{abortEarly:true})
-    if(error){
-        return res.status(400).json({error:error.details})
-    }
+ticketCltr.list=async(req,res)=>{
     try{
-        const ticket=await Ticket.findByIdAndUpdate(id,value,{new:true})
-        res.json(ticket)
+        const ticket=await Ticket.find().populate("eventId",["title"]).populate("attendeeId",["name"])
+        res.status(201).json(ticket)
     }catch(err){
         console.log(err)
-        res.status(500).json(err)
+        res.status(500).json({err:"Something went wrong"})
     }
 }
 
-ticketCltr.remove=async(req,res)=>{
-    const id=req.params.id
+ticketCltr.cancel=async(req,res)=>{
     try{
-        const ticket=await Ticket.findByIdAndDelete(id)
-        res.json(ticket)
+        const ticketId=req.params.id;
+        const attendeeId=req.userId;
+        const ticket=await Ticket.findOne({_id:ticketId,attendeeId})
+        if(!ticket){
+            return res.status(404).json({error:"Ticket not found"})
+        }
+        await Ticket.deleteOne({_id:ticketId})
+        res.json({message:"Ticket cancelled Successfully"})
     }catch(err){
         console.log(err)
-        res.status(500).json(err)
+        res.status(500).json({err:"Something went wrong"})
     }
 }
+
+
+ticketCltr.verifyQR=async(req,res)=>{
+    const{qrData}=req.body
+    try{
+        const parts=qrData.split("|")
+        let userId,eventId;
+        parts.forEach(part => {
+            const [key,val]=part.split(":");
+            if(key==="USER") userId=val;
+            if(key==="EVENT") eventId=val;
+        });
+        if(!userId||!eventId){
+            return res.status(400).json({error:"invalid QR format"})
+        }
+        const ticket=await Ticket.findOne({
+            attendeeId:userId,
+            eventId:eventId
+        })
+        if(!ticket){
+            return res.status(404).json({error:"Ticket not found"})
+        }
+        if(ticket.checkedIn){
+            return res.status(400).json({error:"Ticket already used for entry"})
+        }
+        ticket.checkedIn=true;
+        await ticket.save();
+        return res.json({
+            message:"Ticket verified successfully",
+            ticket
+        })
+
+    }catch(err){
+        console.log(err)
+        res.status(500).json({error:"Something went wrong"})
+    }
+}
+
 
 
 module.exports=ticketCltr
+
+
+
+
+//check payment
+//   const payment = await Payment.findById(body.paymentId)
+//         if (!payment || payment.status !== "success") {
+//             return res.status(400).json({ error: "Payment not verified" })
+//         }
