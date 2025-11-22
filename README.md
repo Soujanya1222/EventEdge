@@ -1,1 +1,1 @@
-"# EventEdge" 
+"Event Tracking App"
