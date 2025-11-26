@@ -3,12 +3,15 @@ import { Input } from "../componets/ui/input"
 import { Button } from "../componets/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "../componets/ui/card"
 import { loginUser } from "../slices/userSlice"
-import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from "react-redux"
+import { useNavigate, useSearchParams } from "react-router-dom"
 
 export default function Login(){
     const dispatch=useDispatch()
     const navigate=useNavigate()
+    const {errors}=useSelector((state)=>{
+        return state.users
+    })
    const formik=useFormik({
     initialValues:{
         email:"",
@@ -23,6 +26,7 @@ export default function Login(){
    })
     return(
         <div className="flex justify-center items-center h-screen">
+        {errors && <p>{errors}</p>}
         <Card className="w-[350px] p-4">
         <CardHeader>
           <CardTitle className="text-center">Login User</CardTitle>
