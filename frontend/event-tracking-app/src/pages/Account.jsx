@@ -15,10 +15,10 @@ export default function Account(){
     }
     return(
         <div>
-            <h2><b>Account Page</b></h2>
-           <p> <b>Name--{data.name}</b></p>
-            <p><b>Email -- {data.email}</b></p>
-           <p> <b>Role--{data.role}</b></p>
+            <h2>Account Page</h2>
+           <p> Name--{data.name}</p>
+            <p>Email -- {data.email}</p>
+           <p> Role--{data.role}</p>
         </div>
     )
 }

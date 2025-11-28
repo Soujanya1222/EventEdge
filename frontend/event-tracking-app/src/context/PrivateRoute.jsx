@@ -1,21 +1,29 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
-export default function PrivateRoute({children,allowedRoles}){
-    const token=localStorage.getItem('token');
-    const {data,isAuthenticated}=useSelector((state)=>{
-        return state.users;
-    })
-    if(token && !isAuthenticated){  
-        return <p>Loading...</p>
+import { useEffect } from "react";
+import { fetchAccount } from "../slices/userSlice";
+
+export default function PrivateRoute({ children, allowedRoles }) {
+  const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
+
+  const { data: user, isAuthenticated, isloading } = useSelector(
+    (state) => state.users
+  );
+
+  useEffect(() => {
+    if (token && !user) {
+      dispatch(fetchAccount());
     }
-    else if(token){
-        return children;
-    }else if(token){
-        return <h2>Unauthorized</h2>
-    }else if (allowedRoles && !allowedRoles.includes(user.role)){
-         return <Navigate to="/dashboard" replace />;
-    }
-    else{
-        return <Navigate to="/login"/>
-    }
+  }, [token, user]);
+
+  if (!token) return <Navigate to="/login" replace />;
+
+  if (isloading || (token && !user)) return <p>Loading...</p>;
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <h2>Unauthorized</h2>;
+  }
+
+  return children;
 }

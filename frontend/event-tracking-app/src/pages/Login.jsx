@@ -4,7 +4,7 @@ import { Button } from "../componets/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "../componets/ui/card"
 import { loginUser } from "../slices/userSlice"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export default function Login(){
     const dispatch=useDispatch()
