@@ -5,14 +5,18 @@ require('dotenv').config();
 const port=process.env.PORT
 
 
+
 app.use(express.json())
 app.use(cors())
 const configureDB=require('./config/db')
 configureDB()
 
 app.use((err, req, res, next) => {
-  return res.status(err.status || 500).json({ error: err.message });
+  console.error(err);
+  res.status(err.status || 500).json({ error: err.message || 'Server error' });
 });
+
+
 
 
 const authenticateUser = require('./app/middlewares/AuthenticateUser');
@@ -26,6 +30,7 @@ const couponCltr = require('./app/controllers/coupon-controller');
 const ticketCltr = require('./app/controllers/ticket-controller');
 
 
+
 //Sign Up /In
 app.post('/users/register',userCltr.register)
 app.post('/user/login',userCltr.login)
@@ -36,9 +41,9 @@ app.get('/user/account',authenticateUser,userCltr.account)
 app.get('/admin/users',authenticateUser,roleAuth(['admin','organiser']),adminCltr.getAllUser)
 app.get('/admin/events',authenticateUser,roleAuth(['admin','organiser']),adminCltr.getAllEvents)
 app.get('/admin/organisers',authenticateUser,roleAuth(['admin']),adminCltr.getAllOragniser)
-app.put('/admin/:id',authenticateUser,roleAuth(['admin']),adminCltr.approveOrganiser)
+// app.put('/admin/:id',authenticateUser,roleAuth(['admin']),adminCltr.approveOrganiser)
 app.put('/admin/changeRole/:id',authenticateUser,roleAuth(['admin']),adminCltr.changeRole)
-app.delete('/admin/removeUser/:id',authenticateUser,roleAuth(['admin']),adminCltr.deleteUser)
+app.delete('/admin/removeUser/:id',authenticateUser,roleAuth(['admin','organiser']),adminCltr.deleteUser)
 app.put('/admin/update/:id',authenticateUser,adminCltr.accountUpdate)
 
 
@@ -48,8 +53,9 @@ app.post('/events/create',authenticateUser,roleAuth(['organiser']),upload.array(
 app.get('/events',authenticateUser,eventCltr.list)
 app.get('/events/:id',authenticateUser,eventCltr.getOne)
 app.put('/event/:id',authenticateUser,roleAuth(['organiser']),upload.array('images'),eventCltr.update)
-app.delete('/event/:id',authenticateUser,roleAuth(['organiser']),eventCltr.remove)
+app.delete('/event/:id',authenticateUser,roleAuth(['admin','organiser']),eventCltr.remove)
 app.get("/nearby", authenticateUser, eventCltr.nearby);
+app.put("/event/approve/:id",authenticateUser,roleAuth(['admin']),eventCltr.approve)
 
 
 //Ticket Routes

@@ -57,7 +57,7 @@ userCltr.login=async(req,res)=>{
         if(!isPasswordMatch){
             return res.status(400).json({error:"Invalid Email/Password"})
         }
-        const tokenData={userId:user._id,role:user.role,isApproved:user.isApproved}
+        const tokenData={userId:user._id,role:user.role}  //isApproved:user.isApproved
         console.log(tokenData)
         const token=jwt.sign(tokenData,process.env.JWT_SECRET,{expiresIn:'50d'})
         res.json({token:token})
@@ -83,8 +83,6 @@ userCltr.account=async(req,res)=>{
     }
 }
 
-// const isAdmin=(req)=>req.role==='admin';
-
 adminCltr.getAllUser=async(req,res)=>{
     try{
         const user=await User.find({role:"attendee"});
@@ -107,7 +105,14 @@ adminCltr.getAllOragniser=async(req,res)=>{
 
 adminCltr.getAllEvents=async(req,res)=>{
     try{
-        const events=await Event.find({});
+        let events;
+        if(req.role=="admin"){
+            events=await Event.find();
+        }else if(req.role=="organiser"){
+            events=await Event.find({organiserId:req.userId});
+        }else{
+            return res.status(403).json({error:"Access denied"})
+        }
         res.json(events)
     }catch(err){
         console.log(err)
@@ -115,27 +120,28 @@ adminCltr.getAllEvents=async(req,res)=>{
     }
 }
 
-adminCltr.approveOrganiser=async(req,res)=>{
-    const id=req.params.id
-    if(req.role!=='admin'){
-        return res.status(403).json({error:"Only admin can approve organiser"})
-    }
-    try{
-        const  user=await User.findById(id)
-        if(!user){
-            return res.status(404).json({err:"User not found"})
-        }
-        if(user.role!=="organiser"){
-            return res.status(400).json({err:"This user is not an organiser"})
-        }
-        user.isApproved=true;
-        await user.save()
-        res.json({message:"Organiser Aprroved ",user})
-    }catch(err){
-        console.log(err)
-         res.status(500).json({err:"something went wrong"})
-    }
-}
+// adminCltr.approveOrganiser=async(req,res)=>{
+//     const id=req.params.id
+//     if(req.role!=='admin'){
+//         return res.status(403).json({error:"Only admin can approve organiser"})
+//     }
+//     try{
+//         const  user=await User.findById(id)
+//         if(!user){
+//             return res.status(404).json({err:"User not found"})
+//         }
+//         if(user.role!=="organiser"){
+//             return res.status(400).json({err:"This user is not an organiser"})
+//         }
+//         user.isApproved=true;
+//         await user.save()
+//         res.json({message:"Organiser Aprroved ",user})
+//     }catch(err){
+//         console.log(err)
+//          res.status(500).json({err:"something went wrong"})
+//     }
+// }
+
 
 adminCltr.changeRole=async(req,res)=>{
     const id = req.params.id;

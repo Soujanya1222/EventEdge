@@ -17,10 +17,10 @@ const UserSchema= new mongoose.Schema({
         enum:["admin","organiser","attendee"],
         default:"attendee"
     },
-    isApproved: {
-         type: Boolean, 
-         default: false
-         }
+    // isApproved: {
+    //      type: Boolean, 
+    //      default: false
+    //      }
 },{timestamps:true})
 const User=mongoose.model('User',UserSchema)
 module.exports=User

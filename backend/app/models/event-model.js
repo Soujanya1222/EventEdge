@@ -1,4 +1,3 @@
-const { required } = require('joi');
 const mongoose=require('mongoose')
 const EventSchema=new mongoose.Schema({
     title:{
@@ -51,7 +50,12 @@ const EventSchema=new mongoose.Schema({
     image: {
         type: [String],
         required: true,
-},
+    },
+    status: {
+        type: String,
+        enum: ["pending", "approved", "rejected"],
+        default: "pending"
+    },
 },{timestamps:true})
 EventSchema.index({ location: "2dsphere" }); 
 const Event=mongoose.model("Event",EventSchema)

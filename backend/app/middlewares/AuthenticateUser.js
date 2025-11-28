@@ -1,16 +1,16 @@
 const jwt=require('jsonwebtoken')
 const authenticateUser=(req,res,next)=>{
-    const token=req.headers['authorization']
+    let token=req.headers['authorization']
     if(!token){
-        res.status(401).json({error:"token not provided"})
+         return res.status(401).json({error:"token not provided"})
     }
+    token=token.trim()
     try{
         const tokenData=jwt.verify(token,process.env.JWT_SECRET)
         //console.log("tokendata",tokenData)
         req.userId=tokenData.userId
         req.role=tokenData.role
-        req.isApproved=tokenData.isApproved
-        next()
+        return next()
     }catch(err){
         console.log(err.message)
         return res.status(500).json({err:"something went wrong"})
