@@ -3,6 +3,7 @@ const Payment = require('../models/payment-model')
 const Coupon = require('../models/coupon-model')
 const Event = require('../models/event-model')
 const QRCode = require('qrcode')
+const mongoose=require('mongoose')
 
 const{ticketValidationSchema}=require('../validations/ticket-validation')
 const ticketCltr={}
@@ -11,7 +12,7 @@ ticketCltr.book=async(req,res)=>{
     const body=req.body
     const {error,value}=ticketValidationSchema.validate(body,{abortEarly:true})
     if(error){
-        return res.status(400).json({error:error.details})
+        return res.status(400).json({error:error.details[0].message})
     }
     try{
        const attendeeId=req.userId;
@@ -109,6 +110,39 @@ ticketCltr.verifyQR=async(req,res)=>{
     }
 }
 
+
+ticketCltr.bookedUsers=async(req,res)=>{
+    try{
+        if(req.role!=="organiser"){
+            return res.status(403).json({error: "Only organisers can access organiser bookings" });
+        }
+         const organiserId = req.params.organiserId;
+          if (!mongoose.Types.ObjectId.isValid(organiserId)) {
+            return res.status(400).json({
+                error: "Invalid organiser ID format"
+            });
+        }
+
+         if (req._id !== organiserId) {
+            return res.status(403).json({
+                error: "The organiser token does not match this organiser. You cannot access another organiser’s data."
+            });
+        }
+        const events = await Event.find({ organiserId });
+         if (events.length === 0) {
+            return res.status(404).json({
+                error: "No events found for this organiser"
+            });
+        }
+        const organiserEvents=await Event.find({organiserId:req.params.organiserId}).select("_id")
+        const eventIds=organiserEvents.map(event=>event._id);
+        const booking=await Ticket.find({eventId:{$in:eventIds}}).populate("attendeeId","name email").populate("eventId","title date")
+        res.json(booking)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({err:"Something went wrong"});
+    }
+}
 
 
 module.exports=ticketCltr

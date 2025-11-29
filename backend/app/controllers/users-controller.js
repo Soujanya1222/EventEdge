@@ -9,11 +9,11 @@ userCltr.register=async(req,res)=>{
     const body=req.body;
     const {error,value}=userRegisterValidatorSchema.validate(body,{abortEarly:false})
     if(error){
-        return res.status(400).json({error:error.details})
+        return res.status(400).json({error:error.details[0].message})
     }
     const userEmail=await User.findOne({email:value.email})
     if(userEmail){
-        return res.status(400).json("Email already taken")
+        return res.status(400).json({error:"Email already taken"})
     }
     try{
         const user=new User(value)
@@ -25,7 +25,7 @@ userCltr.register=async(req,res)=>{
         if(user.role==='admin'){
             const adminExist=await User.findOne({role:"admin"})
                 if(adminExist){
-                    return res.status(403).json({message:"You are not Admin"})
+                    return res.status(403).json({message:"Admin already exists"})
                 }
             
         }
@@ -46,7 +46,7 @@ userCltr.login=async(req,res)=>{
     const body=req.body;
     const {error,value}=userLoginValidatorSchema.validate(body,{abortEarly:false})
     if(error){
-        return res.status(401).json({error:error.details})
+        return res.status(401).json({error:error.details[0].message})
     }
     try{
         const user=await User.findOne({email:value.email})
@@ -70,6 +70,12 @@ userCltr.login=async(req,res)=>{
     }
 
 }
+
+userCltr.checkAdmin = async (req, res) => {
+    const admin = await User.findOne({ role: "admin" });
+    res.json({ adminExists: !!admin });
+};
+
 
 //users Account
 

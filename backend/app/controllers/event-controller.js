@@ -8,7 +8,7 @@ eventCltr.create=async(req,res)=>{
    const body=req.body;
    const {error,value}=eventValidationSchema.validate(body,{abortEarly:true})
    if(error){
-    return res.status(400).json({error:error.details})
+    return res.status(400).json({error:error.details[0].message})
    }
    try{
     const eventInDb=await Event.findOne({title:value.title, organiserId:req.userId})
@@ -169,6 +169,9 @@ eventCltr.approve=async(req,res)=>{
   const id=req.params.id;
   try{
     const event=await Event.findByIdAndUpdate(id,{status:"approved"},{new:true})
+    if(!event){
+      return res.status(404).json({error:"Record not Found"})
+    }
     res.json({message:"Event approved",event})
   }catch(err){
     console.log(err)
@@ -176,36 +179,24 @@ eventCltr.approve=async(req,res)=>{
   }
 }
 
+eventCltr.reject=async(req,res)=>{
+  const id=req.params.id;
+  try{
+    const event=await Event.findByIdAndUpdate(id,{status:"rejected"},{new:true})
+    if(!event){
+      return res.status(404).json({error:"Record not Found"})
+    }
+    res.json({message:"Event rejected",event})
+
+  }catch(err){
+    console.log(err)
+    res.status(500).json({err:"Something went wrong"})
+  }
+}
+
+
 module.exports=eventCltr
 
 
 
-// router.put('/event/reject/:id', async (req, res) => {
-//     try {
-//         const event = await Event.findByIdAndUpdate(
-//             req.params.id,
-//             { status: "rejected" },
-//             { new: true }
-//         )
-//         res.json({ message: "Event Rejected", event })
-//     } catch (err) {
-//         res.status(500).json(err)
-//     }
-// })
-
-
-// router.get('/events', async (req, res) => {
-//     try {
-//         const events = await Event.find({ status: "approved" })
-//         res.json(events)
-//     } catch (err) {
-//         res.status(500).json(err)
-//     }
-// })
-
-
-// router.get('/organiser/events/:id', async (req, res) => {
-//     const events = await Event.find({ organiserId: req.params.id })
-//     res.json(events)
-// })
 
