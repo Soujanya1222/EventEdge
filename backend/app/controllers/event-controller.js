@@ -107,10 +107,6 @@ eventCltr.remove=async(req,res)=>{
             await event.deleteOne();
             return res.json({ message: "Event deleted by admin" });
         }
-         if (event.organiserId.toString() === req.userId) {
-            await event.deleteOne();
-            return res.json({ message: "Event deleted by organiser" });
-        }
         if (event.organiserId.toString() !== req.userId) {
          return res.status(403).json({ error: "You are not allowed to Delete this event" });
         }
