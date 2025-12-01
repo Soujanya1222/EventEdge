@@ -1,36 +1,16 @@
-import {Routes,Route,Link} from "react-router-dom"
+import {Routes,Route,Link, useNavigate} from "react-router-dom"
 import Account from "./pages/Account"
 import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import "./App.css"
 import UsersList from "./pages/UsersList"
-import {  fetchAccount, logout } from "./slices/userSlice"
-import { useDispatch,useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import { Button } from "./componets/ui/button"
 import Dashboard from "./pages/Dashboard"
-import PrivateRoute from "./context/PrivateRoute"
-import { useEffect } from "react"
-
-
-
+import { useContext } from "react"
+import UserContext from "./context/UserContext"
 export default function App(){
-    const dispatch=useDispatch()
-    const navigate=useNavigate()
-    useEffect(() => {
-    if (localStorage.getItem("token")) {
-      dispatch(fetchAccount());
-     }
-  }, []);
-
-    const {isAuthenticated,errors,data:user}=useSelector((state)=>{
-      return state.users;
-    })
-    const handleLogout=()=>{
-      dispatch(logout())
-    }
-    
+  const {handleLogout}=useContext(UserContext)
+  const navigate=useNavigate()
     
   return (
     <div >
@@ -38,28 +18,23 @@ export default function App(){
       <ul className="nav-link">
          <li><Link to="/">Home</Link></li>
 
-        {(isAuthenticated || localStorage.getItem('token')) &&(
-          <>
+       
            
             <li> <Link to="/dashboard">Dashboard</Link></li>
              <li> <Link to="/account">Account</Link></li>
-             {(user?.role==="admin"||user?.role==="organiser")&&<li><Link to="/usersList">Users List</Link></li>}
-            <Button onClick={()=>{
-              handleLogout()
+             {/* {(user?.role==="admin"||user?.role==="organiser")&&<li><Link to="/usersList">Users List</Link></li>} */}
+            <li><Link onClick={()=>{
+              handleLogout();
               navigate('/login')
-            }}>Logout</Button>
-          </>
-        )}
+            }}>Logout</Link></li>
+        
   
    
   
-      {(!isAuthenticated && !localStorage.getItem('token'))&&(
-        <>
-        {errors && <p>{errors}</p>}
+      
          <li><Link to="/login">SignIn</Link></li>     
         <li><Link to="/register">SignUp</Link></li>
-        </>
-      ) }
+      
 
 
       </ul>

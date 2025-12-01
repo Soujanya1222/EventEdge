@@ -14,7 +14,7 @@ export const registerUser=createAsyncThunk("users/registerUser",async(formData,{
 
 export const loginUser=createAsyncThunk("users/loginUser",async(formData,{rejectWithValue})=>{
     try{
-        const response=await axios.post('user/login',formData)
+        const response=await axios.post('/user/login',formData)
         localStorage.setItem("token", response.data.token);
         console.log(response.data)
         return response.data
@@ -23,6 +23,16 @@ export const loginUser=createAsyncThunk("users/loginUser",async(formData,{reject
         return rejectWithValue(err.response.data)
     }
 })
+
+
+export const checkAdminExists = createAsyncThunk(
+"users/checkAdminExists",
+    async () => {
+        const res = await axios.get("/check-admin");
+        return res.data.adminExists;
+    }
+);
+
 
 export const fetchAccount=createAsyncThunk("users/fetchUsers",async(undefined,{rejectWithValue})=>{
     try{
@@ -41,8 +51,11 @@ const userSlice=createSlice({
     initialState:{
         data:null,
         isloading:false,
+        isLoggedIn:false,
         errors:null,
-        isAuthenticated:false
+        isAuthenticated:false,
+        adminExists: false,
+
     },
     reducers:{
         logout(state){
@@ -61,7 +74,7 @@ const userSlice=createSlice({
         })
         .addCase(registerUser.fulfilled,(state,action)=>{
             state.data=action.payload;
-            state.isAuthenticated=true
+            state.isAuthenticated=false
             state.isloading=false
             state.errors=null
         })
@@ -81,10 +94,13 @@ const userSlice=createSlice({
             state.isloading=false
         })
         .addCase(loginUser.rejected, (state, action) => {
-            state.user = null;
+            state.data = null;
             state.isAuthenticated = false;
             state.errors = action.payload;
             state.isloading = false;
+        })
+        .addCase(checkAdminExists.fulfilled, (state, action) => {
+            state.adminExists = action.payload;
         })
         .addCase(fetchAccount.pending, (state) => {
             state.isloading = true;
