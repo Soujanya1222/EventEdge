@@ -84,25 +84,7 @@ reviewCltr.remove=async(req,res)=>{
 
 
 
-// async function updateEventRating(eventId) {
-//   const reviews = await Review.find({ eventId });
 
-//   if (reviews.length === 0) {
-//     await Event.findByIdAndUpdate(eventId, {
-//       rating: 0,
-//       totalReviews: 0
-//     });
-//     return;
-//   }
-
-//   const avgRating =
-//     reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-
-//   await Event.findByIdAndUpdate(eventId, {
-//     rating: avgRating.toFixed(1),
-//     totalReviews: reviews.length
-//   });
-// }
 
 
 module.exports=reviewCltr

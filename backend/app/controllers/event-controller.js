@@ -41,7 +41,7 @@ eventCltr.list = async (req, res) => {
     console.log('Error fetching events:', err);
     res.status(500).json({ err: 'Something went wrong' });
   }
-};
+}
 
 
 eventCltr.getOne=async(req,res)=>{   

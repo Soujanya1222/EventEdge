@@ -45,7 +45,7 @@ app.get('/admin/organisers',authenticateUser,roleAuth(['admin']),adminCltr.getAl
 app.put('/admin/changeRole/:id',authenticateUser,roleAuth(['admin']),adminCltr.changeRole)
 app.delete('/admin/removeUser/:id',authenticateUser,roleAuth(['admin','organiser']),adminCltr.deleteUser)
 app.put('/admin/update/:id',authenticateUser,adminCltr.accountUpdate)
-app.get("/check-admin", userCltr.checkAdmin);
+app.get("/check-admin",authenticateUser, userCltr.checkAdmin);
 
 
 
