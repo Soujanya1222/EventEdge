@@ -15,20 +15,9 @@ export default function Register(props){
             role:""
             
         },
-        validate: (values) => {
-        const errors = {};
-
-        if (!values.name) errors.name = "Please enter your name";
-        if (!values.email) errors.email = "Please enter your email";
-        if (!values.password) errors.password = "Please enter your password";
-        if (!values.role) errors.role = "Please select a role";
-
-        return errors;
-        },
         onSubmit:(values,{resetForm})=>{
-            console.log(values)
+            console.log("formik data",values)
             handleRegister(values,resetForm)
-            alert("Registerd Successfully")
         }
     })
     return(
@@ -36,6 +25,7 @@ export default function Register(props){
            <Card>
             <CardHeader>
                 <CardTitle>Create Account</CardTitle>
+                  {serverErrors&& <p style={{color:"red"}}>{serverErrors}</p>}
             </CardHeader>
             <br/>
             <CardContent>
@@ -43,17 +33,15 @@ export default function Register(props){
                 <div>
                 <Input type="text" name="name" placeholder="Enter UserName"value={formik.values.name} onChange={formik.handleChange}/>
                 </div><br/>
-                  {formik.errors.name && <p className="text-red-500">{formik.errors.name}</p>}
 
                 <div>
                     <Input type="email" name="email"  placeholder="Enter Email" value={formik.values.email} onChange={formik.handleChange}/>
                 </div><br/>
-                  {formik.errors.email && <p className="text-red-500">{formik.errors.email}</p>}
 
                 <div>
                     <Input type="password" name="password"placeholder="Enter Password" value={formik.values.password} onChange={formik.handleChange}/>
                 </div><br/>
-                  {formik.errors.password && <p className="text-red-500">{formik.errors.password}</p>}
+                
 
                 <select 
                         name="role" 

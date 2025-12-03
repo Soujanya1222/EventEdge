@@ -6,7 +6,7 @@ import Register from "./pages/Register"
 import "./App.css"
 import UsersList from "./pages/UsersList"
 import Dashboard from "./pages/Dashboard"
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import UserContext from "./context/UserContext"
 export default function App(){
   const {isLoggedIn,handleLogout,user}=useContext(UserContext)
@@ -22,7 +22,7 @@ export default function App(){
            <li> <Link to="/dashboard">Dashboard</Link></li>
              <li> <Link to="/account">Account</Link></li>
              {(user?.role==="admin"||user?.role==="organiser")&&<li><Link to="/usersList">Users List</Link></li>}
-            <li><Link onClick={()=>{
+            <li><Link to="/login" onClick={()=>{
               handleLogout();
             }}>Logout</Link></li>
           </>

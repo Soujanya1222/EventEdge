@@ -1,7 +1,7 @@
 export default function Home(props){
     return(
         <div>
-            <h2>Home Page</h2>
+            <h1 style={{color:"blueviolet"}}>Welcome to Event Tracking App</h1>
         </div>
     )
 }

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 const userReducer=(state,action)=>{
     switch(action.type){
         case "LOGIN":{
-            return {...state,isLoggedIn:true,user:action.payload,serverErrors:''}
+            return {...state,isLoggedIn:true,user:action.payload,adminExists: action.payload.role === "admin" ? true : state.adminExists,serverErrors:''}
         }
         case "LOGOUT":{
             return {...state,isLoggedIn:false,user:null}
@@ -15,7 +15,7 @@ const userReducer=(state,action)=>{
             return {...state,serverErrors:action.payload}
         }
         case "ADMIN_EXISTS":{
-            return {...state,isLoggedIn:true,user:action.payload,serverErrors:'',adminExists:true}
+            return {...state,serverErrors:'',adminExists:true}
         }
         default:{
             return {...state}
@@ -43,6 +43,8 @@ export default function AuthProvider(props){
                 }
             }
             fetchUser();
+            adminExists();
+            
         }
     },[])
 
@@ -50,15 +52,14 @@ export default function AuthProvider(props){
     const handleRegister=async(formData,resetForm)=>{
         try{
             const response=await axios.post('/users/register',formData)
-            console.log(response.data)
+            console.log("response:",response.data);
             alert("Successfully Registered")
             resetForm();
+            userDispatch({type:"SERVER_ERROR",payload:""})
             navigate('/login')
-
-
         }catch(err){
             console.log(err.message)
-            userDispatch({type:'SERVER_ERROR',payload:err.response})
+            userDispatch({type:'SERVER_ERROR',payload:err.response.data.error})
         }
     }
 
@@ -66,29 +67,34 @@ export default function AuthProvider(props){
     const handleLogin=async(formData,resetForm)=>{
         try{
             const response=await axios.post('/user/login',formData)
-            console.log(response.data);
+            console.log("response",response.data);
             localStorage.setItem('token',response.data.token)
             const userResponse=await axios.get('/user/account',{headers:{Authorization:localStorage.getItem("token")}})
             console.log(userResponse)
-            userDispatch({type:"LOGIN" ,payload:response.data})
+            userDispatch({type:"LOGIN" ,payload:userResponse.data})
+            alert("Successfully Logged In")
             resetForm()
+            userDispatch({type:"SERVER_ERROR",payload:""})
             navigate('/dashboard')
         }catch(err){
-            console.log(err);
-            userDispatch({type:"SERVER_ERROR",payload:err.response})
+            console.log(err.response.data.error);
+            userDispatch({type:"SERVER_ERROR",payload:err.response.data.error})
         }
     }
 
-    const adminExists=async()=>{
-        try{
-            const response =await axios.get('/check-admin',{headers:{Authorization:localStorage.getItem("token")}})
-            console.log(response.data);
-            userDispatch({type:"ADMIN_EXISTS",payload:response.data})
-        }catch(err){
-            console.log(err);
-            userDispatch({type:"SERVER_ERROR",payload:err.response})
-        } 
-    }
+    const adminExists = async () => {
+        try {
+            const response = await axios.get("/check-admin", {
+                headers: { Authorization:localStorage.getItem("token")} });
+
+            if (response.data.exists) {
+                userDispatch({ type: "ADMIN_EXISTS" });
+            }
+        } catch (err) {
+            console.log("admin error:", err.response?.data?.error);
+        }
+    };
+
 
     const handleLogout=()=>{
         localStorage.removeItem("token");
