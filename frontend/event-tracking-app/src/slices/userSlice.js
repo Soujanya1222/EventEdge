@@ -24,16 +24,6 @@ export const loginUser=createAsyncThunk("users/loginUser",async(formData,{reject
     }
 })
 
-
-export const checkAdminExists = createAsyncThunk(
-"users/checkAdminExists",
-    async () => {
-        const res = await axios.get("/check-admin");
-        return res.data.adminExists;
-    }
-);
-
-
 export const fetchAccount=createAsyncThunk("users/fetchUsers",async(undefined,{rejectWithValue})=>{
     try{
         const response=await axios.get('/user/account',{headers:{Authorization:localStorage.getItem('token')}});

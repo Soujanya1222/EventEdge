@@ -1,26 +1,16 @@
-import { useContext, useEffect } from "react";
-// import { useSelector,useDispatch } from "react-redux"
-// import { fetchAccount } from "../slices/userSlice";
-import UserContext from "../context/UserContext";
+import { useContext } from "react"
+import UserContext from "../context/UserContext"
+
 
 export default function Account(){
-    // const dispatch=useDispatch()
-    // useEffect(()=>{
-    //    dispatch(fetchAccount())
-    // },[])
-    // const {data}=useSelector((state)=>{
-    //     return state.users;
-    // })
-    // if(!data){
-    //     return <p>Loading....</p>
-    // }
-    
+    const {user}=useContext(UserContext)
     return(
         <div>
             <h2>Account Page</h2>
-           {/* <p> Name--{user.name}</p>
-            <p>Email -- {user.email}</p>
-           <p> Role--{user.role}</p> */}
+            <p>Name--{user.name}</p>
+            <p>Email--{user.email}</p>
+            <p>Role--{user.role}</p>
+           
         </div>
     )
 }

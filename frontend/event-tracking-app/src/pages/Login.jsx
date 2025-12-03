@@ -7,17 +7,16 @@ import { useContext } from "react"
 import UserContext from "../context/UserContext"
 
 export default function Login(props){
-    const {handleLogin}=useContext(UserContext)
+    const {handleLogin,serverErrors}=useContext(UserContext)
     const navigate=useNavigate()
    const formik=useFormik({
     initialValues:{
         email:"",
         password:""
-    },onSubmit:(values,{resetForm})=>{
+    }
+    ,onSubmit:(values,{resetForm})=>{
         console.log(values)
-        handleLogin(values);
-        resetForm();
-        navigate("/dashboard")
+        handleLogin(values,resetForm());
 
     }
    })
@@ -30,6 +29,7 @@ export default function Login(props){
         <br/>
         <CardContent>
             <form onSubmit={formik.handleSubmit}>
+                  {serverErrors&& <p>{serverErrors}</p>}
                 <div>
                    
                     <Input type="email" name="email" placeholder="   Enter Email" value={formik.values.email} onChange={formik.handleChange}/>

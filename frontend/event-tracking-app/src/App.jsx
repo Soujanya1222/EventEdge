@@ -6,11 +6,10 @@ import Register from "./pages/Register"
 import "./App.css"
 import UsersList from "./pages/UsersList"
 import Dashboard from "./pages/Dashboard"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import UserContext from "./context/UserContext"
 export default function App(){
-  const {handleLogout}=useContext(UserContext)
-  const navigate=useNavigate()
+  const {isLoggedIn,handleLogout,user}=useContext(UserContext)
     
   return (
     <div >
@@ -18,24 +17,29 @@ export default function App(){
       <ul className="nav-link">
          <li><Link to="/">Home</Link></li>
 
-       
-           
-            <li> <Link to="/dashboard">Dashboard</Link></li>
+        {(isLoggedIn|| localStorage.getItem("token")) &&(
+          <>
+           <li> <Link to="/dashboard">Dashboard</Link></li>
              <li> <Link to="/account">Account</Link></li>
-             {/* {(user?.role==="admin"||user?.role==="organiser")&&<li><Link to="/usersList">Users List</Link></li>} */}
+             {(user?.role==="admin"||user?.role==="organiser")&&<li><Link to="/usersList">Users List</Link></li>}
             <li><Link onClick={()=>{
               handleLogout();
-              navigate('/login')
             }}>Logout</Link></li>
-        
-  
+          </>
+        )}
+           
+           
+                
+          {!isLoggedIn && !localStorage.getItem('token')&&
+          (
+            <>
+             <li><Link to="/register">Register</Link></li>
+              <li><Link to="/login">Login</Link></li>     
+               
+            </>
+          )}
    
   
-      
-         <li><Link to="/login">SignIn</Link></li>     
-        <li><Link to="/register">SignUp</Link></li>
-      
-
 
       </ul>
       <br/>
