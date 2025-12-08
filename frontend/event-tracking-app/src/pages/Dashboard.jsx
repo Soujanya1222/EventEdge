@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react"
 import UserContext from "../context/UserContext"
 import AttendeeDashboard from "./AttendeeDashboard"
 import AdminDashboard from "./AdminDashboard"
-import OrganiserDashboard from "./OrganiserDashboard"
+import OrganiserDashboard from "./Organiser Pages/OrganiserDashboard"
 
 export default function Dashboard(props){
     const {user,isLoggedIn}=useContext(UserContext)
