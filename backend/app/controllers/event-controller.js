@@ -34,7 +34,7 @@ eventCltr.create=async(req,res)=>{
 
 eventCltr.list = async (req, res) => {
   try {
-    const events = await Event.find({status:"approved"}) .select("title image venue price location status")
+    const events = await Event.find({status:"approved"}) .select("title  description image venue price location status")
     // console.log('Events found:', events);
     res.json(events);
   } catch (err) {

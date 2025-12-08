@@ -51,7 +51,7 @@ userCltr.login=async(req,res)=>{
     try{
         const user=await User.findOne({email:value.email})
         if(!user){
-            return res.status(401).json({error:"invalid Email/Password"})
+            return res.status(401).json({error:"Invalid Email/Password"})
         }
         const isPasswordMatch=await bcryptjs.compare(value.password,user.password)
         if(!isPasswordMatch){
@@ -115,7 +115,7 @@ adminCltr.getAllEvents=async(req,res)=>{
         if(req.role=="admin"){
             events=await Event.find();
         }else if(req.role=="organiser"){
-            events=await Event.find({organiserId:req.userId});
+            events=await Event.find({organiserId:req.userId}).populate('organiserId',["name"])
         }else{
             return res.status(403).json({error:"Access denied"})
         }
