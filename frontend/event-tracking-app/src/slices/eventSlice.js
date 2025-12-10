@@ -11,12 +11,26 @@ export const fetchEvents=createAsyncThunk("events/fetchEvents",async(undefined,{
     }
 
 })
+
+export const createEvents=createAsyncThunk("events/createEvents",async(formData,{rejectWithValue})=>{
+    try{
+        const response=await axios.post('/events/create',formData,{headers:{Authorization:localStorage.getItem("token"),"Content-Type": "multipart/form-data"}})
+        console.log(response.data)
+        return response.data;
+
+    }catch(err){
+        console.log(err.response.data.error);
+        return rejectWithValue(err.response.data.error)
+    }
+})
+
+
 const eventSlice=createSlice({
     name:"events",
     initialState:{
         data:[],
         isLoading:false,
-        errors:null
+        errors:null,
     },
     extraReducers:(builder)=>{
         builder.addCase(fetchEvents.pending,(state)=>{
@@ -32,6 +46,21 @@ const eventSlice=createSlice({
          .addCase(fetchEvents.rejected,(state,action)=>{
             state.data=[]
             state.isLoading=false
+            state.errors=action.payload
+        })
+        .addCase(createEvents.pending,(state)=>{
+            state.isLoading=true
+            state.data=[]
+            state.errors=null
+        })
+        .addCase(createEvents.fulfilled,(state,action)=>{
+            state.isLoading=false
+            state.data.push(action.payload)
+            state.errors=null
+        })
+        .addCase(createEvents.rejected,(state,action)=>{
+            state.isLoading=false
+            state.data=[]
             state.errors=action.payload
         })
     }

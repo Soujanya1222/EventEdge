@@ -12,12 +12,11 @@ import EventList from "./pages/Organiser Pages/EventList"
 import EventForm from "./pages/Organiser Pages/EventForm"
 import { fetchEvents } from "./slices/eventSlice"
 import { useDispatch } from "react-redux"
-import { Button } from "./componets/ui/button"
 export default function App(){
   const {isLoggedIn,handleLogout,user}=useContext(UserContext)
   const dispatch=useDispatch()
    useEffect(()=>{
-        dispatch(fetchEvents())
+        dispatch(fetchEvents());
     },[])
     
   return (
@@ -30,7 +29,7 @@ export default function App(){
           <>
            <li> <Link to="/dashboard">Dashboard</Link></li>
              <li> <Link to="/account">Account</Link></li>
-             {(user?.role==="admin"||user?.role==="organiser")&&<li><Link to="/usersList">Users List</Link></li>}
+             {(user?.role==="admin")&&<li><Link to="/usersList">Users List</Link></li>}
             {(user?.role==="admin"||user?.role==="organiser")&&<li><Link to="/organiser/events">Event List</Link></li>}
             {user?.role === "organiser" && (<li style={{color:"blue"}}><Link to="/create-event">CreateEvent</Link></li>)}
            <li style={{color:"blue"}}><Link to="/login" onClick={()=>{

@@ -1,12 +1,18 @@
 
+import { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 
 function LocationPicker({ setFieldValue, lat, lng }) {
+  const [position,setPosition]=useState([lat||20.5937,lng||78.9629])
   function ClickHandler() {
     useMapEvents({
       click(e) {
-        setFieldValue("latitude", e.latlng.lat);
-        setFieldValue("longitude", e.latlng.lng);
+        const {lat,lng}=e.latlng;
+       setFieldValue("location", {
+      type: "Point",
+      coordinates: [Number(lng), Number(lat)] 
+    });
+      setPosition([lat,lng])
       }
     });
     return null;
@@ -14,7 +20,7 @@ function LocationPicker({ setFieldValue, lat, lng }) {
 
   return (
     <MapContainer
-      center={[lat || 20.5937, lng || 78.9629]} 
+      center={position}
       zoom={5}
       style={{ height: "300px", width: "100%" }}
     >
@@ -22,7 +28,7 @@ function LocationPicker({ setFieldValue, lat, lng }) {
 
       <ClickHandler />
 
-      {lat && lng && <Marker position={[lat, lng]} />}
+      {lat && lng && <Marker position={position} />}
     </MapContainer>
   );
 }
