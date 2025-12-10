@@ -5,7 +5,11 @@ const eventCltr={}
 const {deleteOldImages}=require('../middlewares/cloudinary')
 
 eventCltr.create=async(req,res)=>{
-   const body=req.body;
+
+   const body={
+      ...req.body,
+      location: req.body.location ? JSON.parse(req.body.location) : undefined
+    };
    const {error,value}=eventValidationSchema.validate(body,{abortEarly:true})
    if(error){
     return res.status(400).json({error:error.details[0].message})
@@ -64,7 +68,10 @@ eventCltr.getOne=async(req,res)=>{
 
 eventCltr.update=async(req,res)=>{
     const id=req.params.id
-    const body=req.body
+     const body = {
+    ...req.body,
+    location: req.body.location ? JSON.parse(req.body.location) : undefined
+  };
     const {error,value}=eventValidationSchema.validate(body,{abortEarly:true})
     if(error){
         return res.status(400).json({error:error.details})

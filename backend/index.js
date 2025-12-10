@@ -52,7 +52,7 @@ app.get("/check-admin",authenticateUser, userCltr.checkAdmin);
 
 
 //Event Routes
-app.post('/events/create',authenticateUser,roleAuth(['organiser']),upload.array('images'),eventCltr.create)
+app.post('/events/create',authenticateUser,roleAuth(['organiser']),upload.array('image'),eventCltr.create)
 app.get('/events',authenticateUser,eventCltr.list)
 app.get('/events/:id',authenticateUser,eventCltr.getOne)
 app.put('/event/:id',authenticateUser,roleAuth(['organiser']),upload.array('images'),eventCltr.update)
