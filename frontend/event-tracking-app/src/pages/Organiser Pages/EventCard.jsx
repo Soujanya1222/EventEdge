@@ -27,6 +27,16 @@ export default function EventCard({ event }) {
           style={{ width: "100%", marginTop: "10px" }}
         />
       )}
+      
+      {event.location && (
+        <div style={{ marginTop: "10px" }}>
+          <strong>Location:</strong>
+          <p>Latitude: {event.location.coordinates[1]}</p>
+          <p>Longitude: {event.location.coordinates[0]}</p>
+        </div>
+      )}
+    
+
     </div>
   );
 }

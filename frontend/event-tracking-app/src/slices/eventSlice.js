@@ -24,6 +24,18 @@ export const createEvents=createAsyncThunk("events/createEvents",async(formData,
     }
 })
 
+export const approveEvent=createAsyncThunk("events/approveEvent",async(id,{rejectWithValue})=>{
+    try{
+        const response=await axios.put(`/event/approve/${id}`,{},{headers:{Authorization:localStorage.getItem("token")}})
+        console.log(response.data)
+        return response.data;                       
+    }catch(err){
+        console.log(err.response.data.error);
+        return rejectWithValue(err.response.data.error)
+    }
+})
+
+
 
 const eventSlice=createSlice({
     name:"events",

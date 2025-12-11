@@ -1,13 +1,15 @@
 import {createSlice,createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "../config/axios";
 
-export const listUsers=createAsyncThunk("users/listUsers",async(formData,{rejectWithValue})=>{
+export const fetchOrganisers=createAsyncThunk("users/fetchOrgnisers",async(undefined,{rejiectWithValue})=>{
     try{
-        const response=await axios.get('/admin/users',{headers:{Authorization:localStorage.getItem("token")}})
+        const response=await axios.get("/admin/organisers",{headers:{Authorization:localStorage.getItem("token")}})
         console.log(response.data)
+        return response.data;
+
     }catch(err){
-        console.log(err.message)
-        return rejectWithValue(err.response.data)
+        console.log(err.response.data.error);
+        return rejiectWithValue(err.response.data.error)
     }
 })
 
@@ -15,10 +17,28 @@ export const listUsers=createAsyncThunk("users/listUsers",async(formData,{reject
 const userSlice=createSlice({
     name:"users",
     initialState:{
-        data:null,
-        isloading:false,
+        data:[],
+        isLoading:false,
         errors:null,
     },
+    extraReducers:(builder)=>{
+        builder
+        .addCase(fetchOrganisers.pending,(state)=>{
+            state.isLoading=true;
+            state.data=[];
+            state.errors=null;
+        })
+        .addCase(fetchOrganisers.fulfilled,(state,action)=>{
+            state.isLoading=false;
+            state.data=action.payload;
+            state.errors=null;  
+        })
+        .addCase(fetchOrganisers.rejected,(state,action)=>{
+            state.isLoading=false;
+            state.data=[];
+            state.errors=action.payload;
+        })
+    }
     
 })
 
