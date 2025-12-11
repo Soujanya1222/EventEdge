@@ -101,8 +101,25 @@ adminCltr.getAllUser=async(req,res)=>{
 
 adminCltr.getAllOragniser=async(req,res)=>{
     try{
-        const user=await User.find({role:"organiser"});
-        res.json(user)
+        const user=await User.find({role:"organiser"})
+          const result = await Promise.all(
+            user.map(async (org) => {
+                const events = await Event.find({ organiserId: org._id });
+
+                const totalTicketsSold = events.reduce((sum, ev) => {
+                    return sum + (ev.soldTickets || 0);
+                }, 0);
+
+                return {
+                    _id: org._id,
+                    name: org.name,
+                    email: org.email,
+                    eventsOrganised: events.length,
+                    ticketsSold: totalTicketsSold
+                };
+            })
+        );
+        res.json(result)
     }catch(err){
         console.log(err)
         res.status(500).json({err:"something went wrong"})
@@ -113,7 +130,7 @@ adminCltr.getAllEvents=async(req,res)=>{
     try{
         let events;
         if(req.role=="admin"){
-            events=await Event.find();
+            events=await Event.find().populate('organiserId',["name"]);
         }else if(req.role=="organiser"){
             events=await Event.find({organiserId:req.userId}).populate('organiserId',["name"])
         }else{
@@ -166,6 +183,8 @@ adminCltr.changeRole=async(req,res)=>{
          res.status(500).json({err:"something went wrong"})
     }   
 }
+
+
 
 adminCltr.deleteUser=async(req,res)=>{
     const id=req.params.id
