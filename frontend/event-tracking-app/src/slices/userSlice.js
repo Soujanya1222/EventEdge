@@ -13,6 +13,19 @@ export const fetchOrganisers=createAsyncThunk("users/fetchOrgnisers",async(undef
     }
 })
 
+export const fetchUsers=createAsyncThunk("users/fetchUsers",async(undefined,{rejectWithValue})=>{
+    try{
+        const response=await axios.get("/admin/users",{headers:{Authorization:localStorage.getItem("token")}})
+        console.log(response.data)
+        return response.data;       
+    }catch(err){
+        console.log(err.response.data.error);
+        return rejectWithValue(err.response.data.error)
+    }
+})
+
+
+
 
 const userSlice=createSlice({
     name:"users",
@@ -20,6 +33,8 @@ const userSlice=createSlice({
         data:[],
         isLoading:false,
         errors:null,
+        pendingEvents:[],
+        approveEvents:[]
     },
     extraReducers:(builder)=>{
         builder
@@ -38,8 +53,23 @@ const userSlice=createSlice({
             state.data=[];
             state.errors=action.payload;
         })
+        .addCase(fetchUsers.pending,(state)=>{      
+            state.isLoading=true;
+            state.data=[];
+            state.errors=null;
+        })
+        .addCase(fetchUsers.fulfilled,(state,action)=>{
+            state.isLoading=false;
+            state.data=action.payload;
+            state.errors=null;
+        })
+        .addCase(fetchUsers.rejected,(state,action)=>{
+            state.isLoading=false;
+            state.data=[];
+            state.errors=action.payload;
+        })
+        
     }
-    
 })
 
 

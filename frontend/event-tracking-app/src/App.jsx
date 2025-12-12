@@ -13,13 +13,15 @@ import EventList from "./pages/Organiser Pages/EventList"
 import EventForm from "./pages/Organiser Pages/EventForm"
 import { fetchEvents } from "./slices/eventSlice"
 import { useDispatch } from "react-redux"
-import { fetchOrganisers } from "./slices/userSlice"
+import { fetchOrganisers, fetchUsers } from "./slices/userSlice"
 export default function App(){
   const {isLoggedIn,handleLogout,user}=useContext(UserContext)
+
   const dispatch=useDispatch()
    useEffect(()=>{
         dispatch(fetchEvents());
-        dispatch(fetchOrganisers())
+        dispatch(fetchOrganisers());
+        dispatch(fetchUsers());
     },[])
     
   return (

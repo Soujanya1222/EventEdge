@@ -3,6 +3,7 @@ import UserContext from "../context/UserContext"
 import AttendeeDashboard from "./AttendeeDashboard"
 import AdminDashboard from "./Admin Page/AdminDashboard"
 import OrganiserDashboard from "./Organiser Pages/OrganiserDashboard"
+import "../styles/admin.css"
 
 export default function Dashboard(props){
     const {user,isLoggedIn}=useContext(UserContext)

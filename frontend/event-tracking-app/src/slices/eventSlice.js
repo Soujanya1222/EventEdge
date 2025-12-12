@@ -1,5 +1,6 @@
 import { createSlice ,createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "../config/axios";
+
 export const fetchEvents=createAsyncThunk("events/fetchEvents",async(undefined,{rejectWithValue})=>{
     try{
         const response=await axios.get('/admin/events',{headers:{Authorization:localStorage.getItem('token')}})
