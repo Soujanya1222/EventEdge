@@ -24,7 +24,7 @@ export default function App(){
     
   return (
     <div >
-      <h2>Event Tracking App</h2><br/>
+      <h2 >Event Tracking App</h2><br/>
       <ul className="nav-link">
          <li><Link to="/">Home</Link></li>
 
