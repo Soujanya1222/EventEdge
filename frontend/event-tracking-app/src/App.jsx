@@ -11,18 +11,25 @@ import { useContext,useEffect } from "react"
 import UserContext from "./context/UserContext"
 import EventList from "./pages/Organiser Pages/EventList"
 import EventForm from "./pages/Organiser Pages/EventForm"
-import { fetchEvents } from "./slices/eventSlice"
 import { useDispatch } from "react-redux"
-import { fetchOrganisers, fetchUsers } from "./slices/userSlice"
+import {  fetchOrganisers, fetchUsers } from "./slices/userSlice"
+import { fetchAdminEvents, fetchEvents } from "./slices/eventSlice"
 export default function App(){
   const {isLoggedIn,handleLogout,user}=useContext(UserContext)
 
   const dispatch=useDispatch()
-   useEffect(()=>{
-        dispatch(fetchEvents());
-        dispatch(fetchOrganisers());
-        dispatch(fetchUsers());
-    },[])
+  useEffect(() => {
+    if (user?.role === "admin") {
+      dispatch(fetchAdminEvents())
+      dispatch(fetchUsers())
+      dispatch(fetchOrganisers())
+    }
+    if(user?.role==="organiser"){
+      dispatch(fetchEvents())
+    }
+             
+  }, [user])
+    
     
   return (
     <div >
@@ -33,14 +40,12 @@ export default function App(){
         {(isLoggedIn|| localStorage.getItem("token")) &&(
           <>
            <li> <Link to="/dashboard">Dashboard</Link></li>
-             <li> <Link to="/account">Account</Link></li>
-             {(user?.role==="admin")&&<li><Link to="/usersList">List Users</Link></li>}
-             {user?.role==="admin" && <li><Link to="/organiserList">List Organiser</Link></li>}
-            {(user?.role==="admin"||user?.role==="organiser")&&<li><Link to="/organiser/events">Event List</Link></li>}
+          <li> <Link to="/account">Account</Link></li>
+            {user?.role==="organiser"&&<li><Link to="/organiser/events">Event List</Link></li>}
             {user?.role === "organiser" && (<li style={{color:"blue"}}><Link to="/create-event">CreateEvent</Link></li>)}
-           <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
+           {/* <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
               handleLogout();
-            }}>Logout</Link></li>
+            }}>Logout</Link></li> */}
           </>
         )}
            

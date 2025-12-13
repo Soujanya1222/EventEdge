@@ -99,6 +99,7 @@ export default function AuthProvider(props){
     const handleLogout=()=>{
         localStorage.removeItem("token");
         userDispatch({type:"LOGOUT"})
+        navigate('/login')
     }
     
 

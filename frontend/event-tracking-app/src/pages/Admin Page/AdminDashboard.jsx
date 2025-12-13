@@ -1,7 +1,8 @@
-import { useContext } from "react"
+import { useContext,  } from "react"
 import UserContext from "../../context/UserContext"
-import {  useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+
 
 
 export default function AdminDashboard(props){
@@ -12,12 +13,32 @@ export default function AdminDashboard(props){
     const {data:events}=useSelector((state)=>{
         return state.events;
     })
+  
+       
+
+    const approvedEvents = events.filter(
+         event => event.status === "approved"
+    );
+
+    const pendingEvents = events.filter(
+    event => event.status === "pending"
+    );
+
+     const rejectedEvents = events.filter(
+    event => event.status === "rejected"
+    );
+
+    const approvedCount = approvedEvents.length;
+    const pendingCount = pendingEvents.length;
+    const rejectedCount=rejectedEvents.length;
+
+
     const {user}=useContext(UserContext)
     if(!user){
         return <p>Loading...</p>
     }
     return(
-        <div className="dashbord-content">
+        <div className="dashboard-content">
             <h2 className="page-title">Admin Dashboard</h2>
             <p>Name--{user.name}</p>
             <div className="stats-container">
@@ -27,9 +48,6 @@ export default function AdminDashboard(props){
                     <button className="view-btn" onClick={()=>navigate("/organiserList")}>View Organiser</button>
                 </div>
 
-            </div>
-
-            <div className="stats-container">
                 <div className="stat-card">
                     <h3>Total Events</h3>
                     <p>{events.length}</p>
@@ -39,9 +57,6 @@ export default function AdminDashboard(props){
 
                 </div>
 
-            </div>
-
-             <div className="stats-container">
                 <div className="stat-card">
                     <h3>Total Users</h3>
                     <p>{data.length}</p>
@@ -49,6 +64,25 @@ export default function AdminDashboard(props){
                         navigate("/usersList")
                     }}>View Users</button>
 
+                </div>
+                
+                <div className="stat-box">
+                <p>Pending Events</p>
+                <h2>{pendingCount}</h2>
+                 <button className="view-btn" onClick={()=>navigate("/organiser/events?status=pending")}>View pending Events</button>
+                </div>
+                
+                <div className="stat-box">
+                <p>Approved Events</p>
+                <h2>{approvedCount}</h2>
+                 <button className="view-btn" onClick={()=>navigate("/organiser/events?status=approved")}>View Approved Evets</button>
+                </div>
+
+
+                 <div className="stat-box">
+                <p>Rejected Events</p>
+                <h2>{rejectedCount}</h2>
+                 <button className="view-btn" onClick={()=>navigate("/organiser/events?status=rejected")}>View Rejected Events</button>
                 </div>
 
             </div>

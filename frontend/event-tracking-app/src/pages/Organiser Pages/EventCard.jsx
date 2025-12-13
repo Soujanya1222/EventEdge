@@ -1,4 +1,18 @@
+import { useDispatch } from "react-redux"
+import { approveEvent, rejectEvent } from "../../slices/eventSlice"
+import { useContext } from "react";
+import UserContext from "../../context/UserContext";
 export default function EventCard({ event }) {
+  const dispatch=useDispatch()
+  const {user}=useContext(UserContext)
+
+  const handleApprove=()=>{
+    dispatch(approveEvent(event._id))
+  }
+
+  const handleReject=()=>{
+    dispatch(rejectEvent(event._id))
+  }
   return (
     <div style={{
       border: "1px solid #ddd",
@@ -35,8 +49,39 @@ export default function EventCard({ event }) {
           <p>Longitude: {event.location.coordinates[0]}</p>
         </div>
       )}
-    
 
-    </div>
+      {user?.role==="admin" && event.status==="pending" &&(
+        <div style={{ display: "flex", gap: "10px", marginTop: "15px" }}>
+          <button onClick={handleApprove}
+              style={{
+            backgroundColor: "green",
+            color: "white",
+            padding: "8px 12px",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+           }}>
+            Approve
+           </button>
+
+
+           <button
+            onClick={handleReject}
+            style={{
+              backgroundColor: "red",
+              color: "white",
+              padding: "8px 12px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer"
+            }}
+          >
+            Reject
+          </button>
+        </div>
+      )}
+
+  </div>
+  
   );
 }

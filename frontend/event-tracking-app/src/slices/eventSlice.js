@@ -1,17 +1,32 @@
 import { createSlice ,createAsyncThunk} from "@reduxjs/toolkit";
 import axios from "../config/axios";
 
+
+
 export const fetchEvents=createAsyncThunk("events/fetchEvents",async(undefined,{rejectWithValue})=>{
+    try{
+        const response=await axios.get('/organiser/events',{headers:{Authorization:localStorage.getItem('token')}})
+        console.log(response.data)
+        return response.data
+    }catch(err){
+        console.log(err.response.data.error);
+        rejectWithValue(err.message)
+    }
+
+})
+
+export const fetchAdminEvents=createAsyncThunk("events/fetchAdminEvents",async(undefined,{rejectWithValue})=>{
     try{
         const response=await axios.get('/admin/events',{headers:{Authorization:localStorage.getItem('token')}})
         console.log(response.data)
         return response.data
     }catch(err){
-        console.log(err.reponse.data.error);
+        console.log(err.response.data.error);
         rejectWithValue(err.message)
     }
 
 })
+
 
 export const createEvents=createAsyncThunk("events/createEvents",async(formData,{rejectWithValue})=>{
     try{
@@ -36,6 +51,18 @@ export const approveEvent=createAsyncThunk("events/approveEvent",async(id,{rejec
     }
 })
 
+export const rejectEvent=createAsyncThunk("events/rejectEvent",async(id,{rejectWithValue})=>{
+    try{
+        const response=await axios.delete(`/event/reject/${id}`,{headers:{Authorization:localStorage.getItem("token")}})
+        console.log(response.data)
+        return response.data;                       
+
+    }catch(err){
+        console.log(err.response.data.error);
+        return rejectWithValue(err.response.data.error)
+    }
+})
+
 
 
 const eventSlice=createSlice({
@@ -44,12 +71,12 @@ const eventSlice=createSlice({
         data:[],
         isLoading:false,
         errors:null,
+        pendingEvents:[],
+        approvedEvents:[]
     },
     extraReducers:(builder)=>{
         builder.addCase(fetchEvents.pending,(state)=>{
-            state.isLoading=true,
-            state.data=[],
-            state.errors=null
+            state.isLoading=true
         })
         .addCase(fetchEvents.fulfilled,(state,action)=>{
             state.data=action.payload
@@ -63,8 +90,6 @@ const eventSlice=createSlice({
         })
         .addCase(createEvents.pending,(state)=>{
             state.isLoading=true
-            state.data=[]
-            state.errors=null
         })
         .addCase(createEvents.fulfilled,(state,action)=>{
             state.isLoading=false
@@ -74,6 +99,49 @@ const eventSlice=createSlice({
         .addCase(createEvents.rejected,(state,action)=>{
             state.isLoading=false
             state.data=[]
+            state.errors=action.payload
+        })
+        .addCase(fetchAdminEvents.pending,(state)=>{
+            state.isLoading=true
+        })       
+        .addCase(fetchAdminEvents.fulfilled,(state,action)=>{
+            state.data=action.payload
+            state.isLoading=false
+            state.errors=null
+        })
+         .addCase(fetchAdminEvents.rejected,(state,action)=>{
+            state.data=[]
+            state.isLoading=false
+            state.errors=action.payload
+        })
+
+        .addCase(approveEvent.pending,(state)=>{
+            state.isLoading=true
+        })
+        .addCase(approveEvent.fulfilled,(state,action)=>{
+            state.isLoading=false
+            const index=state.data.findIndex(event=>event._id===action.payload._id)
+            if(index!==-1){
+                state.data[index]=action.payload
+            }
+            state.errors=null
+        })
+        .addCase(approveEvent.rejected,(state,action)=>{
+            state.isLoading=false
+            state.errors=action.payload
+        })  
+
+        .addCase(rejectEvent.pending,(state)=>{
+            state.isLoading=true
+        })
+        .addCase(rejectEvent.fulfilled,(state,action)=>{
+             const index = state.data.findIndex(ele => ele._id === action.payload._id)
+            if (index !== -1) {
+                state.data[index] = action.payload
+            }
+        })
+        .addCase(rejectEvent.rejected,(state,action)=>{
+            state.isLoading=false
             state.errors=action.payload
         })
     }
