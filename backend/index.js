@@ -39,7 +39,8 @@ app.get('/user/account',authenticateUser,userCltr.account)
 
 //Admin route
 app.get('/admin/users',authenticateUser,roleAuth(['admin']),adminCltr.getAllUser)
-app.get('/admin/events',authenticateUser,roleAuth(['admin','organiser']),adminCltr.getAllEvents)
+app.get('/admin/events',authenticateUser,roleAuth(['admin']),adminCltr.getAllEvents)
+app.get('/organiser/events',authenticateUser,roleAuth(['organiser']),adminCltr.getAllEvents)
 app.get('/admin/organisers',authenticateUser,roleAuth(['admin']),adminCltr.getAllOragniser)
 // app.put('/admin/:id',authenticateUser,roleAuth(['admin']),adminCltr.approveOrganiser)
 app.put('/admin/changeRole/:id',authenticateUser,roleAuth(['admin']),adminCltr.changeRole)
