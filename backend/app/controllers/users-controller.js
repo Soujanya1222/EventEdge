@@ -206,12 +206,17 @@ adminCltr.deleteUser=async(req,res)=>{
 adminCltr.accountUpdate=async(req,res)=>{
     const id=req.params.id
     const body=req.body
+    if (body.password) {
+        const salt = await bcryptjs.genSalt();
+        body.password = await bcryptjs.hash(body.password, salt);
+    }
     
     try{
         const user=await User.findByIdAndUpdate(id,body,{new:true})
-        const salt=await bcryptjs.genSalt();
-        const hash=await bcryptjs.hash(user.password,salt)
-        user.password=hash;
+        if(!user){
+            return res.status(404).json({err:"User not found"})
+        }
+
           
         await user.save();
         res.status(201).json(user)
@@ -222,6 +227,28 @@ adminCltr.accountUpdate=async(req,res)=>{
 
     }
 }
+
+userCltr.updateAccount = async (req, res) => {
+  const body = req.body;
+
+  if (body.password) {
+    const salt = await bcryptjs.genSalt();
+    body.password = await bcryptjs.hash(body.password, salt);
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.userId,  
+      body,
+      { new: true }
+    );
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ err: "Something went wrong" });
+  }
+};
+
 
 
 module.exports={adminCltr,userCltr}
