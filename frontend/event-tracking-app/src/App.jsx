@@ -41,11 +41,11 @@ export default function App(){
           <>
            <li> <Link to="/dashboard">Dashboard</Link></li>
           <li> <Link to="/account">Account</Link></li>
-            {user?.role==="organiser"&&<li><Link to="/organiser/events">Event List</Link></li>}
-            {user?.role === "organiser" && (<li style={{color:"blue"}}><Link to="/create-event">CreateEvent</Link></li>)}
-           {/* <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
+            {/* {user?.role==="organiser"&&<li><Link to="/organiser/events">Event List</Link></li>}
+            {user?.role === "organiser" && (<li style={{color:"blue"}}><Link to="/create-event">CreateEvent</Link></li>)} */}
+           <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
               handleLogout();
-            }}>Logout</Link></li> */}
+            }}>Logout</Link></li>
           </>
         )}
            

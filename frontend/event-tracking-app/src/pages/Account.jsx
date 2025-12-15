@@ -1,42 +1,91 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrganisers,fetchUsers } from "../slices/userSlice";
+import { updateAccount, fetchOrganisers,fetchUsers } from "../slices/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Account() {
-    const dispatch=useDispatch()
-  const { user, handleLogout } = useContext(UserContext);
-  const{data}=useSelector((state)=>{
-    return state.users;
+  const navigate=useNavigate()
+  const dispatch=useDispatch()
+  const { user, handleLogout,errors,updateUser } = useContext(UserContext);
+  const{data:event}=useSelector((state)=>{
+    return state.events;
   })
-  useEffect(()=>{
-    dispatch(fetchOrganisers())
-    dispatch(fetchUsers())
-  })
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (user && token && user?.role==="admin") {
+      dispatch(fetchOrganisers());
+      dispatch(fetchUsers());
+    }}, [user, dispatch]);
+    
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
+ 
+    const COLORS = {
+    primary: "#1E3A8A",
+    secondary: "#2563EB",
+    success: "#16A34A",
+    warning: "#F59E0B",
+    danger: "#DC2626",
+    bg: "#F1F5F9",
+    card: "#FFFFFF",
+    text: "#0F172A",
+    muted: "#64748B"
+  };
+
+  const buttonBase = {
+    padding: "10px 18px",
+    borderRadius: "8px",
+    border: "none",
+    fontSize: "14px",
+    fontWeight: 500,
+    cursor: "pointer"
+  };
 
 
   if (!user) return <p>Loading...</p>;
 
   const handleSave = () => {
-    console.log("Updated profile:", { name, email });
-    setEditMode(false);
+    dispatch(updateAccount({name,email}))
+    .then((res)=>{
+      if(res.meta.requestStatus==="fulfilled"){
+        updateUser(res.payload)
+        setEditMode(false);
+      }
+      
+    })
+    .catch(()=>{
+      dispatch(errors)
+    })
   };
+
 
   return (
     <div
       style={{
-        maxWidth: "800px",
+        maxWidth: "900px",
         margin: "40px auto",
-        padding: "30px",
-        background: "#f9f9f9",
-        borderRadius: "12px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
+        padding: "32px",
+        backgroundColor: COLORS.card,
+        borderRadius: "14px",
+        border: "1px solid #E5E7EB",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
+        fontFamily: "Inter, sans-serif",
+        color: COLORS.text
       }}
     >
-      <h2 style={{ marginBottom: "20px", color: "#333" }}>
+
+      <h2
+        style={{
+          marginBottom: "24px",
+          fontSize: "24px",
+          fontWeight: "600",
+          borderBottom: "1px solid #E5E7EB",
+          paddingBottom: "12px"
+        }}
+      >
         Account Details
       </h2>
 
@@ -86,118 +135,76 @@ export default function Account() {
           <>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <strong>Total Events:</strong>
-              <span>{user.totalEvents || 0}</span>
+              <span>{event.length}</span>
             </div>
             <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-              <button
+             <button
                 style={{
-                  padding: "8px 16px",
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
+                  ...buttonBase,
+                  backgroundColor: COLORS.secondary,
+                  color: "#fff"
+                }} onClick={()=>
+                  navigate("/organiser/events")
+                }
+                
               >
+
                 View My Events
               </button>
               <button
                 style={{
-                  padding: "8px 16px",
-                  backgroundColor: "#2196F3",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer"
+                  ...buttonBase,
+                  backgroundColor: COLORS.secondary,
+                  color: "#fff"
                 }}
+                onClick={()=>navigate("/create-event")}
               >
+
                 Create Event
               </button>
             </div>
           </>
         )}
 
-        {user.role === "admin" && (
-          <>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <strong>Total Users:</strong>
-              <span>{data.length || 0}</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <strong>Total Organisers:</strong>
-              <span>{data.length || 0}</span>
-            </div>
-            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-              <button
-                style={{
-                  padding: "8px 16px",
-                  backgroundColor: "#4CAF50",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
-              >
-                Manage Users
-              </button>
-              <button
-                style={{
-                  padding: "8px 16px",
-                  backgroundColor: "#2196F3",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
-              >
-                Manage Organisers
-              </button>
-            </div>
-          </>
-        )}
+      
 
         <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
           {editMode ? (
-            <button
-              onClick={handleSave}
+             <button
               style={{
-                padding: "8px 16px",
-                backgroundColor: "#4CAF50",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
-              }}
+                ...buttonBase,
+                backgroundColor: COLORS.secondary,
+                color: "#fff"
+              }} onClick={handleSave}
             >
               Save
             </button>
           ) : (
-            <button
-              onClick={() => setEditMode(true)}
+          <button
               style={{
-                padding: "8px 16px",
-                backgroundColor: "#FF9800",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer"
+                ...buttonBase,
+                backgroundColor: COLORS.secondary,
+                color: "#fff"
               }}
+              onClick={()=>{
+                setName(user.name);
+                setEmail(user.email);
+                setEditMode(true);
+              }
+                
+                }
             >
               Edit Profile
             </button>
           )}
 
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#f44336",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer"
-            }}
-           >
+           <button
+                style={{
+              ...buttonBase,
+              backgroundColor: COLORS.secondary,
+              color: "#fff"
+            }} onClick={handleLogout}
+          >
             Logout
            
           </button>

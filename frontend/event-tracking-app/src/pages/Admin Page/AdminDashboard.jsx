@@ -39,8 +39,13 @@ export default function AdminDashboard(props){
     }
     return(
         <div className="dashboard-content">
-            <h2 className="page-title">Admin Dashboard</h2>
-            <p>Name--{user.name}</p>
+            <h2 style={{
+          marginBottom: "24px",
+          fontSize: "24px",
+          fontWeight: "600",
+          paddingBottom: "12px"
+        }}>Admin Dashboard</h2>
+            
             <div className="stats-container">
                 <div className="stat-card">
                     <h3>Total Organisers</h3>

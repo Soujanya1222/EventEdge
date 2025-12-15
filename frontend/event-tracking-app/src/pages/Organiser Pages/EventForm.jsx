@@ -3,8 +3,11 @@ import LocationPicker from "../../componets/Components/Map"
 import { useDispatch, useSelector } from "react-redux";
 import { createEvents } from "../../slices/eventSlice";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../../styles/event.css"
 
 export default function EventForm(props){
+    const navigate=useNavigate()
     const {errors}=useSelector(state=>state.events)
     const [message, setMessage] = useState(null);
     const dispatch=useDispatch()
@@ -44,49 +47,53 @@ export default function EventForm(props){
 
             dispatch(createEvents(formData));
             resetForm();
-            setMessage(alert("Event created successfully!"));
+            alert("Event created successfully!")
+
         }
     })
     return (
-        <div>
-            <h2>Add Events</h2>
-            {errors && <p style={{color:"red"}}>{errors}</p>}
-            {message && <p style={{color:"green"}}>{message}</p>}
-        <form onSubmit={formik.handleSubmit}>
-            <div>  
+        <div className="event-form-container">
+            <h2 className="event-form-title">Add Events</h2>
+            {errors && <p className="error-text">{errors}</p>}
+            {message && <p className="success-text">{message}</p>}
+        <form onSubmit={formik.handleSubmit} className="event-form">
+            <div className="event-input">  
                 <input type="text" name="title" placeholder="Event Title" value={formik.values.title} onChange={formik.handleChange} />
             </div>
-            <div> 
+            <div className="event-input"> 
                  <input type="text" name="description" placeholder="Enter description" value={formik.values.description} onChange={formik.handleChange} />
             </div>
-            <div>  
+            <div className="event-input">  
                 <input type="text" name="category" placeholder="Enter category" value={formik.values.category} onChange={formik.handleChange} />
             </div>
-            <div> 
+            <div className="event-input"> 
                 <input type="text" name="venue" placeholder="Enter Venue" value={formik.values.venue} onChange={formik.handleChange} />
             </div>
-            <div>  
+            <div className="event-input">  
                  <input type="number" name="price" placeholder="Enter Price" value={formik.values.price} onChange={formik.handleChange} />
             </div>
-            <div>  
+            <div className="event-input">  
                  <input type="number" name="totalTickets" placeholder="Enter totalTickets" value={formik.values.totalTickets} onChange={formik.handleChange} />
             </div>
-            <div>  
+            <div className="event-input">  
                  <input type="number" name="soldTickets" placeholder="Enter soldTickets" value={formik.values.soldTickets} onChange={formik.handleChange} />
             </div>
-            <div>  
+            <div className="event-input">  
                 <input type="datetime-local" name="datetime" value={formik.values.datetime} onChange={formik.handleChange} />
             </div>
-             <p style={{ marginTop: "10px", fontWeight: "500" }}>Select Event Location</p>
+             <p className="location-title">Select Event Location</p>
+              <div className="map-wrapper">
            <LocationPicker
                 setFieldValue={formik.setFieldValue}
                 lat={formik.values.location.coordinates[1]}   
                 lng={formik.values.location.coordinates[0]}   
             />
+            </div>
 
             <br/><br/>
 
             <input
+                className="file-input"
                 type="file"
                 name="image"
                 multiple
@@ -97,7 +104,7 @@ export default function EventForm(props){
                 />
 
         <div>
-            <button><input type="submit" value=" Add Events"/></button>
+            <button type="submit" className="submit-btn"> Add Event </button>
         </div>
 
         </form>

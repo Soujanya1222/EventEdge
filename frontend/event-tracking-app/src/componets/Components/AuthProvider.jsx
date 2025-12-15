@@ -14,6 +14,9 @@ const userReducer=(state,action)=>{
         case "SERVER_ERROR":{
             return {...state,serverErrors:action.payload}
         }
+        case "UPDATE_USER":{
+            return {...state,user:action.payload}
+        }
         case "ADMIN_EXISTS":{
             return {...state,serverErrors:'',adminExists:true}
         }
@@ -95,6 +98,10 @@ export default function AuthProvider(props){
         }
     };
 
+    const updateUser=(userData)=>{
+        userDispatch({type:"UPDATE_USER",payload:userData})
+    }
+
 
     const handleLogout=()=>{
         localStorage.removeItem("token");
@@ -104,7 +111,7 @@ export default function AuthProvider(props){
     
 
     return (
-        <UserContext.Provider value={{...userState ,handleRegister,handleLogin,handleLogout,adminExists}}>
+        <UserContext.Provider value={{...userState ,handleRegister,handleLogin,handleLogout,adminExists,updateUser}}>
             {props.children}
         </UserContext.Provider>
     )

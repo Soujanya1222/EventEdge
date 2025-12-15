@@ -64,15 +64,25 @@ export const rejectEvent=createAsyncThunk("events/rejectEvent",async(id,{rejectW
 })
 
 
+export const fetchUserEvents = createAsyncThunk(
+  "events/fetchUserEvents",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get("events", {headers: { Authorization: localStorage.getItem("token") } }); 
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.error || "Error fetching events");
+    }
+  }
+);
+
 
 const eventSlice=createSlice({
     name:"events",
     initialState:{
         data:[],
         isLoading:false,
-        errors:null,
-        pendingEvents:[],
-        approvedEvents:[]
+        errors:null
     },
     extraReducers:(builder)=>{
         builder.addCase(fetchEvents.pending,(state)=>{
@@ -144,6 +154,21 @@ const eventSlice=createSlice({
             state.isLoading=false
             state.errors=action.payload
         })
+
+        .addCase(fetchUserEvents.pending, (state) => {      
+            state.isLoading = true;
+        })
+        .addCase(fetchUserEvents.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.data = action.payload;
+            state.errors = null;
+        })
+        .addCase(fetchUserEvents.rejected, (state, action) => {
+            state.isLoading = false;
+            state.data = [];
+            state.errors = action.payload;
+        });
+
     }
 })
 export default eventSlice.reducer;

@@ -25,6 +25,20 @@ export const fetchUsers=createAsyncThunk("users/fetchUsers",async(undefined,{rej
 })
 
 
+export const updateAccount=createAsyncThunk("users/updateAccount",async({id,name,email},{rejectWithValue})=>{
+    try{
+        const response=await axios.put(`/user/account`,{name,email},{headers:{Authorization:localStorage.getItem("token")}})
+        console.log(response.data)
+        return response.data;
+    }
+    catch(err){
+        console.log(err.response.data.error);
+        return rejectWithValue(err.response.data.error)
+    }
+
+})
+
+
 const userSlice=createSlice({
     name:"users",
     initialState:{
@@ -64,6 +78,19 @@ const userSlice=createSlice({
             state.data=[];
             state.errors=action.payload;
         })
+        .addCase(updateAccount.pending, (state) => {
+            state.isLoading = true;
+        })
+        .addCase(updateAccount.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.user = action.payload;   
+            state.errors = null;
+        })
+        .addCase(updateAccount.rejected, (state, action) => {
+            state.isLoading = false;
+            state.errors = action.payload;
+        });
+
     }
 })
 

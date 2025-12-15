@@ -8,8 +8,13 @@ export default function AttendeeDashboard(props){
     }
     return(
         <div>
-            <h2>Attendee Dashboard</h2>
-            <p>Name--{user.name}</p>
+             <h2 style={{
+          marginBottom: "24px",
+          fontSize: "24px",
+          fontWeight: "600",
+          paddingBottom: "12px"
+        }}>Attendee Dashboard</h2>
+
         </div>
     )
 }
