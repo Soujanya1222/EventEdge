@@ -6,7 +6,6 @@ import axios from "../config/axios";
 export const fetchEvents=createAsyncThunk("events/fetchEvents",async(undefined,{rejectWithValue})=>{
     try{
         const response=await axios.get('/organiser/events',{headers:{Authorization:localStorage.getItem('token')}})
-        console.log(response.data)
         return response.data
     }catch(err){
         console.log(err.response.data.error);
@@ -18,7 +17,6 @@ export const fetchEvents=createAsyncThunk("events/fetchEvents",async(undefined,{
 export const fetchAdminEvents=createAsyncThunk("events/fetchAdminEvents",async(undefined,{rejectWithValue})=>{
     try{
         const response=await axios.get('/admin/events',{headers:{Authorization:localStorage.getItem('token')}})
-        console.log(response.data)
         return response.data
     }catch(err){
         console.log(err.response.data.error);
@@ -31,7 +29,6 @@ export const fetchAdminEvents=createAsyncThunk("events/fetchAdminEvents",async(u
 export const createEvents=createAsyncThunk("events/createEvents",async(formData,{rejectWithValue})=>{
     try{
         const response=await axios.post('/events/create',formData,{headers:{Authorization:localStorage.getItem("token"),"Content-Type": "multipart/form-data"}})
-        console.log(response.data)
         return response.data;
 
     }catch(err){
@@ -43,7 +40,6 @@ export const createEvents=createAsyncThunk("events/createEvents",async(formData,
 export const approveEvent=createAsyncThunk("events/approveEvent",async(id,{rejectWithValue})=>{
     try{
         const response=await axios.put(`/event/approve/${id}`,{},{headers:{Authorization:localStorage.getItem("token")}})
-        console.log(response.data)
         return response.data;                       
     }catch(err){
         console.log(err.response.data.error);
@@ -53,9 +49,19 @@ export const approveEvent=createAsyncThunk("events/approveEvent",async(id,{rejec
 
 export const rejectEvent=createAsyncThunk("events/rejectEvent",async(id,{rejectWithValue})=>{
     try{
-        const response=await axios.delete(`/event/reject/${id}`,{headers:{Authorization:localStorage.getItem("token")}})
-        console.log(response.data)
+        const response=await axios.put(`/event/reject/${id}`,{headers:{Authorization:localStorage.getItem("token")}})
         return response.data;                       
+
+    }catch(err){
+        console.log(err.response.data.error);
+        return rejectWithValue(err.response.data.error)
+    }
+})
+
+export const deleteEvent=createAsyncThunk("events/deleteEvent",async(id,{rejectWithValue})=>{
+    try{
+        const response=await axios.delete(`/event/${id}`,{headers:{Authorization:localStorage.getItem("token")}})
+        return response.data;
 
     }catch(err){
         console.log(err.response.data.error);
@@ -167,7 +173,20 @@ const eventSlice=createSlice({
             state.isLoading = false;
             state.data = [];
             state.errors = action.payload;
-        });
+        })
+
+        .addCase(deleteEvent.pending,(state)=>{
+            state.isLoading=true
+        })
+        .addCase(deleteEvent.fulfilled,(state,action)=>{
+            state.isLoading=false
+            state.data=state.data.filter(event=>event._id!==action.payload._id)
+            state.errors=null
+        })
+        .addCase(deleteEvent.rejected,(state,action)=>{
+            state.isLoading=false
+            state.errors=action.payload
+        })
 
     }
 })

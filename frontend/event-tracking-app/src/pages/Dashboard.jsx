@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react"
 import UserContext from "../context/UserContext"
-import AttendeeDashboard from "./AttendeeDashboard"
+import AttendeeDashboard from "./Attendee Page/AttendeeDashboard"
 import AdminDashboard from "./Admin Page/AdminDashboard"
 import OrganiserDashboard from "./Organiser Pages/OrganiserDashboard"
 import "../styles/admin.css"

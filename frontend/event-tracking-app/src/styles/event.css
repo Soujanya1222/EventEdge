@@ -86,3 +86,37 @@
   animation: spin 1s linear infinite;
   margin: 0 auto;
 }
+
+
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.event-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.event-card h3 {
+  margin-bottom: 8px;
+  color: #1f2937;
+}
+
+.event-card p {
+  margin: 4px 0;
+  color: #6b7280;
+  font-size: 14px;
+}

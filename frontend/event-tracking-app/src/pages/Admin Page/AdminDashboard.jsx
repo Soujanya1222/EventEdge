@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 
 export default function AdminDashboard(props){
     const navigate=useNavigate()
-    const {data}=useSelector((state)=>{
+    const {users,organisers}=useSelector((state)=>{
         return state.users;
     })
     const {data:events}=useSelector((state)=>{
@@ -39,17 +39,12 @@ export default function AdminDashboard(props){
     }
     return(
         <div className="dashboard-content">
-            <h2 style={{
-          marginBottom: "24px",
-          fontSize: "24px",
-          fontWeight: "600",
-          paddingBottom: "12px"
-        }}>Admin Dashboard</h2>
-            
+            <h2 className="page-title">Admin Dashboard</h2>
+            <p>Name--{user.name}</p>
             <div className="stats-container">
                 <div className="stat-card">
                     <h3>Total Organisers</h3>
-                    <p>{data.length}</p>
+                    <p>{organisers.length}</p>
                     <button className="view-btn" onClick={()=>navigate("/organiserList")}>View Organiser</button>
                 </div>
 
@@ -64,7 +59,7 @@ export default function AdminDashboard(props){
 
                 <div className="stat-card">
                     <h3>Total Users</h3>
-                    <p>{data.length}</p>
+                    <p>{users.length}</p>
                     <button className="view-btn" onClick={()=>{
                         navigate("/usersList")
                     }}>View Users</button>

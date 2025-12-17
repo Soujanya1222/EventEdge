@@ -1,19 +1,22 @@
-import { useState,useEffect ,useContext, use} from "react"
+import { useState,useEffect ,useContext} from "react"
 import axios from "../../config/axios"
 import UserContext from "../../context/UserContext"
+import { useNavigate } from "react-router-dom"
 export default function UsersList(){
+    const navigate=useNavigate()
     const {user}=useContext(UserContext)
     const [users,setUsers]=useState([])
     useEffect(()=>{
-           axios.get('/admin/users',{headers:{Authorization:localStorage.getItem('token')}})
-          .then((response)=>{
-            setUsers(response.data)
-            console.log(response.data)
-          }).catch((err)=>{
-            console.log(err)
-          })
-                    
-       },[])
+        const fetchUsers = () => {
+            axios.get('/admin/users',{headers:{Authorization:localStorage.getItem('token')}})
+            .then((response)=>{
+              setUsers(response.data)
+            }).catch((err)=>{
+              console.log(err)
+            })
+        }
+        fetchUsers()
+    },[])
 
        const changeRole=async(id,oldRole)=>{
         const newRole=window.prompt("Enter new role (organiser/user):",oldRole)
@@ -55,8 +58,10 @@ export default function UsersList(){
 
     return(
         <div>
-          
-            <h2>Users List</h2>
+            <button onClick={() => navigate("/dashboard")} className="mb-3 px-4 py-2 border border-black">
+                ← Back to Dashboard
+            </button>
+            <h2><strong>Users List</strong></h2><br/>
             <table className="border border-black border-collapse">
                 <thead>
                     <tr className="border border-black p-3">
@@ -84,6 +89,9 @@ export default function UsersList(){
                     )}
                 </tbody>
             </table>
+
+
+
         </div>
     )
 }

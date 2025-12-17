@@ -25,10 +25,10 @@ export const fetchUsers=createAsyncThunk("users/fetchUsers",async(undefined,{rej
 })
 
 
+
 export const updateAccount=createAsyncThunk("users/updateAccount",async({id,name,email},{rejectWithValue})=>{
     try{
         const response=await axios.put(`/user/account`,{name,email},{headers:{Authorization:localStorage.getItem("token")}})
-        console.log(response.data)
         return response.data;
     }
     catch(err){
@@ -42,7 +42,8 @@ export const updateAccount=createAsyncThunk("users/updateAccount",async({id,name
 const userSlice=createSlice({
     name:"users",
     initialState:{
-        data:[],
+        users: [],
+        organisers: [],
         isLoading:false,
         errors:null,
     },
@@ -50,32 +51,28 @@ const userSlice=createSlice({
         builder
         .addCase(fetchOrganisers.pending,(state)=>{
             state.isLoading=true;
-            state.data=[];
-            state.errors=null;
         })
         .addCase(fetchOrganisers.fulfilled,(state,action)=>{
             state.isLoading=false;
-            state.data=action.payload;
+            state.organisers=action.payload;
             state.errors=null;  
         })
         .addCase(fetchOrganisers.rejected,(state,action)=>{
             state.isLoading=false;
-            state.data=[];
+            state.organisers=[];
             state.errors=action.payload;
         })
         .addCase(fetchUsers.pending,(state)=>{      
             state.isLoading=true;
-            state.data=[];
-            state.errors=null;
         })
         .addCase(fetchUsers.fulfilled,(state,action)=>{
             state.isLoading=false;
-            state.data=action.payload;
+            state.users=action.payload;
             state.errors=null;
         })
         .addCase(fetchUsers.rejected,(state,action)=>{
             state.isLoading=false;
-            state.data=[];
+            state.users=[];
             state.errors=action.payload;
         })
         .addCase(updateAccount.pending, (state) => {
@@ -83,13 +80,13 @@ const userSlice=createSlice({
         })
         .addCase(updateAccount.fulfilled, (state, action) => {
             state.isLoading = false;
-            state.user = action.payload;   
+            state.users = action.payload;   
             state.errors = null;
         })
         .addCase(updateAccount.rejected, (state, action) => {
             state.isLoading = false;
             state.errors = action.payload;
-        });
+        })
 
     }
 })

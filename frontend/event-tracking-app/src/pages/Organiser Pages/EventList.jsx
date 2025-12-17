@@ -4,8 +4,10 @@ import { useContext, useEffect } from "react";
 import UserContext from "../../context/UserContext";
 import { fetchAdminEvents, fetchEvents } from "../../slices/eventSlice";
 import { useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function EventList() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams()
   const status = searchParams.get("status") 
   const dispatch=useDispatch()
@@ -26,6 +28,9 @@ export default function EventList() {
     : events
   return (
     <div>
+      <button onClick={() => navigate("/dashboard")} className="mb-3 px-4 py-2 border border-black">
+                ← Back to Dashboard
+            </button>
       <h1>
         {status ? `${status.toUpperCase()} EVENTS` : "All Events"}
       </h1>

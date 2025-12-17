@@ -1,8 +1,10 @@
 import { useDispatch } from "react-redux"
-import { approveEvent, rejectEvent } from "../../slices/eventSlice"
+import { approveEvent, deleteEvent, rejectEvent } from "../../slices/eventSlice"
 import { useContext } from "react";
 import UserContext from "../../context/UserContext";
+
 export default function EventCard({ event }) {
+
   const dispatch=useDispatch()
   const {user}=useContext(UserContext)
 
@@ -13,7 +15,12 @@ export default function EventCard({ event }) {
   const handleReject=()=>{
     dispatch(rejectEvent(event._id))
   }
+
+  const handleDelete=()=>{
+    dispatch(deleteEvent(event._id))
+  }
   return (
+    
     <div style={{
       border: "1px solid #ddd",
       padding: "15px",
@@ -68,7 +75,7 @@ export default function EventCard({ event }) {
            <button
             onClick={handleReject}
             style={{
-              backgroundColor: "red",
+              backgroundColor: "blue",
               color: "white",
               padding: "8px 12px",
               border: "none",
@@ -77,6 +84,21 @@ export default function EventCard({ event }) {
             }}
           >
             Reject
+          </button>
+
+
+           <button
+            style={{
+              backgroundColor: "red",
+              color: "white",
+              padding: "8px 12px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer"
+            }}
+            onClick={handleDelete}
+          >
+            DELETE
           </button>
         </div>
       )}
