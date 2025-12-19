@@ -44,7 +44,7 @@ app.get('/admin/users',authenticateUser,roleAuth(['admin']),adminCltr.getAllUser
 app.get('/admin/events',authenticateUser,roleAuth(['admin']),adminCltr.getAllEvents)
 app.get('/organiser/events',authenticateUser,roleAuth(['organiser']),adminCltr.getAllEvents)
 app.get('/admin/organisers',authenticateUser,roleAuth(['admin']),adminCltr.getAllOragniser)
-app.put('/admin/:id',authenticateUser,roleAuth(['admin']),adminCltr.approveOrganiser)
+// app.put('/admin/:id',authenticateUser,roleAuth(['admin']),adminCltr.approveOrganiser)
 app.put('/admin/changeRole/:id',authenticateUser,roleAuth(['admin']),adminCltr.changeRole)
 app.delete('/admin/removeUser/:id',authenticateUser,roleAuth(['admin','organiser']),adminCltr.deleteUser)
 app.put('/admin/update/:id',authenticateUser,adminCltr.accountUpdate)
@@ -70,7 +70,7 @@ app.post('/ticket/book',authenticateUser,ticketCltr.book)
 app.delete('/ticket/cancel/:id',authenticateUser,ticketCltr.cancel)
 app.get('/ticket',ticketCltr.list)
 app.post('/ticket/verify',ticketCltr.verifyQR)
-app.get('/organiser/booking/:organiserId',authenticateUser,roleAuth(['organiser']),ticketCltr.bookedUsers)
+app.get('/organiser/booking',authenticateUser,roleAuth(['organiser']),ticketCltr.bookedUsers)
 
 //Coupon Routes
 app.post('/coupon/create',authenticateUser,couponCltr.create);
