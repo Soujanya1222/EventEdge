@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../componets/ui/card";
 import { Button } from "../componets/ui/button";
 import { useContext } from "react";
 import UserContext from "../context/UserContext";
+import { Link } from "react-router-dom";
 export default function Register(props){
     const {handleRegister,serverErrors,adminExists}=useContext(UserContext)
 
@@ -58,6 +59,12 @@ export default function Register(props){
 
                 <Button type="submit" className="w-full">Register</Button>
                 </form>
+                <p className="text-center text-sm mt-4">
+                Create an account?{" "}
+                <Link to="/login" className="text-blue-600 font-medium hover:underline">
+                Login
+                </Link>
+                </p>
             </CardContent>
            </Card>
         </div>

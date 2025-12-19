@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 
 
 
+
 export default function AdminDashboard(props){
     const navigate=useNavigate()
     const {users,organisers}=useSelector((state)=>{
@@ -38,8 +39,8 @@ export default function AdminDashboard(props){
         return <p>Loading...</p>
     }
     return(
-        <div className="dashboard-content">
-            <h2 className="page-title">Admin Dashboard</h2>
+        <div className=".dashboard-container">
+            <h1 className="page-title"><strong>Admin Dashboard</strong></h1>
             <p>Name--{user.name}</p>
             <div className="stats-container">
                 <div className="stat-card">

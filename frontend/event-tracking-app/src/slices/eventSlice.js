@@ -70,11 +70,12 @@ export const deleteEvent=createAsyncThunk("events/deleteEvent",async(id,{rejectW
 })
 
 
+
 export const fetchUserEvents = createAsyncThunk(
   "events/fetchUserEvents",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("events", {headers: { Authorization: localStorage.getItem("token") } }); 
+      const response = await axios.get("/events", {headers: { Authorization: localStorage.getItem("token") } }); 
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.error || "Error fetching events");

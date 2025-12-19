@@ -39,6 +39,20 @@ export const updateAccount=createAsyncThunk("users/updateAccount",async({id,name
 })
 
 
+export const fetchBookedUsers=createAsyncThunk(
+  "events/fetchBookedUsers",
+  async (undefined, { rejectWithValue }) => { 
+    try {
+      const response = await axios.get(`/organiser/booking`, {headers: { Authorization: localStorage.getItem("token") } }); 
+      return response.data;
+    }
+    catch (err) {
+      return rejectWithValue(err.response?.data?.error || "Error fetching booked users");
+    }
+    }
+);
+
+
 const userSlice=createSlice({
     name:"users",
     initialState:{
@@ -87,6 +101,18 @@ const userSlice=createSlice({
             state.isLoading = false;
             state.errors = action.payload;
         })
+        .addCase(fetchBookedUsers.pending, (state) => {
+            state.isLoading = true;
+        })
+        .addCase(fetchBookedUsers.fulfilled, (state, action) => {
+            state.isLoading = false;
+           state.users = action.payload;
+            state.errors = null;
+        })
+        .addCase(fetchBookedUsers.rejected, (state, action) => {
+            state.isLoading = false;
+            state.errors = action.payload;
+        });
 
     }
 })

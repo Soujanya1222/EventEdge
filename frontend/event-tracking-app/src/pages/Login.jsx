@@ -4,6 +4,8 @@ import { Button } from "../componets/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "../componets/ui/card"
 import { useContext } from "react"
 import UserContext from "../context/UserContext"
+import { Link } from "react-router-dom"
+
 
 export default function Login(props){
     const {handleLogin,serverErrors}=useContext(UserContext)
@@ -20,6 +22,7 @@ export default function Login(props){
    })
     return(
         <div className="flex justify-center items-center h-screen">
+
         <Card className="w-[350px] p-4">
         <CardHeader>
           <CardTitle className="text-center">Login With Us</CardTitle>
@@ -42,6 +45,13 @@ export default function Login(props){
             </Button>
 
             </form>
+
+            <p className="text-center text-sm mt-4">
+                Don’t have an account?{" "}
+                <Link to="/register" className="text-blue-600 font-medium hover:underline">
+                Sign In
+                </Link>
+                </p>
            </CardContent>
            </Card>
         </div>

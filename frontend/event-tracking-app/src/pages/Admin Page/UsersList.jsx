@@ -3,6 +3,7 @@ import axios from "../../config/axios"
 import UserContext from "../../context/UserContext"
 import { useNavigate } from "react-router-dom"
 export default function UsersList(){
+
     const navigate=useNavigate()
     const {user}=useContext(UserContext)
     const [users,setUsers]=useState([])
@@ -16,7 +17,10 @@ export default function UsersList(){
             })
         }
         fetchUsers()
+    
     },[])
+
+
 
        const changeRole=async(id,oldRole)=>{
         const newRole=window.prompt("Enter new role (organiser/user):",oldRole)

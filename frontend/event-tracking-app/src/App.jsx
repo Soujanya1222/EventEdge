@@ -12,7 +12,7 @@ import UserContext from "./context/UserContext"
 import EventList from "./pages/Organiser Pages/EventList"
 import EventForm from "./pages/Organiser Pages/EventForm"
 import { useDispatch } from "react-redux"
-import {  fetchOrganisers, fetchUsers } from "./slices/userSlice"
+import {  fetchBookedUsers, fetchOrganisers, fetchUsers } from "./slices/userSlice"
 import { fetchAdminEvents, fetchEvents } from "./slices/eventSlice"
 export default function App(){
   const {isLoggedIn,handleLogout,user}=useContext(UserContext)
@@ -25,6 +25,7 @@ export default function App(){
       dispatch(fetchOrganisers())
     }
     if(user?.role==="organiser"){
+      dispatch(fetchBookedUsers())
       dispatch(fetchEvents())
     }
              
@@ -33,7 +34,6 @@ export default function App(){
     
   return (
     <div >
-      <h2 >Event Tracking App</h2><br/>
       <ul className="nav-link">
          <li><Link to="/">Home</Link></li>
 
@@ -51,14 +51,14 @@ export default function App(){
            
            
                 
-          {!isLoggedIn && !localStorage.getItem('token')&&
+          {/* {!isLoggedIn && !localStorage.getItem('token')&&
           (
             <>
              <li><Link to="/register">Register</Link></li>
               <li><Link to="/login">Login</Link></li>     
                
             </>
-          )}
+          )} */}
    
   
 
