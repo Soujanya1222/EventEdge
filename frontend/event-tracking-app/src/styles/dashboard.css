@@ -1,23 +1,33 @@
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
+  background-color: #cfdce8;
 }
 
-.dashboard-container {
+
+  .dashboard-container {
   display: flex;
-  height: 100vh;
-  background-color: #f0f2f7;
+  min-height: 100vh;
+  background-color: #f5f7fb;
 }
+  
+
+
+
+.dashboard-header {
+  margin-bottom: 10px;
+  font-size: 28px;
+  color: #1d3557;
+  text-align: center;
+}
+
 
 .sidebar {
-  width: 220px;
-  background-color: #2f3e46;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
+  width: 260px;
+  background-color: #0b2c5d;
+  color: white;
 }
+
 
 .sidebar h2 {
   margin-bottom: 40px;
@@ -57,15 +67,19 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-color: #f9fafb;
 }
+
 
 .navbar {
   display: flex;
-  justify-content: flex-end;
-  padding: 15px 20px;
-  background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
 }
+
 
 .navbar a {
   margin-left: 20px;
@@ -78,6 +92,55 @@ body {
 }
 
 .content-area {
-  flex: 1;
-  padding: 20px;
+  padding: 30px;
 }
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.dashboard-card {
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 14px;
+  text-align: left;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card h3 {
+  font-size: 16px;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.dashboard-card p {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 6px 0;
+}
+
+.organiser { border-left: 6px solid #6366f1; }
+.events    { border-left: 6px solid #0ea5e9; }
+.users     { border-left: 6px solid #22c55e; }
+
+.pending   { border-left: 6px solid #f59e0b; }
+.approved  { border-left: 6px solid #16a34a; }
+.rejected  { border-left: 6px solid #dc2626; }
+
+.content-area .dashboard-container {
+  display: block;
+  padding: 0;
+  height: auto;
+  background: transparent;
+}
+
