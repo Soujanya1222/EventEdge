@@ -229,19 +229,13 @@ adminCltr.accountUpdate=async(req,res)=>{
 }
 
 userCltr.updateAccount = async (req, res) => {
-  const body = req.body;
-
-  if (body.password) {
-    const salt = await bcryptjs.genSalt();
-    body.password = await bcryptjs.hash(body.password, salt);
-  }
-
+  const {name,email} = req.body;
   try {
     const user = await User.findByIdAndUpdate(
       req.userId,  
-      body,
-      { new: true }
-    );
+      {name,email},
+      { new: true ,runValidators:true}
+    ).select("-password")
 
     res.json(user);
   } catch (err) {
@@ -249,6 +243,28 @@ userCltr.updateAccount = async (req, res) => {
   }
 };
 
+
+userCltr.changePassword=async(req,res)=>{
+    const id=req.userId
+    const {currentPassword,newPassword}=req.body
+    try{
+        const user=await User.findById(id);
+        const isMatch=await bcryptjs.compare(currentPassword,user.password);
+        if(!isMatch){
+            return res.status(400).json({error:"Current password is incorrect"})
+        }
+
+        const salt=await bcryptjs.genSalt(10);
+        const hashedPassword=await bcryptjs.hash(newPassword,salt)
+        user.password=hashedPassword;
+        await user.save()
+        res.json({message:"Password Updated succesfully"})
+
+    }catch(err){
+        console.log(err);
+        res.status(500).json({err:"Something went wrong"})
+    }
+}
 
 
 module.exports={adminCltr,userCltr}

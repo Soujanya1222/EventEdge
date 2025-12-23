@@ -36,6 +36,7 @@ app.post('/users/register',userCltr.register)
 app.post('/user/login',userCltr.login)
 app.get('/user/account',authenticateUser,userCltr.account)
 app.put("/user/account", authenticateUser, userCltr.updateAccount);
+app.put("/user/change-password",authenticateUser,userCltr.changePassword)
 
 
 
