@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext";
 import { useDispatch, useSelector } from "react-redux";
-import { updateAccount, fetchOrganisers,fetchUsers } from "../slices/userSlice";
+import { updateAccount, fetchOrganisers,fetchUsers,changePassword } from "../slices/userSlice";
 import { useNavigate } from "react-router-dom";
+
 
 export default function Account() {
   const navigate=useNavigate()
@@ -22,6 +23,37 @@ export default function Account() {
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+
+  const handlePasswordChange = () => {
+  if (newPassword !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
+
+  dispatch(
+    changePassword({
+      currentPassword,
+      newPassword
+    })
+  ).then((res) => {
+    if (res.meta.requestStatus === "fulfilled") {
+      alert("Password updated successfully");
+      setShowPasswordForm(false);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } else {
+      alert(res.payload?.error || "Failed to update password");
+    }
+  });
+};
+
+
  
     const COLORS = {
     primary: "#1E3A8A",
@@ -130,6 +162,51 @@ export default function Account() {
             <span>{user.email}</span>
           )}
         </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <strong>Password:</strong>
+          <button
+            style={{ ...buttonBase, backgroundColor: COLORS.warning, color: "#fff" }}
+            onClick={() => setShowPasswordForm(!showPasswordForm)}
+          >
+            Change Password
+          </button>
+        </div>
+
+        {showPasswordForm && (
+  <div style={{ marginTop: "15px", display: "grid", rowGap: "10px" }}>
+    <input
+      type="password"
+      placeholder="Current Password"
+      value={currentPassword}
+      onChange={(e) => setCurrentPassword(e.target.value)}
+    />
+
+    <input
+      type="password"
+      placeholder="New Password"
+      value={newPassword}
+      onChange={(e) => setNewPassword(e.target.value)}
+    />
+
+    <input
+      type="password"
+      placeholder="Confirm New Password"
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+    />
+
+    <button
+      style={{ ...buttonBase, backgroundColor: COLORS.success, color: "#fff" }}
+      onClick={handlePasswordChange}
+    >
+      Update Password
+    </button>
+  </div>
+)}
+
+
+
 
         {user.role === "organiser" && (
           <>

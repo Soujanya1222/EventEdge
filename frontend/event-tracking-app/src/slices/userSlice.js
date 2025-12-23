@@ -1,6 +1,7 @@
 import {createSlice,createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "../config/axios";
 
+
 export const fetchOrganisers=createAsyncThunk("users/fetchOrgnisers",async(undefined,{rejiectWithValue})=>{
     try{
         const response=await axios.get("/admin/organisers",{headers:{Authorization:localStorage.getItem("token")}})
@@ -26,7 +27,7 @@ export const fetchUsers=createAsyncThunk("users/fetchUsers",async(undefined,{rej
 
 
 
-export const updateAccount=createAsyncThunk("users/updateAccount",async({id,name,email},{rejectWithValue})=>{
+export const updateAccount=createAsyncThunk("users/updateAccount",async({name,email},{rejectWithValue})=>{
     try{
         const response=await axios.put(`/user/account`,{name,email},{headers:{Authorization:localStorage.getItem("token")}})
         return response.data;
@@ -37,6 +38,17 @@ export const updateAccount=createAsyncThunk("users/updateAccount",async({id,name
     }
 
 })
+
+export const changePassword=createAsyncThunk("users/changePassword",async(formData,{rejectWithValue})=>{
+    try{
+        const response=await axios.put("/user/change-password",formData,{headers:{Authorization:localStorage.getItem("token")}})
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data)
+    }
+})
+
+
 
 
 export const fetchBookedUsers=createAsyncThunk(
@@ -112,7 +124,19 @@ const userSlice=createSlice({
         .addCase(fetchBookedUsers.rejected, (state, action) => {
             state.isLoading = false;
             state.errors = action.payload;
-        });
+        })
+        .addCase(changePassword.pending,(state)=>{
+            state.isLoading=false
+            state.errors=null
+        })
+        .addCase(changePassword.fulfilled,(state)=>{
+            state.errors=null
+            state.isLoading=false
+        })
+        .addCase(changePassword.rejected,(state,action)=>{
+            state.isLoading=false
+            state.errors=action.payload
+        })
 
     }
 })

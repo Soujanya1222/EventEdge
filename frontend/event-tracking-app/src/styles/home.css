@@ -96,3 +96,19 @@ body {
   background: #374151;
   color: #ffffff;
 }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid #1d3557;
+  border-radius: 8px;
+  color: #1d3557;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}

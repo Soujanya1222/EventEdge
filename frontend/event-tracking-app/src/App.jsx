@@ -4,6 +4,7 @@ import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import "./App.css"
+import "./styles/dashboard.css"
 import UsersList from "./pages/Admin Page/UsersList"
 import Dashboard from "./pages/Dashboard"
 import OrganiserList from "./pages/Admin Page/OrganiserList"
@@ -43,22 +44,22 @@ export default function App(){
           <li> <Link to="/account">Account</Link></li>
             {/* {user?.role==="organiser"&&<li><Link to="/organiser/events">Event List</Link></li>}
             {user?.role === "organiser" && (<li style={{color:"blue"}}><Link to="/create-event">CreateEvent</Link></li>)} */}
-           <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
+           {/* <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
               handleLogout();
-            }}>Logout</Link></li>
+            }}>Logout</Link></li> */}
           </>
         )}
            
            
                 
-          {/* {!isLoggedIn && !localStorage.getItem('token')&&
+          {!isLoggedIn && !localStorage.getItem('token')&&
           (
             <>
              <li><Link to="/register">Register</Link></li>
               <li><Link to="/login">Login</Link></li>     
                
             </>
-          )} */}
+          )}
    
   
 

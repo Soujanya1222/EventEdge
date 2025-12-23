@@ -5,6 +5,7 @@ import UserContext from "../../context/UserContext";
 import { fetchAdminEvents, fetchEvents } from "../../slices/eventSlice";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import "../../styles/event.css"
 
 export default function EventList() {
   const navigate = useNavigate();
@@ -27,21 +28,23 @@ export default function EventList() {
     ? events.filter(event => event.status === status)
     : events
   return (
-    <div>
-      <button onClick={() => navigate("/dashboard")} className="mb-3 px-4 py-2 border border-black">
+    <div className="event-list-container">
+      <button onClick={() => navigate("/dashboard")} className="back-btn">
                 ← Back to Dashboard
             </button>
-      <h1>
+      <h1 className="event-list-title">
         {status ? `${status.toUpperCase()} EVENTS` : "All Events"}
       </h1>
 
-      {isLoading && <p>Loading...</p>}
-
-      {!isLoading &&
+      {isLoading && <p className="loading-text">Loading...</p>}
+      <div className="event-grid">
+         {!isLoading &&
         filteredEvents.map(event => (
           <EventCard key={event._id} event={event} />
         ))
       }
+      </div>
+     
     </div>
   );
 }

@@ -62,7 +62,7 @@ export default function UsersList(){
 
     return(
         <div>
-            <button onClick={() => navigate("/dashboard")} className="mb-3 px-4 py-2 border border-black">
+            <button onClick={() => navigate("/dashboard")} className="back-btn">
                 ← Back to Dashboard
             </button>
             <h2><strong>Users List</strong></h2><br/>

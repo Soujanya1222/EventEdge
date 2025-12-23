@@ -8,7 +8,7 @@ export default function OrganiserList(props){
 
     return (
         <div>
-            <button onClick={() => navigate("/dashboard")} className="mb-3 px-4 py-2 border border-black">
+            <button onClick={() => navigate("/dashboard")} className="back-btn">
                 ← Back to Dashboard
             </button>
             <table className="border border-black border-collapse">

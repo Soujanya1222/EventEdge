@@ -53,6 +53,9 @@ export default function EventForm(props){
     })
     return (
         <div className="event-form-container">
+            <button onClick={() => navigate("/dashboard")} className="back-btn">
+                ← Back to Dashboard
+            </button>
             <h2 className="event-form-title">Add Events</h2>
             {errors && <p className="error-text">{errors}</p>}
             {message && <p className="success-text">{message}</p>}

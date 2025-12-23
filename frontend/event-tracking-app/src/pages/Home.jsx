@@ -1,17 +1,21 @@
 import { Link } from "react-router-dom";
 import "../styles/home.css";
+import { useContext } from "react";
+import UserContext from "../context/UserContext";
 
 export default function Home() {
+  const{isLoggedIn}=useContext(UserContext)
   return (
     <div className="home-container">
       {/* Top Heading */}
       <header className="home-header">
         <h2>Event Tracking App</h2>
-        <nav>
+        {!isLoggedIn && !localStorage.getItem('token')&&
+          <nav>
           <Link to="/">Home</Link>
           <Link to="/register">Register</Link>
           <Link to="/login">Login</Link>
-        </nav>
+        </nav>}
       </header>
 
       {/* Center Card */}
