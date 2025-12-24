@@ -75,6 +75,7 @@ export default function App(){
         <Route path="/organiserList" element={<OrganiserList/>}/>
         <Route path="/organiser/events" element={<EventList/>}/>
         <Route path="/create-event" element={<EventForm/>}/>
+        <Route path="/create-event/:id" element={<EventForm />} />
       </Routes>
 
     </div>

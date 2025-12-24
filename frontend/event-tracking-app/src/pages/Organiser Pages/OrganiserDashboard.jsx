@@ -25,7 +25,7 @@ export default function OrganiserDashboard(props){
                 <div className="dashboard-card events">
                     <h3>Total Events</h3>
                     <p>{data.length}</p>
-                    <button className="view-btn" onClick={()=>{
+                    <button className="dashboard-btn" onClick={()=>{
                         navigate("/organiser/events")
                     }}>View Events</button> 
                    
@@ -33,21 +33,21 @@ export default function OrganiserDashboard(props){
                  <div className="dashboard-card pending">
                     <h3>Pending Events</h3>
                     <p>{data.filter(event=>event.status==="pending").length}</p>
-                    <button className="view-btn" onClick={()=>{
+                    <button className="dashboard-btn" onClick={()=>{
                         navigate("/organiser/events?status=pending")
                     }}>View Events</button>
                 </div>
                 <div className="dashboard-card approved">
                     <h3>Approved Events</h3>
                     <p>{data.filter(event=>event.status==="approved").length}</p>
-                    <button className="view-btn" onClick={()=>{
+                    <button className="dashboard-btn" onClick={()=>{
                         navigate("/organiser/events?status=approved")
                     }}>View Events</button>
                 </div>
                 <div className="dashboard-card rejected">
                     <h3>Rejected Events</h3>
                     <p>{data.filter(event=>event.status==="rejected").length}</p>
-                    <button className="view-btn" onClick={()=>{
+                    <button className="dashboard-btn" onClick={()=>{
                         navigate("/organiser/events?status=rejected")
                     }}>View Events</button>
                 </div>
@@ -62,7 +62,7 @@ export default function OrganiserDashboard(props){
                <div className="dashboard-card users">
                     <h3>Total Users</h3>
                     <p>{users.length}</p>
-                    <button className="view-btn">View Users</button>
+                    <button className="dashboard-btn">View Users</button>
 
                 </div>
                

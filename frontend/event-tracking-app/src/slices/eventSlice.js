@@ -83,13 +83,39 @@ export const fetchUserEvents = createAsyncThunk(
   }
 );
 
+export const updateEvent = createAsyncThunk(
+  "events/updateEvent",
+  async ({ id, formData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/event/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+
+      return response.data;
+
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.error || "Failed to update event"
+      );
+    }
+  }
+);
+
 
 const eventSlice=createSlice({
     name:"events",
     initialState:{
         data:[],
         isLoading:false,
-        errors:null
+        errors:null,
+        singleEvent: null,
     },
     extraReducers:(builder)=>{
         builder.addCase(fetchEvents.pending,(state)=>{
@@ -188,6 +214,21 @@ const eventSlice=createSlice({
             state.isLoading=false
             state.errors=action.payload
         })
+         .addCase(updateEvent.pending, (state) => {
+            state.isLoading = true;
+            state.errors = null;
+        })
+        .addCase(updateEvent.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.data = state.data.map(event =>
+            event._id === action.payload._id ? action.payload : event
+            );
+            state.singleEvent = action.payload;
+        })
+        .addCase(updateEvent.rejected, (state, action) => {
+            state.isLoading = false;
+            state.errors = action.payload;
+        });
 
     }
 })

@@ -1,12 +1,22 @@
 import { useDispatch } from "react-redux"
-import { approveEvent, deleteEvent, rejectEvent } from "../../slices/eventSlice"
+import { approveEvent, deleteEvent, rejectEvent, } from "../../slices/eventSlice"
 import { useContext } from "react";
 import UserContext from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+
 
 export default function EventCard({ event }) {
+  const navigate = useNavigate();
+
+
 
   const dispatch=useDispatch()
   const {user}=useContext(UserContext)
+
+    const handleEdit = () => {
+       navigate(`/create-event/${event._id}`);
+    };
+  
 
   const handleApprove=()=>{
     dispatch(approveEvent(event._id))
@@ -102,6 +112,26 @@ export default function EventCard({ event }) {
           </button>
         </div>
       )}
+
+
+      {user?.role === "organiser" && event.status === "pending" && (
+        <div style={{ marginTop: "12px" }}>
+          <button
+            onClick={handleEdit}
+            style={{
+              backgroundColor: "orange",
+              color: "white",
+              padding: "8px 12px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer"
+            }}
+          >
+            Edit
+          </button>
+        </div>
+      )}
+
 
   </div>
   

@@ -147,6 +147,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  margin-top: 10%;
 
   background: linear-gradient(135deg, #a31672, #e11d48);
   color: #ffffff;
