@@ -7,7 +7,7 @@ export default function Home() {
   const{isLoggedIn}=useContext(UserContext)
   return (
     <div className="home-container">
-      {/* Top Heading */}
+      
       <header className="home-header">
         <h2>Event Tracking App</h2>
         {!isLoggedIn && !localStorage.getItem('token')&&
@@ -18,7 +18,6 @@ export default function Home() {
         </nav>}
       </header>
 
-      {/* Center Card */}
       <main className="home-main">
         <div className="home-card">
           <h1>Event Tracking App</h1>

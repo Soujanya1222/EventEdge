@@ -8,10 +8,10 @@ import { useNavigate } from "react-router-dom";
 export default function EventCard({ event }) {
   const navigate = useNavigate();
 
-
-
   const dispatch=useDispatch()
   const {user}=useContext(UserContext)
+    const isPrivilegedUser = user?.role === "admin" || user?.role === "organiser";
+
 
     const handleEdit = () => {
        navigate(`/create-event/${event._id}`);
@@ -40,16 +40,18 @@ export default function EventCard({ event }) {
     }}>
       <h2><strong>Event:{event.title}</strong></h2>
       <p><strong>Description:</strong> {event.description}</p>
-      <p><strong>Category:</strong> {event.category}</p>
       <p><strong>Date & Time:</strong> {new Date(event.datetime).toLocaleString()}</p>
       <p><strong>Venue:</strong> {event.venue}</p>
       <p><strong>Price:</strong> ₹{event.price}</p>
+
+      {isPrivilegedUser&&(
+        <><p><strong>Category:</strong> {event.category}</p>
       <p><strong>Total Tickets:</strong> {event.totalTickets}</p>
-      <p><strong>Sold Tickets:</strong> {event.soldTickets}</p>
+      <p><strong>Sold Tickets:</strong> {event.soldTickets}</p></>)}
 
       <p><strong>Status:</strong> {event.status}</p>
 
-      <p><strong>Organiser Name:</strong> {event.organiserId.name}</p>
+      <p><strong>Organiser Name:</strong> {event.organiserId?.name|| "N/A"}</p>
 
       {event.image?.length > 0 && (
         <img 
@@ -59,7 +61,7 @@ export default function EventCard({ event }) {
         />
       )}
       
-      {event.location && (
+      {event.location?.coordinates && (
         <div style={{ marginTop: "10px" }}>
           <strong>Location:</strong>
           <p>Latitude: {event.location.coordinates[1]}</p>
@@ -131,6 +133,26 @@ export default function EventCard({ event }) {
           </button>
         </div>
       )}
+
+      {user?.role === "attendee" && event.status === "approved" && (
+          <button
+            onClick={() => navigate(`/events/${event._id}`)}
+            style={{
+              backgroundColor: "purple",
+              color: "white",
+              padding: "8px 12px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              marginTop: "12px"
+            }}
+          >
+            Book Event
+          </button>
+        )}
+
+
+     
 
 
   </div>
