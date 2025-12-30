@@ -82,31 +82,46 @@ export const fetchUserEvents=createAsyncThunk("events/fetchUserEvents",async(und
     }
 })
 
+export const fetchSingleEvent=createAsyncThunk("events/fetchSingleEvent",async(id,{rejectWithValue})=>{
+    try{
+        const response=await axios.get(`/events/${id}`,{headers:{Authorization:localStorage.getItem("token")}})
+        console.log(response.data)
+        return response.data
 
+    }catch(err){
+        console.log(err.response.data.error)
+        return rejectWithValue(err.response.data.error)
+    }
+})
 
-
-
-export const updateEvent = createAsyncThunk(
-  "events/updateEvent",
-  async ({ id, formData }, { rejectWithValue }) => {
+export const fetchNearbyEvents=createAsyncThunk("events/fetchNearbyEvents",async({ latitude, longitude, distance }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `http://localhost:8080/event/${id}`,
-        formData,
-        {
-          headers: {
-            Authorization: localStorage.getItem("token"),
-            "Content-Type": "multipart/form-data"
-          }
+      const response = await axios.get("/nearby", {
+        params: { latitude, longitude, distance },
+        headers: { Authorization: localStorage.getItem("token") },
+      });
+      return response.data.events; 
+    } catch (err) {
+      console.error(err.response?.data?.error || err.message);
+      return rejectWithValue(err.response?.data?.error || "Failed to fetch nearby events");
+    }
+  }
+);
+
+
+
+
+export const updateEvent = createAsyncThunk("events/updateEvent",async ({ id, formData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`http://localhost:8080/event/${id}`,formData,{headers: 
+        {Authorization: localStorage.getItem("token"), "Content-Type": "multipart/form-data"}
         }
       );
 
       return response.data;
 
     } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.error || "Failed to update event"
-      );
+      return rejectWithValue(err.response?.data?.error || "Failed to update event");
     }
   }
 );
@@ -119,6 +134,7 @@ const eventSlice=createSlice({
         isLoading:false,
         errors:null,
         singleEvent: null,
+         nearbyEvents: [],
     },
     extraReducers:(builder)=>{
         builder.addCase(fetchEvents.pending,(state)=>{
@@ -231,7 +247,34 @@ const eventSlice=createSlice({
         .addCase(updateEvent.rejected, (state, action) => {
             state.isLoading = false;
             state.errors = action.payload;
-        });
+        })
+        .addCase(fetchSingleEvent.pending,(state)=>{
+            state.isLoading=false
+            state.singleEvent = null
+        })
+        .addCase(fetchSingleEvent.fulfilled,(state,action)=>{
+            state.singleEvent=action.payload
+            state.isLoading=false
+            state.errors=null
+        })
+        .addCase(fetchSingleEvent.rejected,(state,action)=>{
+            state.isLoading=false
+            state.errors=action.payload
+        })
+          .addCase(fetchNearbyEvents.pending, (state) => {
+      state.isLoading = true;
+      state.errors = null;
+    })
+    .addCase(fetchNearbyEvents.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.nearbyEvents = action.payload;
+      state.errors = null;
+    })
+    .addCase(fetchNearbyEvents.rejected, (state, action) => {
+      state.isLoading = false;
+      state.errors = action.payload;
+      state.nearbyEvents = [];
+    })
 
     }
 })

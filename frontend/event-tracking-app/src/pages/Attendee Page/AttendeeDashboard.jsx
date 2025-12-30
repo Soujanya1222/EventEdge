@@ -1,21 +1,24 @@
 import { useContext, useEffect } from "react"
 import UserContext from "../../context/UserContext"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import { fetchUserEvents } from "../../slices/eventSlice"
+import { useNavigate, useParams } from "react-router-dom"
+import { fetchSingleEvent, fetchUserEvents } from "../../slices/eventSlice"
+import NearbyEventsMap from "../../componets/NearbyEventMap/NearByEventMap"
 
 export default function AttendeeDashboard(props){
     const {user}=useContext(UserContext)
     const dispatch=useDispatch()
     const navigate=useNavigate()
+    
 
-    const {data:events,isLoading}=useSelector((state)=>{
+    const {data:events,isLoading,singleEvent}=useSelector((state)=>{
         return state.events;
     })
 
     useEffect(()=>{
         if(user?.role==="attendee"){
             dispatch(fetchUserEvents())
+            
         }
     },[user,dispatch])
 
@@ -88,7 +91,7 @@ export default function AttendeeDashboard(props){
             ))
             )}
         </div>
-
+            <NearbyEventsMap/>
 
         </div>
     )

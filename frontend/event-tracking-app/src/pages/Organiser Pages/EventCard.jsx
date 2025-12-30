@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function EventCard({ event }) {
   const navigate = useNavigate();
-
   const dispatch=useDispatch()
   const {user}=useContext(UserContext)
     const isPrivilegedUser = user?.role === "admin" || user?.role === "organiser";
@@ -134,22 +133,38 @@ export default function EventCard({ event }) {
         </div>
       )}
 
-      {user?.role === "attendee" && event.status === "approved" && (
-          <button
-            onClick={() => navigate(`/events/${event._id}`)}
-            style={{
-              backgroundColor: "purple",
-              color: "white",
-              padding: "8px 12px",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              marginTop: "12px"
-            }}
-          >
-            Book Event
-          </button>
-        )}
+     {user?.role === "attendee" && event.status === "approved" && (
+    <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
+    <button
+      onClick={() => navigate(`/events/${event._id}`)}
+      style={{
+        backgroundColor: "#6a1b9a",
+        color: "white",
+        padding: "8px 12px",
+        border: "none",
+        borderRadius: "6px",
+        cursor: "pointer"
+      }}
+    >
+      View
+    </button>
+
+    <button
+      onClick={() => navigate(`/events/${event._id}/book`)}
+      style={{
+        backgroundColor: "purple",
+        color: "white",
+        padding: "8px 12px",
+        border: "none",
+        borderRadius: "6px",
+        cursor: "pointer"
+      }}
+    >
+      Book
+    </button>
+  </div>
+)}
+
 
 
      
