@@ -56,10 +56,23 @@ eventCltr.getOne=async(req,res)=>{
     if(!event){
       return res.status(404).json({error:"Event does not exist"})
     }
-    if(event.organiserId.toString()!==userId){
-      return res.status(403).json({error:"Access denied. Its not your event"})
+    if(req.role==="admin"){
+      return res.status(200).json(event)
     }
-    res.status(200).json(event);
+    if(req.role==="organiser"){
+      if(event.organiserId.toString()!==userId){
+        return res.status(403).json({error:"Access denied. Its not your event"})
+      }
+      return res.status(200).json(event)
+    }
+    
+    if(req.role==="attendee"){
+      if(event.status!=="approved"){
+        return res.status(403).json({error:"event not approved yet"})
+      }
+      return res.status(200).json(event)
+    }
+
   }catch(err){
     console.log(err);
     res.status(500).json({err:"Something went wrong"})
