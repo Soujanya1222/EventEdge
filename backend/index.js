@@ -66,6 +66,11 @@ app.put("/event/approve/:id",authenticateUser,roleAuth(['admin']),eventCltr.appr
 app.put("/event/reject/:id",authenticateUser,roleAuth(['admin']),eventCltr.reject)
 
 
+//Payment Routes
+app.post("/create-order", paymentCltr.createOrder)
+app.post("/verify-payment", paymentCltr.verifyPayment)
+
+
 //Ticket Routes
 app.post('/ticket/book',authenticateUser,ticketCltr.book)
 app.delete('/ticket/cancel/:id',authenticateUser,ticketCltr.cancel)
