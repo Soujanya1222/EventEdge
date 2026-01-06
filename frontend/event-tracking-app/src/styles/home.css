@@ -1,13 +1,13 @@
-/* Full page container */
 .home-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
   font-family: "Arial", sans-serif;
+  min-height: 100vh;
+  width: 100%;
 }
 
-/* Header */
 .home-header {
   display: flex;
   justify-content: space-between;
@@ -24,7 +24,7 @@
   margin: 0;
 }
 
-/* Navigation links */
+
 .home-header nav {
   display: flex;
   gap: 20px;
@@ -43,7 +43,7 @@
   border-bottom: 2px solid #60a5fa;
 }
 
-/* Main section */
+
 .home-main {
   flex: 1;
   display: flex;
@@ -52,7 +52,7 @@
   padding: 40px 20px;
 }
 
-/* Center card */
+
 .home-card {
   background: #ffffff;
   padding: 50px 60px;
@@ -76,7 +76,7 @@
   line-height: 1.6;
 }
 
-/* Subtle animation */
+
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -88,7 +88,7 @@
   }
 }
 
-/* Responsive */
+
 @media (max-width: 640px) {
   .home-header {
     flex-direction: column;

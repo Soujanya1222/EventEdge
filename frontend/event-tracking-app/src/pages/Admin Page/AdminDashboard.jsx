@@ -3,9 +3,6 @@ import UserContext from "../../context/UserContext"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
-
-
-
 export default function AdminDashboard(props){
     const navigate=useNavigate()
     const {users,organisers}=useSelector((state)=>{
