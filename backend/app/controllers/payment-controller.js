@@ -1,121 +1,69 @@
-const Payment=require('../models/payment-model')
-const {paymentValidationSchmea}=require('../validations/payment-validation')
-// const paymentCltr={}
-// paymentCltr.create=async(req,res)=>{
-//    const body=req.body
-//    const {error,value}=paymentValidationSchmea.validate(body,{abortEarly:true})
-//    if(error){
-//         return res.status(400).json({error:error.details})
-//     }
-//    try{
-//     const payment=new Payment(value)
-//     await payment.save()
-//     res.json(payment)
-//    }catch(err){
-//     console.log(err)
-//     res.status(500).json({err:"Something Went wrong"})
-//    }
-// }
-
-// paymentCltr.list=async(req,res)=>{
-//     try{
-//         const payment=await Payment.find()
-//         res.json(payment)
-
-//     }catch(err){
-//         console.log(err)
-//         res.status(500).json({err:"Something went wrong"})
-//     }
-// }
-
-// paymentCltr.getOne=async(req,res)=>{
-//     const id=req.params.id
-//     try{
-//         const payment=await Payment.findById(id)
-//         res.json(payment)
-//     }catch(err){
-//         console.log(err)
-//         res.status(500).json({err:"Something went wrong"})
-//     }
-// }
-
-// paymentCltr.update=async(req,res)=>{
-//     const id=req.params.id
-//     const body=req.body
-//     const {error,value}=paymentValidationSchmea.validate(body,{abortEarly:true})
-//     if(error){
-//         return res.status(400).json({error:error.details})
-//     }
-//     try{
-//         const payment=await Payment.findByIdAndUpdate({_id:id},value,{new:true})
-//         res.json(payment)
-
-//     }catch(err){
-//         console.log(err)
-//         res.status(500).json({err:"Something went wrong"})
-//     }
-// }
-
-
-// paymentCltr.remove=async(req,res)=>{
-//     const id=req.params.id
-//     try{
-//         const payment=await Payment.findByIdAndDelete(id)
-//         res.json(payment)
-
-//     }catch(err){
-//         console.log(err)
-//         res.status(500).json({err:"Something went wrong"})
-//     }
-// }
-
-
-const razorpay = require("../../config/razorpay")
-const crypto = require("crypto")
+const razorpay=require("../razorpay/razorpay")
+const crypto=require("crypto")
+const Payment=require("../models/payment-model")
 const paymentCltr={}
-// CREATE ORDER
-paymentCltr.createOrder = async (req, res) => {
+
+paymentCltr.createOrder=async (req, res) => {
   try {
-    const { amount } = req.body // amount in rupees
-
-    const order = await razorpay.orders.create({
-      amount: amount * 100, // paise
+    const { amount, eventId } = req.body;
+    const shortEventId = eventId.toString().slice(-6);
+    const options = {
+      amount: amount * 100, // Razorpay works in paise
       currency: "INR",
-      receipt: "event_booking_" + Date.now()
-    })
+      receipt: `event_${shortEventId}_${Date.now().toString().slice(-6)}`
+    };
 
-    res.status(200).json(order)
-  } catch (err) {
-    res.status(500).json({ error: err.message })
+    const order = await razorpay.orders.create(options);
+
+    res.status(200).json({
+      success: true,
+      order
+    });
+  } catch (error) {
+    res.status(500).json({ error: error });
   }
-}
+};
 
-// VERIFY PAYMENT
-paymentCltr.verifyPayment = async (req, res) => {
+ paymentCltr.verifyPayment=async (req, res) => {
   try {
     const {
       razorpay_order_id,
       razorpay_payment_id,
-      razorpay_signature
-    } = req.body
+      razorpay_signature,
+      attendeeId,
+      eventId,
+      amount,
+      platformFee
+    } = req.body;
 
-    const sign = razorpay_order_id + "|" + razorpay_payment_id
+    // Generate signature
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
 
-    const expectedSign = crypto
+    const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(sign)
-      .digest("hex")
+      .update(body.toString())
+      .digest("hex");
 
-    if (expectedSign === razorpay_signature) {
-      return res.status(200).json({ success: true })
-    } else {
-      return res.status(400).json({ success: false })
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ error: "Payment verification failed" });
     }
-  } catch (err) {
-    res.status(500).json({ error: err.message })
+
+    // Save payment to DB
+    const payment = await Payment.create({
+      attendeeId,
+      eventId,
+      amount,
+      platformFee,
+      status: "success"
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Payment verified successfully",
+      payment
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
-
-
-
 module.exports=paymentCltr

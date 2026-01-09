@@ -25,9 +25,9 @@ const {adminCltr,userCltr} = require('./app/controllers/users-controller');
 const eventCltr = require('./app/controllers/event-controller');
 const reviewCltr = require('./app/controllers/review-controller');
 const upload=require('./app/middlewares/multer');
-const paymentCltr = require('./app/controllers/payment-controller');
 const couponCltr = require('./app/controllers/coupon-controller');
 const ticketCltr = require('./app/controllers/ticket-controller');
+const paymentCltr=require('./app/controllers/payment-controller')
 
 
 
@@ -67,8 +67,8 @@ app.put("/event/reject/:id",authenticateUser,roleAuth(['admin']),eventCltr.rejec
 
 
 //Payment Routes
-app.post("/create-order", paymentCltr.createOrder)
-app.post("/verify-payment", paymentCltr.verifyPayment)
+app.post("/payment/create-order",paymentCltr.createOrder)
+app.post("/payment/verify-payment",paymentCltr.verifyPayment)
 
 
 //Ticket Routes
