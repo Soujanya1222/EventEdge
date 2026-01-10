@@ -1,10 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
-
+import "../../styles/paymentSuccess.css"
 export default function PaymentSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
 
   const { referenceId, eventTitle, amount } = location.state || {};
+
+ 
 
   // Safety check (direct URL access)
   if (!referenceId) {
@@ -17,41 +19,29 @@ export default function PaymentSuccess() {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: "500px",
-        margin: "50px auto",
-        padding: "30px",
-        borderRadius: "10px",
-        background: "#e8f5e9",
-        textAlign: "center"
-      }}
-    >
-      <h2>🎉 Payment Successful</h2>
+    <div >
+       <button onClick={() => navigate("/dashboard")} className="back-btn">
+                ← Back to Dashboard
+            </button>
+       <div className="payment-success-container">
+        <div className="payment-success-card">
+          
+          <h1 className="payment-success-title">Payment Successful</h1>
+            <p className="payment-success-message">
+                        Thank you for your payment. Your transcation was Successful!
+              </p>{referenceId && (<p className="payment-success-reference">
+                <strong>Refernce ID:</strong>{referenceId}
+              </p>
+              )}
+              <p className="payment-success-message"><strong>Event:</strong> {eventTitle}</p> 
+              <p className="payment-success-message"><strong>Amount Paid:</strong> ₹{amount}</p>
+               <button onClick={() => navigate("/my-tickets")}>View My Tickets</button>
+          </div>
+      </div>
 
-      <p><strong>Event:</strong> {eventTitle}</p>
-      <p><strong>Amount Paid:</strong> ₹{amount}</p>
-
-      <p style={{ marginTop: "20px" }}>
-        <strong>Payment Reference ID</strong>
-      </p>
-      <p
-        style={{
-          background: "#fff",
-          padding: "10px",
-          borderRadius: "6px",
-          fontWeight: "bold"
-        }}
-      >
-        {referenceId}
-      </p>
-
-      <button
-        style={{ marginTop: "20px" }}
-        onClick={() => navigate("/my-tickets")}
-      >
-        View My Tickets
-      </button>
+     
     </div>
   );
 }
+
+

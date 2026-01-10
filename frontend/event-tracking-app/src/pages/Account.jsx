@@ -29,6 +29,11 @@ export default function Account() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
 
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
   const handlePasswordChange = () => {
   if (newPassword !== confirmPassword) {
     alert("Passwords do not match");
@@ -174,36 +179,79 @@ export default function Account() {
         </div>
 
         {showPasswordForm && (
-  <div style={{ marginTop: "15px", display: "grid", rowGap: "10px" }}>
-    <input
-      type="password"
-      placeholder="Current Password"
-      value={currentPassword}
-      onChange={(e) => setCurrentPassword(e.target.value)}
-    />
+          <div style={{ marginTop: "15px", display: "grid", rowGap: "10px" }}>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <input
+                type={showCurrentPassword?"text":"password"}
+                placeholder="Current Password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                style={{ ...buttonBase, backgroundColor: COLORS.muted, color: "#fff" }}
+              >
+                {showCurrentPassword ? "Hide" : "Show"}
+              </button>
+              </div>
 
-    <input
-      type="password"
-      placeholder="New Password"
-      value={newPassword}
-      onChange={(e) => setNewPassword(e.target.value)}
-    />
+              <div style={{ display: "flex", gap: "10px" }}>
+              <input
+                type={showNewPassword ? "text" : "password"}
+                placeholder="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                style={{ ...buttonBase, backgroundColor: COLORS.muted, color: "#fff" }}
+              >
+                {showNewPassword ? "Hide" : "Show"}
+              </button>
+            </div>
 
-    <input
-      type="password"
-      placeholder="Confirm New Password"
-      value={confirmPassword}
-      onChange={(e) => setConfirmPassword(e.target.value)}
-    />
+            <div style={{ display: "flex", gap: "10px" }}>
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm New Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{ ...buttonBase, backgroundColor: COLORS.muted, color: "#fff" }}
+              >
+                {showConfirmPassword ? "Hide" : "Show"}
+              </button>
+            </div>
 
-    <button
-      style={{ ...buttonBase, backgroundColor: COLORS.success, color: "#fff" }}
-      onClick={handlePasswordChange}
-    >
-      Update Password
-    </button>
-  </div>
-)}
+            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+              <button
+                style={{ ...buttonBase, backgroundColor: COLORS.success, color: "#fff" }}
+                onClick={handlePasswordChange}
+              >
+                Update Password
+              </button>
+              <button
+                style={{ ...buttonBase, backgroundColor: COLORS.danger, color: "#fff" }}
+                onClick={() => {
+                  setShowPasswordForm(false);
+                  setCurrentPassword("");
+                  setNewPassword("");
+                  setConfirmPassword("");
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+            </div>
+          )}
 
 
 
@@ -247,6 +295,7 @@ export default function Account() {
 
         <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
           {editMode ? (
+            <>
              <button
               style={{
                 ...buttonBase,
@@ -256,6 +305,16 @@ export default function Account() {
             >
               Save
             </button>
+             <button
+                style={{ ...buttonBase, backgroundColor: COLORS.danger, color: "#fff" }}
+                onClick={() => {
+                  setEditMode(false);
+                  setName(user.name);
+                  setEmail(user.email);
+                }}
+              >
+                Cancel
+              </button></>
           ) : (
           <button
               style={{

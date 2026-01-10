@@ -70,6 +70,7 @@ export default function OrganiserDashboard(props){
                 <div className="dashboard-card">
                     <h3>Total Tickets</h3>
                     <p>{data.length}</p>
+                    <button className="dashboard-btn" onClick={()=>navigate("/organiser/booking")}>View Tickets</button>
                       
                 </div>
            </div>

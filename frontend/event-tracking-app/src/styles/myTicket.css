@@ -1,0 +1,159 @@
+/* Container */
+.tickets-wrapper {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 0 20px;
+}
+
+.tickets-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.no-tickets {
+  text-align: center;
+  color: #777;
+  font-size: 1.2rem;
+  margin-top: 50px;
+}
+
+/* Grid */
+.tickets-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 600px) {
+  .tickets-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .tickets-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Ticket Card */
+.ticket-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.ticket-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.ticket-event {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 10px;
+}
+
+.ticket-date {
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* QR Code */
+.ticket-qr {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 15px;
+ 
+}
+
+/* Status Badge */
+.ticket-status {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.ticket-status.active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.ticket-status.used {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.cancel-ticket-btn {
+  padding: 8px 16px;
+  background-color: #DC2626; /* Tailwind red-600 */
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 10px;
+}
+
+.cancel-ticket-btn:hover {
+  background-color: #B91C1C; /* Slightly darker red on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cancel-ticket-btn:disabled {
+  background-color: #FCA5A5; /* light red */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+.verify-qr-btn {
+  padding: 8px 16px;
+  background-color: #2563EB; /* Tailwind blue-600 */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.verify-qr-btn:hover {
+  background-color: #1D4ED8; /* Darker blue on hover */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.verify-qr-btn:disabled {
+  background-color: #93C5FD; /* light blue when disabled */
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
