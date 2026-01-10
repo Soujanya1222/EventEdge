@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux"
 import {  fetchBookedUsers, fetchOrganisers, fetchUsers } from "./slices/userSlice"
 import { fetchAdminEvents, fetchEvents, fetchUserEvents } from "./slices/eventSlice"
 import EventDetails from "./pages/Attendee Page/EventDetails"
+import PaymentSuccess from "./pages/Attendee Page/PaymentSuccess"
 export default function App(){
   const {isLoggedIn,handleLogout,user}=useContext(UserContext)
 
@@ -81,6 +82,7 @@ export default function App(){
         <Route path="/create-event" element={<EventForm/>}/>
         <Route path="/create-event/:id" element={<EventForm />} />
         <Route path="/events/:id" element={<EventDetails/>}/>
+        <Route path="/payment-success" element={<PaymentSuccess />} />
       </Routes>
 
     </div>

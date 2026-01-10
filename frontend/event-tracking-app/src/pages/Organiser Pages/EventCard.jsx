@@ -149,19 +149,7 @@ export default function EventCard({ event }) {
       View
     </button>
 
-    <button
-      onClick={() => navigate(`/events/${event._id}/book`)}
-      style={{
-        backgroundColor: "purple",
-        color: "white",
-        padding: "8px 12px",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer"
-      }}
-    >
-      Book
-    </button>
+    
   </div>
 )}
 

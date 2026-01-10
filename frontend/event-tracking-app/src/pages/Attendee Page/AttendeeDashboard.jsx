@@ -1,8 +1,8 @@
 import { useContext, useEffect } from "react"
 import UserContext from "../../context/UserContext"
 import { useDispatch, useSelector } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
-import { fetchSingleEvent, fetchUserEvents } from "../../slices/eventSlice"
+import { useNavigate } from "react-router-dom"
+import {  fetchUserEvents } from "../../slices/eventSlice"
 import NearbyEventsMap from "../../componets/NearbyEventMap/NearByEventMap"
 
 export default function AttendeeDashboard(props){

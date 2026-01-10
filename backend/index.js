@@ -7,6 +7,7 @@ const port=process.env.PORT
 
 
 app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 app.use(cors())
 const configureDB=require('./config/db')
 configureDB()
@@ -72,10 +73,11 @@ app.post("/payment/verify-payment",paymentCltr.verifyPayment)
 
 
 //Ticket Routes
+app.get("/tickets/my",authenticateUser,ticketCltr.myTickets)
 app.post('/ticket/book',authenticateUser,ticketCltr.book)
 app.delete('/ticket/cancel/:id',authenticateUser,ticketCltr.cancel)
-app.get('/ticket',ticketCltr.list)
-app.post('/ticket/verify',ticketCltr.verifyQR)
+app.get('/ticket',authenticateUser,ticketCltr.list)
+app.post('/ticket/verify',authenticateUser,ticketCltr.verifyQR)
 app.get('/organiser/booking',authenticateUser,roleAuth(['organiser']),ticketCltr.bookedUsers)
 
 //Coupon Routes

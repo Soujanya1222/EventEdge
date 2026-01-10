@@ -27,6 +27,12 @@ ticketCltr.book=async(req,res)=>{
        if(existing){
         return res.status(400).json({error:"Ticket already booked"})
        }
+       const payment = await Payment.findById(body.paymentId)
+        if (!payment || payment.status !== "success") {
+            return res.status(400).json({ error: "Payment not verified" })
+        }
+
+
        const qrData=`USER:${attendeeId}|EVENT:${value.eventId}`
        const qrImage=await QRCode.toDataURL(qrData)
 
@@ -46,6 +52,18 @@ ticketCltr.book=async(req,res)=>{
         res.status(500).json({err:"Something went wrong"})
     }
 }
+
+ticketCltr.myTickets = async (req, res) => {
+  try {
+    const tickets = await Ticket.find({ attendeeId: req.userId })
+      .populate("eventId", ["title", "date"])
+
+    res.json(tickets)
+  } catch (err) {
+    res.status(500).json({ error: "Something went wrong" })
+  }
+}
+
 
 ticketCltr.list=async(req,res)=>{
     try{
@@ -150,8 +168,3 @@ module.exports=ticketCltr
 
 
 
-//check payment
-//   const payment = await Payment.findById(body.paymentId)
-//         if (!payment || payment.status !== "success") {
-//             return res.status(400).json({ error: "Payment not verified" })
-//         }
