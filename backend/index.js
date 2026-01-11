@@ -76,9 +76,11 @@ app.post("/payment/verify-payment",paymentCltr.verifyPayment)
 app.get("/tickets/my",authenticateUser,ticketCltr.myTickets)
 app.post('/ticket/book',authenticateUser,ticketCltr.book)
 app.delete('/ticket/cancel/:id',authenticateUser,ticketCltr.cancel)
-app.get('/ticket',authenticateUser,ticketCltr.list)
+app.get("/organiser/tickets/count",authenticateUser,roleAuth(["organiser"]),ticketCltr.totalTickets);
 app.post('/ticket/verify',authenticateUser,ticketCltr.verifyQR)
 app.get('/organiser/booking',authenticateUser,roleAuth(['organiser']),ticketCltr.bookedUsers)
+app.get("/organiser/tickets-per-event",authenticateUser,ticketCltr.ticketsPerEvent);
+
 
 //Coupon Routes
 app.post('/coupon/create',authenticateUser,couponCltr.create);
