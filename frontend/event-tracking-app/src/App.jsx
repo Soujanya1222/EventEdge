@@ -4,7 +4,7 @@ import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import "./App.css"
-
+import ScanQR from "./pages/Organiser Pages/ScanQR";
 import "./styles/dashboard.css"
 import UsersList from "./pages/Admin Page/UsersList"
 import Dashboard from "./pages/Dashboard"
@@ -14,12 +14,15 @@ import UserContext from "./context/UserContext"
 import EventList from "./pages/Organiser Pages/EventList"
 import EventForm from "./pages/Organiser Pages/EventForm"
 import { useDispatch } from "react-redux"
-import {  fetchBookedUsers, fetchOrganisers, fetchUsers } from "./slices/userSlice"
+import {   fetchOrganisers, fetchUsers } from "./slices/userSlice"
 import { fetchAdminEvents, fetchEvents, fetchUserEvents } from "./slices/eventSlice"
 import EventDetails from "./pages/Attendee Page/EventDetails"
 import PaymentSuccess from "./pages/Attendee Page/PaymentSuccess"
 import MyTickets from "./pages/Attendee Page/MyTickets"
 import BookedUsers from "./pages/Organiser Pages/BookedUsers"
+import { bookedUsers } from "./slices/ticketSlice"
+import { totalTickets } from "./slices/ticketSlice"
+import Ticket from "./pages/Organiser Pages/Tickets"
 export default function App(){
   const {isLoggedIn,handleLogout,user}=useContext(UserContext)
 
@@ -31,8 +34,9 @@ export default function App(){
       dispatch(fetchOrganisers())
     }
     if(user?.role==="organiser"){
-      dispatch(fetchBookedUsers())
+      dispatch(bookedUsers())
       dispatch(fetchEvents())
+      dispatch(totalTickets())
     }if(user?.role==="attendee"){
       dispatch(fetchUserEvents())
     }
@@ -54,6 +58,7 @@ export default function App(){
            {/* <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
               handleLogout();
             }}>Logout</Link></li> */}
+          
           </>
         )}
            
@@ -87,7 +92,8 @@ export default function App(){
         <Route path="/payment-success" element={<PaymentSuccess/>}/>
         <Route path="/my-tickets" element={<MyTickets/>}/>
         <Route path="/organiser/bookings" element={<BookedUsers />} />
-
+        <Route path="/tickets" element={<Ticket/>}/>
+        <Route path="/organiser/scan-qr" element={<ScanQR />} />
         
       </Routes>
 

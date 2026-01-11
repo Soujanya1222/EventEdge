@@ -1,9 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axios from "../config/axios"
 
-export const bookTicket = createAsyncThunk(
-  "tickets/book",
-  async (data, { rejectWithValue }) => {
+export const bookTicket = createAsyncThunk("tickets/book",async (data, { rejectWithValue }) => {
     try {
       const res = await axios.post("/ticket/book", data,{headers:{Authorization:localStorage.getItem("token")}})
       return res.data.ticket
@@ -13,9 +11,7 @@ export const bookTicket = createAsyncThunk(
   }
 )
 
-export const fetchMyTickets = createAsyncThunk(
-  "tickets/my",
-  async (_, { rejectWithValue }) => {
+export const fetchMyTickets = createAsyncThunk("tickets/my",async (_, { rejectWithValue }) => {
     try {
       const res = await axios.get("/tickets/my",{headers:{Authorization:localStorage.getItem("token")}})
       return res.data
@@ -26,9 +22,7 @@ export const fetchMyTickets = createAsyncThunk(
 )
 
 
-export const cancelTicket = createAsyncThunk(
-  "tickets/cancel",
-  async (id, { rejectWithValue }) => {
+export const cancelTicket = createAsyncThunk("tickets/cancel",async (id, { rejectWithValue }) => {
     try {
       const res = await axios.delete(`/ticket/cancel/${id}`,{headers:{Authorization:localStorage.getItem("token")}})
       return id
@@ -39,9 +33,7 @@ export const cancelTicket = createAsyncThunk(
 )
 
 
-export const verifyQR = createAsyncThunk(
-  "tickets/verifyQR",
-  async (qrData, { rejectWithValue }) => {
+export const verifyQR = createAsyncThunk("tickets/verifyQR",async (qrData, { rejectWithValue }) => {
     try {
       const res = await axios.post("/tickets/verify-qr", { qrData },{headers:{Authorization:localStorage.getItem("token")}})
       return res.data.ticket
@@ -51,25 +43,41 @@ export const verifyQR = createAsyncThunk(
   }
 )
 
-export const bookedUsers=createAsyncThunk("tickets/bookedUsers",async (undefined, { rejectWithValue }) => {
+export const bookedUsers = createAsyncThunk("tickets/bookedUsers",async (undefined, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/organiser/booking`, {
-        headers: { Authorization: localStorage.getItem("token") }
-      })
+      const res = await axios.get(`/organiser/booking`, {headers: { Authorization: localStorage.getItem("token") }})
       return res.data
     } catch (err) {
       return rejectWithValue(err.response.data)
     }
-})
+  }
+)
+
 
 export const totalTickets=createAsyncThunk("tickets/totalTickets",async(undefined,{rejectWithValue})=>{
     try{
-        const res=await axios.get("/tickets",{headers:{Authorization:localStorage.getItem("token")}})
-        return res.data;
+        const res=await axios.get("/organiser/tickets/count",{headers:{Authorization:localStorage.getItem("token")}})
+        return res.data.total;
     }catch (err) {
       return rejectWithValue(err.response.data)
     }
 })
+
+export const ticketsPerEvent = createAsyncThunk(
+  "tickets/ticketsPerEvent",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.get("/organiser/tickets-per-event", {
+        headers: { Authorization: localStorage.getItem("token") }
+      });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data.error);
+    }
+  }
+);
+
+
 
 const ticketSlice = createSlice({
   name: "tickets",
@@ -77,6 +85,8 @@ const ticketSlice = createSlice({
     myTickets: [],
     bookedUsersList: [], 
     totalTickets: 0, 
+    ticketsPerEventList: [],
+
     loading: false,
     error: null
   },
@@ -126,12 +136,16 @@ const ticketSlice = createSlice({
     })
     .addCase(totalTickets.fulfilled, (s, a) => {
         s.loading = false;
-        s.totalTickets = a.payload.length; 
+        s.totalTickets = a.payload; 
     })
     .addCase(totalTickets.rejected, (s, a) => {
         s.loading = false;
         s.error = a.payload?.err || "Failed to load tickets";
+    })
+    .addCase(ticketsPerEvent.fulfilled, (state, action) => {
+      state.ticketsPerEventList = action.payload;
     });
+
     
 
   }

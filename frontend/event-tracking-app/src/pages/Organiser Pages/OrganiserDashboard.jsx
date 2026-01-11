@@ -2,7 +2,6 @@ import { useContext, useEffect } from "react"
 import UserContext from "../../context/UserContext"
 import {useSelector} from "react-redux"
 import { useNavigate } from "react-router-dom"
-
 export default function OrganiserDashboard(props){
     const {user}=useContext(UserContext)
   
@@ -12,6 +11,9 @@ export default function OrganiserDashboard(props){
     })
     const {users}=useSelector((state)=>{
         return state.users;
+    })
+    const {totalTickets:tickets,loading}=useSelector((state)=>{
+        return state.tickets;
     })
 
     if(!user){
@@ -69,10 +71,15 @@ export default function OrganiserDashboard(props){
                 
                 <div className="dashboard-card">
                     <h3>Total Tickets</h3>
-                    <p>{data.length}</p>
-                    <button className="dashboard-btn" onClick={()=>navigate("/organiser/booking")}>View Tickets</button>
+                    <p>{loading ? "Loading..." : tickets}</p>
+                    <button className="dashboard-btn" onClick={()=>navigate("/organiser/bookings")}>View Tickets</button>
                       
                 </div>
+
+                <button className="dashboard-btn" onClick={() => navigate("/organiser/scan-qr")}>
+  Scan QR
+</button>
+
            </div>
         
         </div>

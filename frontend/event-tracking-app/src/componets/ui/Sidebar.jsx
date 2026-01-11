@@ -13,6 +13,9 @@ export default function Sidebar() {
         {user?.role==="admin"&&<NavLink to="/organiserList" activeclassname="active">Organiser</NavLink>}
         {user?.role==="admin"&&<NavLink to="/usersList" activeclassname="active">Users</NavLink>}
         {user?.role==="attendee" && <NavLink to="/my-tickets" activeclassname="active"> Tickets</NavLink>}
+        {user?.role==="organiser" && <NavLink to="/organiser/bookings">Booked Users</NavLink>}
+        {user?.role==="organiser" && <NavLink to="/tickets">Tickets Details</NavLink>}
+
         
       </nav>
       <div className="profile-section">
