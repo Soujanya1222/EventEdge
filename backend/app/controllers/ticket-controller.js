@@ -15,18 +15,23 @@ ticketCltr.book=async(req,res)=>{
         return res.status(400).json({error:error.details[0].message})
     }
     try{
-       const attendeeId=req.userId;
-        const event=await Event.findById(value.eventId);
-        if(!event){
-            return res.status(404).json({error:"Event not found"})
-        }
-       const existing=await Ticket.findOne({
+      const attendeeId=req.userId;
+      const event=await Event.findById(value.eventId);
+      if(!event){
+        return res.status(404).json({error:"Event not found"})
+      }
+      if(event.totalTickets <= 0) {
+        await session.abortTransaction();
+        return res.status(400).json({ error: "Tickets sold out" });
+      }
+      const existing=await Ticket.findOne({
         attendeeId,
         eventId:value.eventId
-       })
+      })
        if(existing){
         return res.status(400).json({error:"Ticket already booked"})
        }
+       
        const payment = await Payment.findById(body.paymentId)
         if (!payment || payment.status !== "success") {
             return res.status(400).json({ error: "Payment not verified" })
@@ -36,21 +41,29 @@ ticketCltr.book=async(req,res)=>{
        const qrData=`USER:${attendeeId}|EVENT:${value.eventId}`
        const qrImage=await QRCode.toDataURL(qrData)
 
-       const ticket=await Ticket.create({
+       const ticket=await Ticket.create([{
         attendeeId,
         eventId:value.eventId,
         paymentId:value.paymentId,
         qrCode:qrImage
-       })
+       }],{session})
+
+       event.soldTickets += 1;
+       event.totalTickets -= 1;
+       await event.save({ session });
+
+       await session.commitTransaction();
 
        res.status(201).json({
         message:"Ticket booked Successfully",
-        ticket
+        ticket:ticket[0]
        })
     }catch(err){
         console.log(err)
         res.status(500).json({err:"Something went wrong"})
-    }
+    }finally {
+    session.endSession();
+  }
 }
 
 ticketCltr.myTickets = async (req, res) => {
@@ -91,21 +104,42 @@ ticketCltr.totalTickets = async (req, res) => {
 };
 
 
-ticketCltr.cancel=async(req,res)=>{
-    try{
-        const ticketId=req.params.id;
-        const attendeeId=req.userId;
-        const ticket=await Ticket.findOne({_id:ticketId,attendeeId})
-        if(!ticket){
-            return res.status(404).json({error:"Ticket not found"})
-        }
-        await Ticket.deleteOne({_id:ticketId})
-        res.json({message:"Ticket cancelled Successfully"})
-    }catch(err){
-        console.log(err)
-        res.status(500).json({err:"Something went wrong"})
+ticketCltr.cancel = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const ticket = await Ticket.findOne({
+      _id: req.params.id,
+      attendeeId: req.userId
+    }).session(session);
+
+    if (!ticket) {
+      await session.abortTransaction();
+      return res.status(404).json({ error: "Ticket not found" });
     }
-}
+
+    const event = await Event.findById(ticket.eventId).session(session);
+
+    event.soldTickets -= 1;
+    event.totalTickets += 1;
+    await event.save({ session });
+
+    await ticket.deleteOne({ session });
+
+    await session.commitTransaction();
+
+    res.json({ message: "Ticket cancelled successfully" });
+
+  } catch (err) {
+    await session.abortTransaction();
+    console.log(err);
+    res.status(500).json({ error: "Something went wrong" });
+  } finally {
+    session.endSession();
+  }
+};
+
 
 
 ticketCltr.verifyQR=async(req,res)=>{

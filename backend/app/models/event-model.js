@@ -38,15 +38,16 @@ const EventSchema=new mongoose.Schema({
     price:{
         type:Number,required:true
     },
-    totalTickets:{
-        type:Number,
-        required:true
+    totalTickets: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    soldTickets: {
+        type: Number,
+        default: 0
+    },
 
-    },
-    soldTickets:{
-        type:Number,
-        required:true
-    },
     image: {
         type: [String],
         required: true,
