@@ -119,23 +119,24 @@ ticketCltr.verifyQR=async(req,res)=>{
             if(key==="EVENT") eventId=val;
         });
         if(!userId||!eventId){
-            return res.status(400).json({error:"invalid QR format"})
+            return res.status(400).json({status:"invalid",message:"Invalid QR format"})
         }
         const ticket=await Ticket.findOne({
             attendeeId:userId,
             eventId:eventId
         })
         if(!ticket){
-            return res.status(404).json({error:"Ticket not found"})
+            return res.status(404).json({status:"invalid",message:"Ticket not found"})
         }
         if(ticket.checkedIn){
-            return res.status(400).json({error:"Ticket already used for entry"})
+            return res.status(400).json({ status: "expired",message: "Ticket already used for entry"})
         }
         ticket.checkedIn=true;
         await ticket.save();
         return res.json({
-            message:"Ticket verified successfully",
-            ticket
+          status:"success",
+          message:"Ticket verified successfully",
+          ticket
         })
 
     }catch(err){
