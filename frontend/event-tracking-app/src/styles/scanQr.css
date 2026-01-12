@@ -1,0 +1,55 @@
+.scan-container {
+  text-align: center;
+}
+
+#reader {
+  width: 320px;
+  margin: auto;
+}
+
+.success-box {
+  margin-top: 40px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.checkmark {
+  font-size: 80px;
+  color: #22c55e;
+  animation: pop 0.4s ease-out;
+}
+
+.error-box {
+  margin-top: 40px;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.error-box.expired {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.error-box.invalid {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
