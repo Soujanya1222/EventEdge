@@ -64,10 +64,7 @@ export default function MyTickets() {
                 )}
 
                 {user.role === "organiser" && (
-                <button
-                    className="verify-qr-btn"
-                    onClick={() => dispatch(verifyQR(ticket.qrCode))}
-                >
+                <button className="verify-qr-btn" onClick={() => dispatch(verifyQR(ticket.qrCode))}>
                     Verify QR
                 </button>
                 )}
