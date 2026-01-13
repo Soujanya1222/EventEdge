@@ -6,6 +6,8 @@ const ticketValidationSchema = Joi.object({
   paymentId:Joi.string().hex().length(24).required(),
   qrCode: Joi.string().trim(),
   bookedAt: Joi.date(),
-  checkedIn:Joi.boolean()
+  completedAt:Joi.date(),
+  checkedIn:Joi.boolean().default(false),
+  status: Joi.string().valid("active", "used", "completed", "missed").default("active")
 })
 module.exports={ticketValidationSchema}

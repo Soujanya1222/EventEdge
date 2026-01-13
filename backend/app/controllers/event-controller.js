@@ -79,39 +79,52 @@ eventCltr.getOne=async(req,res)=>{
   }
 }
 
-eventCltr.update=async(req,res)=>{
-    const id=req.params.id
-     const body = {
-    ...req.body,
-    location: req.body.location ? JSON.parse(req.body.location) : undefined
-  };
-    const {error,value}=eventValidationSchema.validate(body,{abortEarly:true})
-    if(error){
-        return res.status(400).json({error:error.details})
+eventCltr.update = async (req, res) => {
+  const id = req.params.id;
+
+  let locationData = undefined;
+  if (req.body && req.body.location) {
+    try {
+      locationData =
+        typeof req.body.location === "string" ? JSON.parse(req.body.location) : req.body.location;
+    } catch (err) {
+      return res.status(400).json({ error: "Invalid location format" });
     }
-    try{
-      const event=await Event.findById(id)
-       if(!event){
-        return res.status(404).json({error:"Event not found"})
-      }
-      if (event.organiserId.toString() !== req.userId) {
+  }
+
+  const body = {
+    ...req.body,
+    ...(locationData ? { location: locationData } : {}),
+  };
+
+  const { error, value } = eventValidationSchema.validate(body, { abortEarly: true });
+  if (error) {
+    return res.status(400).json({ error: error.details });
+  }
+
+  try {
+    const event = await Event.findById(id);
+    if (!event) return res.status(404).json({ error: "Event not found" });
+    if (event.organiserId.toString() !== req.userId) {
       return res.status(403).json({ error: "You are not allowed to update this event" });
     }
-      let updateData={...value}
-      if(req.files && req.files.length>0){
-        if(event.image&&event.image.length>0){
-          await deleteOldImages(event.image);
-        }
-        const newImages=req.files.map((file)=>file.path);
-        updateData.image=newImages;
-      }
-      const updated=await Event.findByIdAndUpdate(id,updateData,{new:true,runValidators:true})
-      res.json(updated)
-    }catch(err){
-      console.log(err)
-      res.status(500).json({err:"Something went wrong"})
+
+    let updateData = { ...value };
+
+    if (req.files && req.files.length > 0) {
+      if (event.image && event.image.length > 0) await deleteOldImages(event.image);
+      const newImages = req.files.map((file) => file.path);
+      updateData.image = newImages;
     }
-}
+
+    const updated = await Event.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+    res.json(updated);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ err: "Something went wrong" });
+  }
+};
+
 
 eventCltr.remove=async(req,res)=>{
      const eventId = req.params.id;

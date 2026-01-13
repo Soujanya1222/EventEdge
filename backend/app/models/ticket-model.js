@@ -26,7 +26,13 @@ const ticketSchema=new mongoose.Schema({
     checkedIn:{
         type:Boolean,
         default:false
-    }
+    },
+    status:{
+        type:String,
+        enum:["active","used","completed","missed"],
+        default:"active"
+    },
+    completedAt:Date
 },{timestamps:true})
 const Ticket=mongoose.model('Ticket',ticketSchema)
 module.exports=Ticket

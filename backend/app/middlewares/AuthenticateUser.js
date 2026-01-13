@@ -4,7 +4,11 @@ const authenticateUser=(req,res,next)=>{
     if(!token){
          return res.status(401).json({error:"token not provided"})
     }
-    token=token.trim()
+    if (token.startsWith("Bearer ")) {
+    token = token.slice(7).trim();
+  } else {
+    token = token.trim();
+  }
     try{
         const tokenData=jwt.verify(token,process.env.JWT_SECRET)
         //console.log("tokendata",tokenData)

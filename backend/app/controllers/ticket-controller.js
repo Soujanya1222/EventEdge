@@ -69,7 +69,8 @@ ticketCltr.book=async(req,res)=>{
 ticketCltr.myTickets = async (req, res) => {
   try {
     const tickets = await Ticket.find({ attendeeId: req.userId })
-      .populate("eventId", ["title", "date"])
+      .populate("eventId", ["title", "datetime"])
+      .populate("attendeeId",["name","email"])
 
     res.json(tickets)
   } catch (err) {
@@ -166,6 +167,7 @@ ticketCltr.verifyQR=async(req,res)=>{
             return res.status(400).json({ status: "expired",message: "Ticket already used for entry"})
         }
         ticket.checkedIn=true;
+        ticket.status="used";
         await ticket.save();
         return res.json({
           status:"success",

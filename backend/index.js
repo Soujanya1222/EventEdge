@@ -3,6 +3,7 @@ const cors=require('cors')
 const app=express();
 require('dotenv').config();
 const port=process.env.PORT
+require("./app/cron/completedTickets")
 
 
 
@@ -29,6 +30,7 @@ const upload=require('./app/middlewares/multer');
 const couponCltr = require('./app/controllers/coupon-controller');
 const ticketCltr = require('./app/controllers/ticket-controller');
 const paymentCltr=require('./app/controllers/payment-controller')
+
 
 
 
@@ -90,11 +92,13 @@ app.post('/coupon/apply',authenticateUser,couponCltr.applyCoupon)
 
 
 //Review routes
-app.post('/review/create',authenticateUser,reviewCltr.create)
-app.get('/review',reviewCltr.list)
+app.post('/review/create',authenticateUser,roleAuth(["attendee"]),reviewCltr.create)
 app.get('/review/:id',authenticateUser,reviewCltr.getOne)
 app.put('/review/:id',authenticateUser,reviewCltr.update)
 app.delete('/review/:id',authenticateUser,reviewCltr.remove)
+app.get("/reviews/event/:eventId", reviewCltr.listByEvent);
+app.get("/reviews/organiser",authenticateUser,roleAuth(["organiser"]),reviewCltr.listForOrganiser);
+
 
 
 app.listen(port,()=>{
