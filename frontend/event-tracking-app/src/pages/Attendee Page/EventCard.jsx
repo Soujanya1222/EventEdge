@@ -45,7 +45,9 @@ export default function EventCard({ event }) {
         >
           View & Book
         </button>
+        
       )}
+     
     </div>
   );
 }

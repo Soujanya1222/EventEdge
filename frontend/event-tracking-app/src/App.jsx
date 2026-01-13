@@ -23,8 +23,10 @@ import BookedUsers from "./pages/Organiser Pages/BookedUsers"
 import { bookedUsers } from "./slices/ticketSlice"
 import { totalTickets } from "./slices/ticketSlice"
 import Ticket from "./pages/Organiser Pages/Tickets"
+import ReviewPage from "./pages/ReviewPage"
+import OrganiserReviews from "./pages/Organiser Pages/OrganiserReviews"
 export default function App(){
-  const {isLoggedIn,handleLogout,user}=useContext(UserContext)
+  const {isLoggedIn,user}=useContext(UserContext)
 
   const dispatch=useDispatch()
   useEffect(() => {
@@ -58,7 +60,6 @@ export default function App(){
            {/* <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
               handleLogout();
             }}>Logout</Link></li> */}
-          
           </>
         )}
            
@@ -94,7 +95,8 @@ export default function App(){
         <Route path="/organiser/bookings" element={<BookedUsers />} />
         <Route path="/tickets" element={<Ticket/>}/>
         <Route path="/organiser/scan-qr" element={<ScanQR />} />
-        
+        <Route path="/review/:eventId" element={<ReviewPage/>}/>
+        <Route path="/organiser/reviews" element={<OrganiserReviews/>}/>
       </Routes>
 
     </div>

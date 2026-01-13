@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import "../../styles/paymentSuccess.css"
 export default function PaymentSuccess() {
   const location = useLocation();
@@ -6,9 +7,16 @@ export default function PaymentSuccess() {
 
   const { referenceId, eventTitle, amount } = location.state || {};
 
- 
+  useEffect(() => {
+    if (referenceId) {
+      const timer = setTimeout(() => {
+        navigate("/my-tickets");
+      }, 3000);
 
-  // Safety check (direct URL access)
+      return () => clearTimeout(timer); 
+    }
+  }, [referenceId, navigate]);
+ 
   if (!referenceId) {
     return (
       <div style={{ padding: "40px", textAlign: "center" }}>
@@ -29,13 +37,13 @@ export default function PaymentSuccess() {
           <h1 className="payment-success-title">Payment Successful</h1>
             <p className="payment-success-message">
                         Thank you for your payment. Your transcation was Successful!
-              </p>{referenceId && (<p className="payment-success-reference">
+            </p>{referenceId && (<p className="payment-success-reference">
                 <strong>Refernce ID:</strong>{referenceId}
-              </p>
-              )}
-              <p className="payment-success-message"><strong>Event:</strong> {eventTitle}</p> 
-              <p className="payment-success-message"><strong>Amount Paid:</strong> ₹{amount}</p>
-               <button onClick={() => navigate("/my-tickets")}>View My Tickets</button>
+            </p>
+            )}
+            <p className="payment-success-message"><strong>Event:</strong> {eventTitle}</p> 
+            <p className="payment-success-message"><strong>Amount Paid:</strong> ₹{amount}</p>
+           <button onClick={() => navigate("/my-tickets")}>View My Tickets</button>
           </div>
       </div>
 

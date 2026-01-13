@@ -113,7 +113,7 @@ export const fetchNearbyEvents=createAsyncThunk("events/fetchNearbyEvents",async
 
 export const updateEvent = createAsyncThunk("events/updateEvent",async ({ id, formData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`http://localhost:8080/event/${id}`,formData,{headers: 
+      const response = await axios.put(`/event/${id}`,formData,{headers: 
         {Authorization: localStorage.getItem("token"), "Content-Type": "multipart/form-data"}
         }
       );
@@ -160,7 +160,6 @@ const eventSlice=createSlice({
         })
         .addCase(createEvents.rejected,(state,action)=>{
             state.isLoading=false
-            state.data=[]
             state.errors=action.payload
         })
         .addCase(fetchAdminEvents.pending,(state)=>{
@@ -261,20 +260,20 @@ const eventSlice=createSlice({
             state.isLoading=false
             state.errors=action.payload
         })
-          .addCase(fetchNearbyEvents.pending, (state) => {
-      state.isLoading = true;
-      state.errors = null;
-    })
-    .addCase(fetchNearbyEvents.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.nearbyEvents = action.payload;
-      state.errors = null;
-    })
-    .addCase(fetchNearbyEvents.rejected, (state, action) => {
-      state.isLoading = false;
-      state.errors = action.payload;
-      state.nearbyEvents = [];
-    })
+        .addCase(fetchNearbyEvents.pending, (state) => {
+            state.isLoading = true;
+            state.errors = null;
+        })
+        .addCase(fetchNearbyEvents.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.nearbyEvents = action.payload;
+            state.errors = null;
+        })
+        .addCase(fetchNearbyEvents.rejected, (state, action) => {
+            state.isLoading = false;
+            state.errors = action.payload;
+            state.nearbyEvents = [];
+        })
 
     }
 })

@@ -25,9 +25,7 @@ export default function MyTickets() {
   return (
     <div className="tickets-wrapper">
       <h2 className="tickets-title">My Tickets</h2>
-       <button onClick={() => navigate("/dashboard")} className="back-btn">
-                ← Back to Dashboard
-            </button>
+       <button onClick={() => navigate("/dashboard")} className="back-btn">← Back to Dashboard</button>
 
       {myTickets.length === 0 && (
         <p className="no-tickets">No tickets booked yet.</p>
@@ -38,36 +36,31 @@ export default function MyTickets() {
           <div key={ticket._id} className="ticket-card">
             <h3 className="ticket-event">{ticket.eventId.title}</h3>
             <p className="ticket-date">Date: {ticket.eventId.date}</p>
-
             <img
               src={ticket.qrCode}
               alt="QR Code"
               className="ticket-qr"
             />
-
             <p
-              className={`ticket-status ${
-                ticket.checkedIn ? "used" : "active"
-              }`}
+              className={`ticket-status ${ticket.status}`}
             >
-              {ticket.checkedIn ? "Used" : "Active"}
+           {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
 
             </p>
-             {!ticket.checkedIn && (
+             {ticket.status === "active" && (
                 <button
-                    className="cancel-ticket-btn"
-                    onClick={() => dispatch(cancelTicket(ticket._id))}
-                    disabled={ticket.checkedIn}
+                  className="cancel-ticket-btn"
+                  onClick={() => dispatch(cancelTicket(ticket._id))}
                 >
-                    Cancel Ticket
+                  Cancel Ticket
                 </button>
-                )}
+              )}
 
-                {user.role === "organiser" && (
+              {user.role === "organiser" && (
                 <button className="verify-qr-btn" onClick={() => dispatch(verifyQR(ticket.qrCode))}>
                     Verify QR
                 </button>
-                )}
+              )}
           </div>
         ))}
       </div>

@@ -99,14 +99,14 @@ export default function ScanQR() {
 
       {status === "expired" && (
         <div className="error-box expired">
-          <h3>⚠️ Ticket Expired</h3>
+          <h3> Ticket Expired</h3>
           <p>{message}</p>
         </div>
       )}
 
       {status === "invalid" && (
         <div className="error-box invalid">
-          <h3>❌ Invalid Ticket</h3>
+          <h3> Invalid Ticket</h3>
           <p>{message}</p>
         </div>
       )}

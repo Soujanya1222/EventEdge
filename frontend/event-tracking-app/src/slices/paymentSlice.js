@@ -1,9 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import api from "../config/axios"
 
-export const createOrder = createAsyncThunk(
-  "payment/createOrder",
-  async (data, { rejectWithValue }) => {
+export const createOrder = createAsyncThunk("payment/createOrder",async (data, { rejectWithValue }) => {
     try {
       const res = await api.post("/payment/create-order", data)
       return res.data.order
@@ -13,9 +11,7 @@ export const createOrder = createAsyncThunk(
   }
 )
 
-export const verifyPayment = createAsyncThunk(
-  "payment/verify",
-  async (data, { rejectWithValue }) => {
+export const verifyPayment = createAsyncThunk("payment/verify",async (data, { rejectWithValue }) => {
     try {
       const res = await api.post("/payment/verify-payment", data)
       return res.data.payment

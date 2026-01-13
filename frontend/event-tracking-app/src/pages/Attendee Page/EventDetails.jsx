@@ -11,6 +11,8 @@ export default function EventDetails() {
   const dispatch = useDispatch();
   const {user}=useContext(UserContext)
   const [payLoading, setPayLoading] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+
 
   const { singleEvent, isLoading, errors } = useSelector(
     state => state.events
@@ -21,6 +23,14 @@ export default function EventDetails() {
       dispatch(fetchSingleEvent(id));
     }
   }, [id, dispatch]);
+
+  useEffect(()=>{
+    if(singleEvent){
+      const now=new Date();
+      const eventDate=new Date(singleEvent.datetime)
+      setIsCompleted(now>eventDate)
+    }
+  },[singleEvent])
 
   if (isLoading) return <p>Loading...</p>;
   if (errors) return <p>{errors}</p>;
@@ -111,6 +121,16 @@ export default function EventDetails() {
           alt="event"
           style={{ width: "100%", height:"100%", marginTop: "10px", borderRadius: "8px" }}
         />
+      )}
+
+
+      {isCompleted && user?.role === "attendee" && (
+        <button
+          onClick={() => navigate(`/review/${singleEvent._id}`)}
+          style={{ marginTop: "10px", padding: "10px", background: "blue", color: "white" }}
+        >
+          Write a Review
+        </button>
       )}
 
       <button

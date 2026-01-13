@@ -51,18 +51,7 @@ export const changePassword=createAsyncThunk("users/changePassword",async(formDa
 
 
 
-// export const fetchBookedUsers=createAsyncThunk(
-//   "events/fetchBookedUsers",
-//   async (organiserId, { rejectWithValue }) => { 
-//     try {
-//       const response = await axios.get(`/organiser/booking/${organiserId}`, {headers: { Authorization: localStorage.getItem("token") } }); 
-//       return response.data;
-//     }
-//     catch (err) {
-//       return rejectWithValue(err.response?.data?.error || "Error fetching booked users");
-//     }
-//     }
-// );
+
 
 
 const userSlice=createSlice({
@@ -113,18 +102,7 @@ const userSlice=createSlice({
             state.isLoading = false;
             state.errors = action.payload;
         })
-        // .addCase(fetchBookedUsers.pending, (state) => {
-        //     state.isLoading = true;
-        // })
-        // .addCase(fetchBookedUsers.fulfilled, (state, action) => {
-        //     state.isLoading = false;
-        //    state.users = action.payload;
-        //     state.errors = null;
-        // })
-        // .addCase(fetchBookedUsers.rejected, (state, action) => {
-        //     state.isLoading = false;
-        //     state.errors = action.payload;
-        // })
+       
         .addCase(changePassword.pending,(state)=>{
             state.isLoading=false
             state.errors=null

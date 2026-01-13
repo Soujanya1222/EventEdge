@@ -107,7 +107,7 @@
 
 .cancel-ticket-btn {
   padding: 8px 16px;
-  background-color: #DC2626; /* Tailwind red-600 */
+  background-color: #DC2626; 
   color: #fff;
   border: none;
   border-radius: 25px;
@@ -119,13 +119,13 @@
 }
 
 .cancel-ticket-btn:hover {
-  background-color: #B91C1C; /* Slightly darker red on hover */
+  background-color: #B91C1C; 
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .cancel-ticket-btn:disabled {
-  background-color: #FCA5A5; /* light red */
+  background-color: #FCA5A5; 
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -134,7 +134,7 @@
 
 .verify-qr-btn {
   padding: 8px 16px;
-  background-color: #2563EB; /* Tailwind blue-600 */
+  background-color: #2563EB; 
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -145,13 +145,13 @@
 }
 
 .verify-qr-btn:hover {
-  background-color: #1D4ED8; /* Darker blue on hover */
+  background-color: #1D4ED8; 
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .verify-qr-btn:disabled {
-  background-color: #93C5FD; /* light blue when disabled */
+  background-color: #93C5FD; 
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -170,4 +170,6 @@
 .dashboard-card th {
   background-color: #f0f0f0;
 }
+.ticket-status.completed { color: green; font-weight: bold; }
+.ticket-status.missed { color: red; font-weight: bold; }
 

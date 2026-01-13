@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 
 export default function Sidebar() {
@@ -8,18 +8,19 @@ export default function Sidebar() {
     <div className="sidebar">
       <h2>Event Track</h2>
       <nav>
-        <NavLink to="/dashboard" activeclassname="active">Dashboard</NavLink>
-        <NavLink to="/organiser/events" activeclassname="active">Events</NavLink>
-        {user?.role==="admin"&&<NavLink to="/organiserList" activeclassname="active">Organiser</NavLink>}
-        {user?.role==="admin"&&<NavLink to="/usersList" activeclassname="active">Users</NavLink>}
-        {user?.role==="attendee" && <NavLink to="/my-tickets" activeclassname="active"> Tickets</NavLink>}
-        {user?.role==="organiser" && <NavLink to="/organiser/bookings">Booked Users</NavLink>}
-        {user?.role==="organiser" && <NavLink to="/tickets">Tickets Details</NavLink>}
+        <Link to="/dashboard" activeclassname="active">Dashboard</Link>
+        <Link to="/organiser/events" activeclassname="active">Events</Link>
+        {user?.role==="admin"&&<Link to="/organiserList" activeclassname="active">Organiser</Link>}
+        {user?.role==="admin"&&<Link to="/usersList" activeclassname="active">Users</Link>}
+        {user?.role==="attendee" && <Link to="/my-tickets" activeclassname="active"> Tickets</Link>}
+        {user?.role==="organiser" && <Link to="/organiser/bookings">Booked Users</ Link>}
+        {user?.role==="organiser" && <Link to="/tickets">Tickets Details</Link>}
+        {user?.role==="organiser" && <Link to="/organiser/reviews">Review</Link>}
 
         
       </nav>
       <div className="profile-section">
-        <NavLink to="/account">My Profile</NavLink>
+        <Link to="/account">My Profile</Link>
         <br></br>
         <button className="logout-btn" onClick={handleLogout}>Logout</button>
       </div>

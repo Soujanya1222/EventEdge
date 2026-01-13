@@ -63,13 +63,9 @@ export const totalTickets=createAsyncThunk("tickets/totalTickets",async(undefine
     }
 })
 
-export const ticketsPerEvent = createAsyncThunk(
-  "tickets/ticketsPerEvent",
-  async (_, { rejectWithValue }) => {
+export const ticketsPerEvent = createAsyncThunk("tickets/ticketsPerEvent",async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get("/organiser/tickets-per-event", {
-        headers: { Authorization: localStorage.getItem("token") }
-      });
+      const res = await axios.get("/organiser/tickets-per-event", {headers: { Authorization: localStorage.getItem("token") }});
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response.data.error);
