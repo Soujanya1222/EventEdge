@@ -59,7 +59,7 @@ const EventSchema=new mongoose.Schema({
     },
     endDate: {
         type: Date,
-        required: true
+        
     }
 },{timestamps:true})
 EventSchema.index({ location: "2dsphere" }); 

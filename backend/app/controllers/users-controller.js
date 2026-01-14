@@ -99,32 +99,36 @@ adminCltr.getAllUser=async(req,res)=>{
     }
 }
 
-adminCltr.getAllOragniser=async(req,res)=>{
-    try{
-        const user=await User.find({role:"organiser"})
-          const result = await Promise.all(
-            user.map(async (org) => {
-                const events = await Event.find({ organiserId: org._id });
+adminCltr.getAllOragniser = async (req, res) => {
+  try {
+    const organisers = await User.find({ role: "organiser" });
 
-                const totalTicketsSold = events.reduce((sum, ev) => {
-                    return sum + (ev.soldTickets || 0);
-                }, 0);
+    const result = await Promise.all(
+      organisers.map(async (org) => {
+        const events = await Event.find({ organiserId: org._id }).select("_id title soldTickets");
 
-                return {
-                    _id: org._id,
-                    name: org.name,
-                    email: org.email,
-                    eventsOrganised: events.length,
-                    ticketsSold: totalTicketsSold
-                };
-            })
-        );
-        res.json(result)
-    }catch(err){
-        console.log(err)
-        res.status(500).json({err:"something went wrong"})
-    }
-}
+        const eventsInfo = events.map((ev) => ({
+          _id: ev._id,
+          title: ev.title,
+          ticketsSold: ev.soldTickets || 0
+        }));
+
+        return {
+          _id: org._id,
+          name: org.name,
+          email: org.email,
+          eventsOrganised: events.length,
+          events: eventsInfo
+        };
+      })
+    );
+
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ err: "something went wrong" });
+  }
+};
 
 adminCltr.getAllEvents=async(req,res)=>{
     try{
