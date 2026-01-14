@@ -25,6 +25,8 @@ import { totalTickets } from "./slices/ticketSlice"
 import Ticket from "./pages/Organiser Pages/Tickets"
 import ReviewPage from "./pages/ReviewPage"
 import OrganiserReviews from "./pages/Organiser Pages/OrganiserReviews"
+import SearchResults from "./pages/SearchResults"
+import Navbar from "./componets/ui/Navbar"
 export default function App(){
   const {isLoggedIn,user}=useContext(UserContext)
 
@@ -48,36 +50,16 @@ export default function App(){
     
   return (
     <div >
-      <ul className="nav-link">
-         <li><Link to="/">Home</Link></li>
+      {/* {!(isLoggedIn || localStorage.getItem("token")) ? (
+        <ul className="nav-link">
+           <li><Link to="/">Home</Link></li>
+           <li><Link to="/register">Register</Link></li>
+           <li><Link to="/login">Login</Link></li>
+        </ul>
+      ) : (
+        <Navbar />
+      )} */}
 
-        {(isLoggedIn|| localStorage.getItem("token")) &&(
-          <>
-           <li> <Link to="/dashboard">Dashboard</Link></li>
-          <li> <Link to="/account">Account</Link></li>
-            {/* {user?.role==="organiser"&&<li><Link to="/organiser/events">Event List</Link></li>}
-            {user?.role === "organiser" && (<li style={{color:"blue"}}><Link to="/create-event">CreateEvent</Link></li>)} */}
-           {/* <li style={{color:"blue"}}><Link to="/login" onClick={()=>{
-              handleLogout();
-            }}>Logout</Link></li> */}
-          </>
-        )}
-           
-           
-                
-          {!isLoggedIn && !localStorage.getItem('token')&&
-          (
-            <>
-             <li><Link to="/register">Register</Link></li>
-              <li><Link to="/login">Login</Link></li>     
-               
-            </>
-          )}
-   
-  
-
-      </ul>
-      <br/>
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/account" element={<Account/>}/>
@@ -97,6 +79,7 @@ export default function App(){
         <Route path="/organiser/scan-qr" element={<ScanQR />} />
         <Route path="/review/:eventId" element={<ReviewPage/>}/>
         <Route path="/organiser/reviews" element={<OrganiserReviews/>}/>
+        <Route path="/search" element={<SearchResults/>}/>
       </Routes>
 
     </div>

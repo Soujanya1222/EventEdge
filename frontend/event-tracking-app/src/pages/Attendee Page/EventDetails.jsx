@@ -25,7 +25,7 @@ export default function EventDetails() {
   }, [id, dispatch]);
 
   useEffect(()=>{
-    if(singleEvent){
+    if(singleEvent?.datetime){
       const now=new Date();
       const eventDate=new Date(singleEvent.datetime)
       setIsCompleted(now>eventDate)

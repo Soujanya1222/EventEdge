@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEventReviews, createReview } from "../slices/reviewSlice";
+import { fetchMyTickets } from "../slices/ticketSlice";
 import { useParams } from "react-router-dom";
 import UserContext from "../context/UserContext";
 import "../styles/review.css";
@@ -10,34 +11,58 @@ export default function ReviewPage() {
   const dispatch = useDispatch();
   const { user } = useContext(UserContext);
 
-  const { reviews, isLoading, errors } = useSelector(
-    (state) => state.reviews
-  );
+  const { reviews, isLoading, errors } = useSelector((state) => state.reviews);
+  const { myTickets } = useSelector((state) => state.tickets);
 
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
 
   useEffect(() => {
-    if (eventId) {
-      dispatch(fetchEventReviews(eventId));
-    }
+    // Fetch tickets when the user changes or when viewing a different event so attendance info is fresh
+    if (user?.role === "attendee") dispatch(fetchMyTickets());
+  }, [dispatch, user, eventId]);
+
+  useEffect(() => {
+    if (eventId) dispatch(fetchEventReviews(eventId));
   }, [dispatch, eventId]);
 
+  // Debug logs to help diagnose why review button may not appear
+  useEffect(() => {
+    console.debug("ReviewPage: eventId", eventId);
+    console.debug("ReviewPage: myTickets", myTickets);
+  }, [eventId, myTickets]);
 
   const hasReviewed = useMemo(() => {
     if (!user || user.role !== "attendee") return false;
     return reviews.some(
-      (review) => review.attendeeId?._id === user._id
+      (r) =>
+        r.attendeeId?._id === user._id &&
+        String(r.eventId?._id || r.eventId) === String(eventId)
     );
-  }, [reviews, user]);
+  }, [reviews, user, eventId]);
+
+  const hasAttended = useMemo(() => {
+    if (!myTickets?.length) return false;
+
+    const now = new Date();
+    return myTickets.some((t) => {
+      const ticketEventId = t.eventId?._id || t.eventId;
+      const eventDate = new Date(t.eventId?.datetime);
+
+      return (
+        String(ticketEventId) === String(eventId) &&
+        (t.checkedIn === true || eventDate <= now)
+      );
+    });
+  }, [myTickets, eventId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(createReview({ eventId, rating, comment }))
       .unwrap()
       .then(() => {
-        setComment("");
         setRating(5);
+        setComment("");
       });
   };
 
@@ -48,15 +73,12 @@ export default function ReviewPage() {
       {isLoading && <p>Loading reviews...</p>}
       {errors && <p className="error-text">{errors}</p>}
 
-      {user?.role === "attendee" && !hasReviewed && (
+      {user?.role === "attendee" && hasAttended && !hasReviewed && (
         <form className="review-form" onSubmit={handleSubmit}>
           <h3>Write a Review</h3>
 
           <label>Rating</label>
-          <select
-            value={rating}
-            onChange={(e) => setRating(Number(e.target.value))}
-          >
+          <select value={rating} onChange={(e) => setRating(Number(e.target.value))}>
             {[5, 4, 3, 2, 1].map((r) => (
               <option key={r} value={r}>
                 {r} ⭐
@@ -69,7 +91,6 @@ export default function ReviewPage() {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             required
-            placeholder="Share your experience..."
           />
 
           <button type="submit">Submit Review</button>
@@ -77,49 +98,18 @@ export default function ReviewPage() {
       )}
 
       {user?.role === "attendee" && hasReviewed && (
-        <p className="info-text">
-          You have already reviewed this event.
-        </p>
+        <p className="info-text">You have already reviewed this event.</p>
       )}
 
-      {!isLoading && reviews.length === 0 && (
-        <p>No reviews yet.</p>
-      )}
+      {!isLoading && reviews.length === 0 && <p>No reviews yet.</p>}
 
-      {reviews.map((review) => {
-        const isMyReview =
-          user?.role === "attendee" &&
-          review.attendeeId?._id === user._id;
-
-        const isOrganiserEvent =
-          user?.role === "organiser" &&
-          review.eventId?.organiserId === user._id;
-
-        return (
-          <div key={review._id} className="review-card">
-            <div className="review-header">
-              <strong>{review.attendeeId?.name}</strong>
-
-              <div className="review-badges">
-                {isMyReview && (
-                  <span className="badge my-review">Your Review</span>
-                )}
-                {isOrganiserEvent && (
-                  <span className="badge organiser-view">
-                    Review for Your Event
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="review-rating">
-               {review.rating} / 5
-            </div>
-
-            <p className="review-comment">{review.comment}</p>
-          </div>
-        );
-      })}
+      {reviews.map((review) => (
+        <div key={review._id} className="review-card">
+          <strong>{review.attendeeId?.name}</strong>
+          <div>{review.rating} / 5</div>
+          <p>{review.comment}</p>
+        </div>
+      ))}
     </div>
   );
 }

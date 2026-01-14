@@ -106,14 +106,18 @@ const ticketSlice = createSlice({
     })
     .addCase(verifyQR.fulfilled, (s, a) => {
         s.loading = false
-        const index = s.myTickets.findIndex(t => t._id === a.payload._id)
+        const payloadTicket = a.payload?.ticket || a.payload
+        if (!payloadTicket) return
+        const index = s.myTickets.findIndex(t => t._id === payloadTicket._id)
         if (index !== -1) {
-            s.myTickets[index] = a.payload
+            s.myTickets[index] = payloadTicket
+        } else {
+            s.myTickets.push(payloadTicket)
         }
     })
     .addCase(verifyQR.rejected, (s, a) => {
         s.loading = false
-        s.error = a.payload?.error || "QR verification failed"
+        s.error = a.payload?.message || a.payload?.error || "QR verification failed"
     })
     .addCase(bookedUsers.pending, s => {
         s.loading = true;

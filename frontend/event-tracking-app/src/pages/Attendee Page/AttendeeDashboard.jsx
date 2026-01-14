@@ -57,14 +57,6 @@ export default function AttendeeDashboard(props){
                 ))}
             </div>
 
-  
-            <div className="stats-container" style={{ marginTop: "40px" }}>
-                <div className="dashboard-card organiser">
-                <h3>My Bookings</h3>
-                <p>Coming soon 🚧</p>
-                </div>
-            </div>
-
         <div className="stats-container" style={{ marginTop: "40px" }}>
             {upcomingEvents.length === 0 ? (
             <div className="dashboard-card approved">

@@ -66,7 +66,7 @@ export default function UsersList(){
                 ← Back to Dashboard
             </button>
             <h2><strong>Users List</strong></h2><br/>
-            <table className="border border-black border-collapse">
+            <table className="border border-black border-collapse w-full mt-4">
                 <thead>
                     <tr className="border border-black p-3">
                         <th className="border border-black p-2">Name</th>

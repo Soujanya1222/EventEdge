@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux"
 import { approveEvent, deleteEvent, rejectEvent, } from "../../slices/eventSlice"
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import UserContext from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
@@ -17,16 +17,44 @@ export default function EventCard({ event }) {
     };
   
 
-  const handleApprove=()=>{
-    dispatch(approveEvent(event._id))
+  const [approving, setApproving] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleApprove=async()=>{
+    if (approving) return;
+    setApproving(true);
+    try{
+      await dispatch(approveEvent(event._id)).unwrap();
+    }catch(err){
+      console.error(err);
+    }finally{
+      setApproving(false);
+    }
   }
 
-  const handleReject=()=>{
-    dispatch(rejectEvent(event._id))
+  const handleReject=async()=>{
+    if (rejecting) return;
+    setRejecting(true);
+    try{
+      await dispatch(rejectEvent(event._id)).unwrap();
+    }catch(err){
+      console.error(err);
+    }finally{
+      setRejecting(false);
+    }
   }
 
-  const handleDelete=()=>{
-    dispatch(deleteEvent(event._id))
+  const handleDelete=async()=>{
+    if (deleting) return;
+    setDeleting(true);
+    try{
+      await dispatch(deleteEvent(event._id)).unwrap();
+    }catch(err){
+      console.error(err);
+    }finally{
+      setDeleting(false);
+    }
   }
   return (
     
@@ -70,31 +98,34 @@ export default function EventCard({ event }) {
 
       {user?.role==="admin" && event.status==="pending" &&(
         <div style={{ display: "flex", gap: "10px", marginTop: "15px" }}>
-          <button onClick={handleApprove}
+          <button onClick={handleApprove} disabled={approving}
               style={{
             backgroundColor: "green",
             color: "white",
             padding: "8px 12px",
             border: "none",
             borderRadius: "6px",
-            cursor: "pointer",
+            cursor: approving ? "not-allowed" : "pointer",
+            opacity: approving ? 0.7 : 1
            }}>
-            Approve
+            {approving ? "Approving..." : "Approve"}
            </button>
 
 
            <button
             onClick={handleReject}
+            disabled={rejecting}
             style={{
               backgroundColor: "blue",
               color: "white",
               padding: "8px 12px",
               border: "none",
               borderRadius: "6px",
-              cursor: "pointer"
+              cursor: rejecting ? "not-allowed" : "pointer",
+              opacity: rejecting ? 0.7 : 1
             }}
           >
-            Reject
+            {rejecting ? "Rejecting..." : "Reject"}
           </button>
 
 
@@ -105,11 +136,13 @@ export default function EventCard({ event }) {
               padding: "8px 12px",
               border: "none",
               borderRadius: "6px",
-              cursor: "pointer"
+              cursor: deleting ? "not-allowed" : "pointer",
+              opacity: deleting ? 0.7 : 1
             }}
             onClick={handleDelete}
+            disabled={deleting}
           >
-            DELETE
+            {deleting ? "Deleting..." : "DELETE"}
           </button>
         </div>
       )}

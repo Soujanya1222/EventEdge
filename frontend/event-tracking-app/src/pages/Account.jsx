@@ -113,6 +113,7 @@ export default function Account() {
         color: COLORS.text
       }}
     >
+  <button className="back-btn" onClick={() => navigate('/dashboard')}>← Back to Dashboard</button>
 
       <h2
         style={{

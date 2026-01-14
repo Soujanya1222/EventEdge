@@ -95,6 +95,43 @@ body {
   padding: 30px;
 }
 
+/* Navbar search */
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-left { display:flex; gap:16px; align-items:center }
+
+.nav-search {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-left: auto;
+}
+
+.nav-search input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #e6edf3;
+  min-width: 220px;
+}
+
+.nav-search button {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #6366f1;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 700px) {
+  .nav-search input { min-width: 120px }
+  .nav-left a { display:none }
+}
+
 .stats-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

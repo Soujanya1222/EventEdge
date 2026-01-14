@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { fetchNearbyEvents } from "../../slices/eventSlice";
 import { defaultIcon } from "./leafletIcon";
@@ -60,7 +60,23 @@ export default function NearbyEventsMap() {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {/* User location */}
-        <Marker position={[userLocation.latitude, userLocation.longitude]} icon={defaultIcon} />
+        <Marker
+          position={[userLocation.latitude, userLocation.longitude]}
+          icon={defaultIcon}
+          eventHandlers={{
+            click: (e) => {
+              // Prevent any unexpected navigation and open popup if present
+              if (e && e.originalEvent) {
+                e.originalEvent.preventDefault();
+                e.originalEvent.stopPropagation();
+              }
+              const marker = e.target;
+              if (marker && marker.openPopup) marker.openPopup();
+            },
+          }}
+        >
+          <Popup>You are here</Popup>
+        </Marker>
 
         {/* Nearby events */}
         {nearbyEvents.map((event) => (
@@ -69,9 +85,37 @@ export default function NearbyEventsMap() {
             position={[event.location.coordinates[1], event.location.coordinates[0]]}
             icon={defaultIcon}
             eventHandlers={{
-              click: () => window.open(event.directionUrl, "_blank"),
+              click: (e) => {
+                if (e && e.originalEvent) {
+                  e.originalEvent.preventDefault();
+                  e.originalEvent.stopPropagation();
+                }
+                const marker = e.target;
+                if (marker && marker.openPopup) marker.openPopup();
+              },
             }}
-          />
+          >
+            <Popup>
+              <div style={{ minWidth: 220 }}>
+                <strong>{event.title}</strong>
+                <div style={{ marginTop: 8 }}>
+                  <a
+                    href={
+                      event.directionUrl ||
+                      `https://www.google.com/maps?q=${event.location.coordinates[1]},${event.location.coordinates[0]}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Get Directions
+                  </a>
+                </div>
+                <div style={{ marginTop: 6 }}>
+                  <a href={`/events/${event._id}`}>View Event</a>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
         ))}
 
         {/* Circle showing radius */}
