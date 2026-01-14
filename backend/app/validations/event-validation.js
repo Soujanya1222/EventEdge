@@ -9,10 +9,10 @@ const eventValidationSchema=Joi.object({
     location:Joi.object({
     type: Joi.string().valid('Point').required(),
     coordinates: Joi.array().items(Joi.number()).length(2).required()
-   }).required(),
+    }).required(),
     price:Joi.number().required().min(1),
-    totalTickets:Joi.number().required(),
-    soldTickets:Joi.number().required(),
+    totalTickets:Joi.number().required().min(1),
+    soldTickets:Joi.number().min(0),
     image:Joi.any().optional()
 })
 module.exports={eventValidationSchema}

@@ -41,11 +41,11 @@ const EventSchema=new mongoose.Schema({
     totalTickets: {
         type: Number,
         required: true,
-        min: 0
+        min: 1
     },
     soldTickets: {
         type: Number,
-        default: 0
+        default: 0,
     },
 
     image: {
@@ -62,6 +62,12 @@ const EventSchema=new mongoose.Schema({
         
     }
 },{timestamps:true})
+
+
+EventSchema.virtual("remainingTickets").get(function () {
+  return this.totalTickets - this.soldTickets;
+});
+
 EventSchema.index({ location: "2dsphere" }); 
 const Event=mongoose.model("Event",EventSchema)
 module.exports=Event

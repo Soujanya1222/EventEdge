@@ -39,8 +39,14 @@ eventCltr.create=async(req,res)=>{
 eventCltr.list = async (req, res) => {
   try {
     const events = await Event.find({status:"approved"}) .select("title  description image venue price location status")
-    // console.log('Events found:', events);
-    res.json(events);
+    const formatted = events.map(event => {
+    const obj = event.toObject();
+    obj.remainingTickets = event.totalTickets - event.soldTickets;
+    return obj;
+    });
+
+    res.json(formatted);
+   
   } catch (err) {
     console.log('Error fetching events:', err);
     res.status(500).json({ err: 'Something went wrong' });
@@ -70,7 +76,9 @@ eventCltr.getOne=async(req,res)=>{
       if(event.status!=="approved"){
         return res.status(403).json({error:"event not approved yet"})
       }
-      return res.status(200).json(event)
+      const eventObj=event.toObject();
+      eventObj.remainingTickets=event.totalTickets=event.soldTickets;
+      return res.status(200).json(eventObj)
     }
 
   }catch(err){

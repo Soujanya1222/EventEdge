@@ -22,10 +22,11 @@ ticketCltr.book = async (req, res) => {
     if (!event) {
       return res.status(404).json({ error: "Event not found" })
     }
-
-    if (event.totalTickets <= 0) {
+    if (event.soldTickets >= event.totalTickets) {
       return res.status(400).json({ error: "Tickets sold out" })
     }
+
+
 
     const existing = await Ticket.findOne({ attendeeId, eventId: value.eventId })
     if (existing) {
@@ -49,7 +50,6 @@ ticketCltr.book = async (req, res) => {
     })
 
     event.soldTickets += 1
-    event.totalTickets -= 1
     await event.save()
 
     res.status(201).json({
@@ -112,13 +112,11 @@ ticketCltr.cancel = async (req, res) => {
     const event = await Event.findById(ticket.eventId)
 
     if (event) {
-      event.soldTickets = Math.max(0, (event.soldTickets || 1) - 1)
-      event.totalTickets = (event.totalTickets || 0) + 1
+      event.soldTickets = Math.max(0,event.soldTickets-1)
       await event.save()
     }
 
     await ticket.deleteOne()
-
     res.json({ message: "Ticket cancelled successfully" })
   } catch (err) {
     console.error(err)
@@ -209,18 +207,13 @@ ticketCltr.ticketsPerEvent = async (req, res) => {
 
     const organiserId = req.userId;
 
-    const events = await Event.find({ organiserId }).select("title");
+    const events = await Event.find({ organiserId }).select("title soldTickets");
 
-    const result = await Promise.all(
-      events.map(async (event) => {
-        const count = await Ticket.countDocuments({ eventId: event._id });
-        return {
-          eventId: event._id,
-          title: event.title,
-          ticketsSold: count
-        };
-      })
-    );
+    const result = events.map(event => ({
+      eventId: event._id,
+      title: event.title,
+      ticketsSold: event.soldTickets
+    }));
 
     res.json(result);
   } catch (err) {
