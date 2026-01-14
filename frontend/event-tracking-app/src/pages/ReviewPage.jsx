@@ -18,7 +18,6 @@ export default function ReviewPage() {
   const [comment, setComment] = useState("");
 
   useEffect(() => {
-    // Fetch tickets when the user changes or when viewing a different event so attendance info is fresh
     if (user?.role === "attendee") dispatch(fetchMyTickets());
   }, [dispatch, user, eventId]);
 
@@ -26,7 +25,7 @@ export default function ReviewPage() {
     if (eventId) dispatch(fetchEventReviews(eventId));
   }, [dispatch, eventId]);
 
-  // Debug logs to help diagnose why review button may not appear
+
   useEffect(() => {
     console.debug("ReviewPage: eventId", eventId);
     console.debug("ReviewPage: myTickets", myTickets);

@@ -23,18 +23,48 @@ export const verifyPayment = createAsyncThunk("payment/verify",async (data, { re
 
 const paymentSlice = createSlice({
   name: "payment",
-  initialState: { order: null, payment: null, loading: false },
+  initialState: { 
+    order: null, 
+    payment: null, 
+    loading: false 
+  },
+   reducers: {
+    clearPaymentState: state => {
+      state.order = null;
+      state.payment = null;
+      state.error = null;
+      state.loading = false;
+    }
+  },
   extraReducers: builder => {
     builder
-      .addCase(createOrder.pending, s => { s.loading = true })
-      .addCase(createOrder.fulfilled, (s, a) => {
-        s.loading = false
-        s.order = a.payload
+      .addCase(createOrder.pending, state => {
+        state.loading = true;
+        state.error = null;
       })
-      .addCase(verifyPayment.fulfilled, (s, a) => {
-        s.payment = a.payload
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.order = action.payload;
       })
+      .addCase(createOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(verifyPayment.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyPayment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.payment = action.payload;
+      })
+      .addCase(verifyPayment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   }
 })
 
+export const { clearPaymentState } = paymentSlice.actions;
 export default paymentSlice.reducer

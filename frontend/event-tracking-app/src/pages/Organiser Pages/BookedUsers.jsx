@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { bookedUsers } from "../../slices/ticketSlice";
 import "../../styles/bookedUser.css"
 
 export default function BookedUsers() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { bookedUsersList, loading, error } = useSelector(
     state => state.tickets
   );
@@ -18,7 +20,11 @@ export default function BookedUsers() {
 
   return (
     <div className="booked-users-container">
+      <button onClick={() => navigate("/dashboard")} className="back-btn">
+                ← Back to Dashboard
+            </button>
       <h2>👥 Event Bookings</h2>
+      
 
       {bookedUsersList.length === 0 ? (
         <p>No bookings found</p>

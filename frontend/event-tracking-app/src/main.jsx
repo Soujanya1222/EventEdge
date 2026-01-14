@@ -7,10 +7,10 @@ import {Provider} from "react-redux"
 import createStore from './store/create-store.js'
 
 const store=createStore()
-console.log('store',store.getState());
-store.subscribe(()=>{
-  console.log('store updated',store.getState())
-})
+// console.log('store',store.getState());
+// store.subscribe(()=>{
+//   console.log('store updated',store.getState())
+// })
 
 
 createRoot(document.getElementById('root')).render(

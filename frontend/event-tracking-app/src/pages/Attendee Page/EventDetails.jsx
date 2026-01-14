@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchSingleEvent } from "../../slices/eventSlice";
 import UserContext from "../../context/UserContext";
-import { createOrder,verifyPayment } from "../../slices/paymentSlice";
+import { createOrder,verifyPayment  } from "../../slices/paymentSlice";
 import { bookTicket } from "../../slices/ticketSlice";
 export default function EventDetails() {
   const { id } = useParams();
@@ -18,19 +18,32 @@ export default function EventDetails() {
     state => state.events
   );
 
+  
+
+
   useEffect(() => {
     if (id) {
       dispatch(fetchSingleEvent(id));
     }
   }, [id, dispatch]);
 
-  useEffect(()=>{
-    if(singleEvent?.datetime){
-      const now=new Date();
-      const eventDate=new Date(singleEvent.datetime)
-      setIsCompleted(now>eventDate)
-    }
-  },[singleEvent])
+  useEffect(() => {
+  if (!singleEvent) return;
+
+  const eventDate =
+    singleEvent?.datetime ||
+    singleEvent?.date ||
+    singleEvent?.eventDate;
+
+  if (!eventDate) {
+    setIsCompleted(false);
+    return;
+  }
+
+  const now = new Date();
+  setIsCompleted(now.getTime() > new Date(eventDate).getTime());
+}, [singleEvent]);
+
 
   if (isLoading) return <p>Loading...</p>;
   if (errors) return <p>{errors}</p>;
@@ -110,6 +123,8 @@ export default function EventDetails() {
 
   return (
     <div className="event-list-container">
+        <button className="back-btn" onClick={() => navigate('/dashboard')}>← Back to Dashboard</button>
+
       <h2>{singleEvent.title}</h2>
       <p>{singleEvent.description}</p>
       <p>{singleEvent.venue}</p>
@@ -124,7 +139,7 @@ export default function EventDetails() {
       )}
 
 
-      {isCompleted && user?.role === "attendee" && (
+      { user?.role === "attendee" && (
         <button
           onClick={() => navigate(`/review/${singleEvent._id}`)}
           style={{ marginTop: "10px", padding: "10px", background: "blue", color: "white" }}

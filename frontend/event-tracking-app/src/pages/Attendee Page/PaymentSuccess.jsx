@@ -1,11 +1,16 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { clearPaymentState } from "../../slices/paymentSlice";
+import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import "../../styles/paymentSuccess.css"
 export default function PaymentSuccess() {
   const location = useLocation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { referenceId, eventTitle, amount } = location.state || {};
+  
+
 
   useEffect(() => {
     if (referenceId) {
@@ -16,6 +21,10 @@ export default function PaymentSuccess() {
       return () => clearTimeout(timer); 
     }
   }, [referenceId, navigate]);
+
+  useEffect(() => {
+    dispatch(clearPaymentState());
+  }, [dispatch]);
  
   if (!referenceId) {
     return (
@@ -25,6 +34,8 @@ export default function PaymentSuccess() {
       </div>
     );
   }
+
+  
 
   return (
     <div >
