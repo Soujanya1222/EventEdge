@@ -43,41 +43,42 @@ couponCltr.list=async(req,res)=>{
 }
 
 //Attendee can use the coupon
-couponCltr.applyCoupon=async(req,res)=>{
-    const {code,eventId}=req.body;
-    try{
-       const coupon=await Coupon.findOne({code})
-       if(!coupon){
-        return res.status(400).json({error:"Invalid Coupon"})
-       } 
-       if(new Date()>coupon.expiry){
-        return res.status(400).json({error:"Coupon has expired"})
-       }
-       if(coupon.eventId.toString()!==eventId){
-        return res.status(400).json({error:"Coupon not valid for this event"})
-       }
-       if(coupon.usedBy.includes(req.userId)){
-        return res.status(400).json({error:"You used the coupon already"})
-       }
-       coupon.usedBy.push(req.userId)
-       await coupon.save()
-       res.json({
-        message:"Coupon applied Successfully ",
-        discount:coupon.discount,
-       })
-        
+couponCltr.applyCoupon = async (req, res) => {
+    const { code, eventId } = req.body;
 
-    }catch(err){
-          console.log(err)
-        res.status(500).json({err:"Something went wrong"})
+    try {
+        const coupon = await Coupon.findOne({ code });
+
+        if (!coupon) {
+            return res.status(400).json({ error: "Invalid coupon" });
+        }
+
+        if (new Date() > coupon.expiry) {
+            return res.status(400).json({ error: "Coupon expired" });
+        }
+
+        if (coupon.eventId.toString() !== eventId) {
+            return res.status(400).json({ error: "Coupon not valid for this event" });
+        }
+
+        if (coupon.usedBy.includes(req.userId)) {
+            return res.status(400).json({ error: "Coupon already used" });
+        }
+
+        res.json({
+            message: "Coupon applied",
+            discount: coupon.discount,
+            couponId: coupon._id
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ err: "Something went wrong" });
     }
-}
+};
 
-couponCltr.markUsed=async(userId,couponId)=>{
-    await Coupon.findByIdAndUpdate(couponId,
-        {$push:{usedBy:userId}
-    })
-}
+
+
 
 couponCltr.update=async(req,res)=>{
     const id=req.params.id
@@ -108,5 +109,25 @@ couponCltr.remove=async(req,res)=>{
         res.status(500).json({err:"Something went wrong"})
     }
 }
+
+couponCltr.markUsed = async (attendeeId, couponId) => {
+  const coupon = await Coupon.findById(couponId);
+
+  if (!coupon) {
+    throw new Error("Coupon not found");
+  }
+
+  // prevent reuse by same attendee
+  if (coupon.usedBy.includes(attendeeId)) {
+    throw new Error("Coupon already used");
+  }
+
+  coupon.usedBy.push(attendeeId);
+  coupon.isUsed = true;
+
+  await coupon.save();
+};
+
+
 module.exports=couponCltr
 

@@ -1,6 +1,7 @@
 const razorpay=require("../razorpay/razorpay")
 const crypto=require("crypto")
 const Payment=require("../models/payment-model")
+const couponCltr=require("./coupon-controller")
 const paymentCltr={}
 
 paymentCltr.createOrder=async (req, res) => {
@@ -33,7 +34,8 @@ paymentCltr.createOrder=async (req, res) => {
       attendeeId,
       eventId,
       amount,
-      platformFee
+      platformFee,
+      couponId   
     } = req.body;
 
     // Generate signature
@@ -57,6 +59,9 @@ paymentCltr.createOrder=async (req, res) => {
       status: "success"
     });
 
+    if (couponId) {
+      await couponCltr.markUsed(attendeeId, couponId);
+    }
     res.status(200).json({
       success: true,
       message: "Payment verified successfully",

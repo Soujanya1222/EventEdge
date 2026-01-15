@@ -85,7 +85,7 @@ app.get("/organiser/tickets-per-event",authenticateUser,ticketCltr.ticketsPerEve
 
 
 //Coupon Routes
-app.post('/coupon/create',authenticateUser,couponCltr.create);
+app.post('/coupon/create',authenticateUser,roleAuth(["organiser"]),couponCltr.create);
 app.get('/coupons',authenticateUser,roleAuth(['organiser']),couponCltr.list);
 app.put('/coupon/:id',authenticateUser,couponCltr.update);
 app.post('/coupon/apply',authenticateUser,couponCltr.applyCoupon)
