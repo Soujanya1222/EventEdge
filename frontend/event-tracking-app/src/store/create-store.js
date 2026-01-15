@@ -4,6 +4,7 @@ import eventReducer from "../slices/eventSlice"
 import ticketReducer from "../slices/ticketSlice"
 import paymentReducer from "../slices/paymentSlice"
 import reviewReducer from "../slices/reviewSlice"
+import couponReducer from "../slices/couponSlice"
 const createStore=()=>{
     return configureStore({
         reducer:{
@@ -11,7 +12,8 @@ const createStore=()=>{
             events:eventReducer,
             tickets:ticketReducer,
             payment:paymentReducer,
-            reviews:reviewReducer
+            reviews:reviewReducer,
+            coupon:couponReducer
         }
     })
 }

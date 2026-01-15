@@ -26,7 +26,8 @@ import Ticket from "./pages/Organiser Pages/Tickets"
 import ReviewPage from "./pages/ReviewPage"
 import OrganiserReviews from "./pages/Organiser Pages/OrganiserReviews"
 import SearchResults from "./pages/SearchResults"
-import Navbar from "./componets/ui/Navbar"
+import CreateCoupon from "./pages/Organiser Pages/createCoupon"
+import CouponList from "./pages/Organiser Pages/CouponList"
 export default function App(){
   const {isLoggedIn,user}=useContext(UserContext)
 
@@ -80,6 +81,8 @@ export default function App(){
         <Route path="/review/:eventId" element={<ReviewPage/>}/>
         <Route path="/organiser/reviews" element={<OrganiserReviews/>}/>
         <Route path="/search" element={<SearchResults/>}/>
+        <Route path="/organiser/events/:id/create-coupon" element={<CreateCoupon/>}/>
+        <Route path="/organiser/coupons" element={<CouponList/>}/>
       </Routes>
 
     </div>

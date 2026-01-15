@@ -16,6 +16,8 @@ export default function Sidebar() {
         {user?.role==="organiser" && <Link to="/organiser/bookings">Booked Users</ Link>}
         {user?.role==="organiser" && <Link to="/tickets">Tickets Details</Link>}
         {user?.role==="organiser" && <Link to="/organiser/reviews">Review</Link>}
+        {user?.role==="organiser" && <Link to="/organiser/coupons">Coupons</Link>}
+
 
         
       </nav>

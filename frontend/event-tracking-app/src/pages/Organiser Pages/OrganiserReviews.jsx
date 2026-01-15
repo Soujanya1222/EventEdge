@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrganiserReviews } from "../../slices/reviewSlice";
+import { useNavigate } from "react-router-dom";
 import "../../styles/review.css";
 
 export default function OrganiserReviews() {
   const dispatch = useDispatch();
   const { reviews, isLoading } = useSelector((state) => state.reviews);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchOrganiserReviews());
@@ -13,6 +15,9 @@ export default function OrganiserReviews() {
 
   return (
     <div className="review-page">
+      <button onClick={() => navigate("/dashboard")} className="back-btn">
+                ← Back to Dashboard
+      </button>
       <h2>Reviews for My Events</h2>
 
       {isLoading && <p>Loading reviews...</p>}

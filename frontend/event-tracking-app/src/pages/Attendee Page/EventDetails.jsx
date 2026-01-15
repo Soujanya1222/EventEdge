@@ -5,6 +5,8 @@ import { fetchSingleEvent } from "../../slices/eventSlice";
 import UserContext from "../../context/UserContext";
 import { createOrder,verifyPayment  } from "../../slices/paymentSlice";
 import { bookTicket } from "../../slices/ticketSlice";
+import { applyCoupon } from "../../slices/couponSlice"
+import "../../styles/coupon.css"
 export default function EventDetails() {
   const { id } = useParams();
   const navigate=useNavigate()
@@ -12,6 +14,11 @@ export default function EventDetails() {
   const {user}=useContext(UserContext)
   const [payLoading, setPayLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [couponId, setCouponId] = useState(null);
+  const [finalAmount, setFinalAmount] = useState(0);
+
 
 
   const { singleEvent, isLoading, errors } = useSelector(
@@ -28,6 +35,13 @@ export default function EventDetails() {
   }, [id, dispatch]);
 
   useEffect(() => {
+  if (singleEvent?.price) {
+    setFinalAmount(singleEvent.price);
+  }
+}, [singleEvent]);
+
+
+  useEffect(() => {
   if (!singleEvent) return;
 
   const eventDate =
@@ -42,7 +56,7 @@ export default function EventDetails() {
 
   const now = new Date();
   setIsCompleted(now.getTime() > new Date(eventDate).getTime());
-}, [singleEvent]);
+  }, [singleEvent]);
 
 
   if (isLoading) return <p>Loading...</p>;
@@ -55,7 +69,7 @@ export default function EventDetails() {
   try {
     setPayLoading(true);
     const order= await dispatch(createOrder({
-      amount: singleEvent.price,
+      amount: finalAmount,
       eventId: singleEvent._id
     })).unwrap();
 
@@ -77,7 +91,8 @@ export default function EventDetails() {
               attendeeId: user._id,
               eventId: singleEvent._id,
               amount: singleEvent.price,
-              platformFee: 20
+              platformFee: 20,
+              couponId
           })).unwrap();
 
           const ticket=await dispatch(
@@ -93,7 +108,7 @@ export default function EventDetails() {
               referenceId:response.razorpay_payment_id,
               paymentId:payment._id,
               eventTitle:singleEvent.title,
-              amount:singleEvent.price
+              amount:finalAmount
             }
           })
         }catch(err){
@@ -121,6 +136,32 @@ export default function EventDetails() {
 };
 
 
+const handleApplyCoupon = async () => {
+  try {
+    const result = await dispatch(
+      applyCoupon({
+        code: couponCode,
+        eventId: singleEvent._id
+      })
+    ).unwrap();
+
+    setDiscount(result.discount);
+    setCouponId(result.couponId);
+
+    const discountedAmount =
+      singleEvent.price -
+      (singleEvent.price * result.discount) / 100;
+
+    setFinalAmount(discountedAmount);
+
+    alert("Coupon applied successfully");
+  } catch (err) {
+    alert(err?.error || "Invalid coupon");
+  }
+};
+
+
+
   return (
     <div className="event-list-container">
         <button className="back-btn" onClick={() => navigate('/dashboard')}>← Back to Dashboard</button>
@@ -129,6 +170,30 @@ export default function EventDetails() {
       <p>{singleEvent.description}</p>
       <p>{singleEvent.venue}</p>
       <p>₹{singleEvent.price}</p>
+             {/* Coupon Section */}
+          <div className="coupon-container">
+            <div className="coupon-input-group">
+              <input
+                type="text"
+                placeholder="Enter coupon code"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="coupon-input"
+              />
+              <button onClick={handleApplyCoupon} className="apply-coupon-btn">
+                Apply Coupon
+              </button>
+            </div>
+
+            {discount > 0 && (
+              <div className="coupon-info">
+                <p className="discount-text">Discount: {discount}%</p>
+                <p className="payable-amount">Payable Amount: ₹{finalAmount}</p>
+              </div>
+            )}
+          </div>
+
+
 
       {singleEvent.image?.length > 0 && (
         <img

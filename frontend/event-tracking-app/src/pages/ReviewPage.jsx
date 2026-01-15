@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEventReviews, createReview } from "../slices/reviewSlice";
 import { fetchMyTickets } from "../slices/ticketSlice";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import UserContext from "../context/UserContext";
 import "../styles/review.css";
 
@@ -10,6 +10,7 @@ export default function ReviewPage() {
   const { eventId } = useParams();
   const dispatch = useDispatch();
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const { reviews, isLoading, errors } = useSelector((state) => state.reviews);
   const { myTickets } = useSelector((state) => state.tickets);
@@ -67,6 +68,9 @@ export default function ReviewPage() {
 
   return (
     <div className="review-page">
+       <button onClick={() => navigate("/dashboard")} className="back-btn">
+                ← Back to Dashboard
+            </button>
       <h2>Event Reviews</h2>
 
       {isLoading && <p>Loading reviews...</p>}
