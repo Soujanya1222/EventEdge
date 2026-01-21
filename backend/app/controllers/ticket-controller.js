@@ -129,46 +129,45 @@ ticketCltr.cancel = async (req, res) => {
 
 
 ticketCltr.verifyQR=async(req,res)=>{
-    const{qrData}=req.body
     try{
-        const parts=qrData.split("|")
-        let userId,eventId;
-        parts.forEach(part => {
-            const [key,val]=part.split(":");
-            if(key==="USER") userId=val;
-            if(key==="EVENT") eventId=val;
-        });
-        if(!userId||!eventId){
-            return res.status(400).json({status:"invalid",message:"Invalid QR format"})
-        }
-
-        const ticket=await Ticket.findOne({
-            attendeeId:userId,
-            eventId:eventId
+      const {qrCode}=req.body
+      if(!qrCode ||typeof qrCode !=="string"){
+        return res.status(400).json({status:"invalid",message:"QR code is missing or invalid"})
+      }
+      const parts=qrCode.split("|")
+      let userId,eventId;
+      parts.forEach(part => {
+        const [key,val]=part.split(":");
+        if(key==="USER") userId=val;
+        if(key==="EVENT") eventId=val;
+      });
+      if(!userId||!eventId){
+        return res.status(400).json({status:"invalid",message:"Invalid QR format"})
+      }
+      const ticket=await Ticket.findOne({
+        attendeeId:userId,
+        eventId:eventId
+      })
+      if(!ticket){
+        return res.status(404).json({status:"invalid",message:"Ticket not found"})
+      }
+      if (ticket.qrExpiresAt < new Date()) {
+        return res.status(400).json({
+          status: "expired",
+          message: "QR code expired"
         })
-        if(!ticket){
-            return res.status(404).json({status:"invalid",message:"Ticket not found"})
-        }
-        if (ticket.qrExpiresAt < new Date()) {
-          return res.status(400).json({
-            status: "expired",
-            message: "QR code expired"
-          })
-        }
-
-
-        if(ticket.checkedIn){
-            return res.status(400).json({ status: "expired",message: "Ticket already used for entry"})
-        }
-        ticket.checkedIn=true;
-        ticket.status="completed";
-        await ticket.save();
-        return res.json({
+      }
+      if(ticket.checkedIn){
+        return res.status(400).json({ status: "expired",message: "Ticket already used for entry"})
+      }
+      ticket.checkedIn=true;
+      ticket.status="completed";
+      await ticket.save();
+      return res.json({
           status:"success",
           message:"Ticket verified successfully",
           ticket
         })
-
     }catch(err){
         console.log(err)
         res.status(500).json({error:"Something went wrong"})

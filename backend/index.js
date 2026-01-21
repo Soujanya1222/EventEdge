@@ -89,7 +89,8 @@ app.post('/coupon/create',authenticateUser,roleAuth(["organiser"]),couponCltr.cr
 app.get('/coupons',authenticateUser,roleAuth(['organiser']),couponCltr.list);
 app.put('/coupon/:id',authenticateUser,couponCltr.update);
 app.post('/coupon/apply',authenticateUser,couponCltr.applyCoupon)
-
+app.post("/coupon/validate", authenticateUser, couponCltr.validateCoupon);
+app.delete("/coupon/:id",authenticateUser,couponCltr.remove)
 
 //Review routes
 app.post('/review/create',authenticateUser,roleAuth(["attendee"]),reviewCltr.create)
