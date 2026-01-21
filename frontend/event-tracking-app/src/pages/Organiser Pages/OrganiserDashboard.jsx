@@ -70,7 +70,7 @@ export default function OrganiserDashboard(props){
                 <div className="dashboard-card">
                     <h3>Total Tickets</h3>
                     <p>{loading ? "Loading..." : tickets}</p>
-                    <button className="dashboard-btn" onClick={()=>navigate("/organiser/bookings")}>View Tickets</button>     
+                    <button className="dashboard-btn" onClick={()=>navigate("/tickets")}>View Tickets</button>     
                 </div>
 
                 <button className="dashboard-btn" onClick={() => navigate("/organiser/scan-qr")}>Scan QR</button>

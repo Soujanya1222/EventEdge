@@ -33,10 +33,10 @@ export const cancelTicket = createAsyncThunk("tickets/cancel",async (id, { rejec
 )
 
 
-export const verifyQR = createAsyncThunk("tickets/verifyQR",async (qrData, { rejectWithValue }) => {
+export const verifyQR = createAsyncThunk("tickets/verifyQR",async (qrCode, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/ticket/verify", { qrData },{headers:{Authorization:localStorage.getItem("token")}})
-      return res.data.ticket
+      const res = await axios.post("/ticket/verify", { qrCode },{headers:{Authorization:localStorage.getItem("token")}})
+      return res.data
     } catch (err) {
       return rejectWithValue(err.response.data)
     }

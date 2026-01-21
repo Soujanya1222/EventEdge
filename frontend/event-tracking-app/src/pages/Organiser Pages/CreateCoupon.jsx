@@ -1,25 +1,51 @@
 import { useDispatch, useSelector } from "react-redux";
-import { createCouponAction } from "../../slices/couponSlice";
-import { useState } from "react";
+import { createCouponAction,updateCouponAction } from "../../slices/couponSlice";
+import { useEffect, useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import "../../styles/coupon.css"
 
 export default function CreateCoupon() {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.coupon);
-  const { id: eventId } = useParams();
+  const { loading, error ,data:coupons} = useSelector((state) => state.coupon);
+  const { id: eventId,couponId } = useParams();
   const navigate = useNavigate();
+
   const [code, setCode] = useState("");
   const [discount, setDiscount] = useState("");
   const [expiry, setExpiry] = useState("");
+ 
+
+  useEffect(()=>{
+    if (couponId && coupons.length > 0) {
+    const coupon = coupons.find((c) => c._id === couponId);
+    if (coupon) {
+      setCode(coupon.code);
+      setDiscount(coupon.discount);
+      setExpiry(new Date(coupon.expiry).toISOString().slice(0, 10)); 
+    }
+  }
+    
+  },[couponId,coupons])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
+  if (couponId) {
+    // Update existing coupon
+    const result = await dispatch(
+      updateCouponAction({ couponId, code, discount, expiry, eventId })
+    );
+    if (updateCouponAction.fulfilled.match(result)) {
+      alert("Coupon Updated Successfully");
+      navigate("/coupons"); // Go back to coupon list
+    } else {
+      alert(result.payload?.error || "Failed to update coupon");
+    }
+  } else {
+    // Create new coupon
     const result = await dispatch(
       createCouponAction({ code, discount, expiry, eventId })
     );
-
     if (createCouponAction.fulfilled.match(result)) {
       alert("Coupon Created Successfully");
       setCode("");
@@ -28,7 +54,9 @@ export default function CreateCoupon() {
     } else {
       alert(result.payload?.error || "Something went wrong");
     }
-  };
+  }
+};
+
 
   return (
     <div className="create-coupon-container">
@@ -36,7 +64,8 @@ export default function CreateCoupon() {
         <button onClick={() => navigate("/dashboard")} className="back-btn">
                 ← Back to Dashboard
             </button>
-        <h2>Create Coupon</h2>
+        <h2>{couponId ? "Edit Coupon" : "Create Coupon"}</h2>
+
         <form className="coupon-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Coupon Code</label>
@@ -46,6 +75,7 @@ export default function CreateCoupon() {
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               required
+              disabled={!!couponId}
             />
           </div>
 

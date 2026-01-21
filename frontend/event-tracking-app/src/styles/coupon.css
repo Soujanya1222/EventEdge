@@ -310,3 +310,39 @@
   font-size: 16px;
   font-weight: 700;
 }
+.coupon-disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.coupon-active {
+  background: #2563eb;
+  color: white;
+}
+.coupon-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.edit-btn {
+  background: #2563eb;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  background: #b91c1c;
+}

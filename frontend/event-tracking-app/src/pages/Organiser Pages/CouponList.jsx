@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCouponsAction } from "../../slices/couponSlice";
+import { deleteCouponAction, fetchCouponsAction } from "../../slices/couponSlice";
 import "../../styles/coupon.css";
 import { useNavigate } from "react-router-dom";
 
@@ -15,6 +15,15 @@ export default function CouponList() {
     dispatch(fetchCouponsAction());
   }, [dispatch]);
 
+
+  const handleDelete=async(id)=>{
+    const confirmDelete=window.confirm("Are you sure you want to delete this coupon?")
+    if(!confirmDelete) return;
+    const result=await dispatch(deleteCouponAction(id))
+    if(deleteCouponAction.rejected.match(result)){
+      alert(result.payload?.error || "Failed to delete coupon")
+    }
+  }
   if (loading) return <div className="loading-text">Loading coupons...</div>;
 
   return (
@@ -68,6 +77,25 @@ export default function CouponList() {
                   <span className="coupon-label">Times Used</span>
                   <span className="coupon-value coupon-usage">{coupon.usedBy?.length || 0}</span>
                 </div>
+              </div>
+              <div className="coupon-actions">
+                <button
+                  className="edit-btn"
+                  onClick={() =>
+                    navigate(`/organiser/events/${coupon.eventId?._id}/create-coupon`, {
+                      state: { couponId: coupon._id } 
+                    })
+                  }
+                >
+                  Edit
+                </button>
+
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(coupon._id)}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}

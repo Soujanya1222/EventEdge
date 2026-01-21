@@ -27,6 +27,44 @@ export const applyCoupon=createAsyncThunk("coupon/apply",async({code,eventId},{r
         return rejectWithValue(err.response.data);
     }
 })
+
+export const updateCouponAction = createAsyncThunk(
+  "coupon/update",
+  async ({ id, formData }, { rejectWithValue }) => {
+    try {
+      const res = await axios.put(
+        `/coupon/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        }
+      );
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data);
+    }
+  }
+);
+export const deleteCouponAction = createAsyncThunk(
+  "coupon/delete",
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await axios.delete(
+        `/coupon/${id}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        }
+      );
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data);
+    }
+  }
+);
 const couponSlice = createSlice({
   name: "coupon",
   initialState: {
@@ -77,7 +115,31 @@ const couponSlice = createSlice({
     .addCase(applyCoupon.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-    });
+    })
+    .addCase(updateCouponAction.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(updateCouponAction.fulfilled, (state, action) => {
+        const index = state.data.findIndex(
+          (c) => c._id === action.payload._id
+        );
+        if (index !== -1) {
+          state.data[index] = action.payload;
+        }
+      })
+    .addCase(updateCouponAction.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    })
+    .addCase(deleteCouponAction.fulfilled, (state, action) => {
+        state.data = state.data.filter(
+          (c) => c._id !== action.payload._id
+        );
+      });
+  
+
+
 
     }
 });

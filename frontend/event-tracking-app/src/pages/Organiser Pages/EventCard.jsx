@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { approveEvent, deleteEvent, rejectEvent, } from "../../slices/eventSlice"
 import { useContext, useState } from "react";
 import UserContext from "../../context/UserContext";
@@ -9,12 +9,16 @@ export default function EventCard({ event }) {
   const navigate = useNavigate();
   const dispatch=useDispatch()
   const {user}=useContext(UserContext)
-    const isPrivilegedUser = user?.role === "admin" || user?.role === "organiser";
+  const isPrivilegedUser = user?.role === "admin" || user?.role === "organiser";
+  const coupons=useSelector((state)=>state.coupon.data)
 
+  const hasCoupon = (eventId) => {
+    return coupons.some((coupon) => coupon.eventId._id === eventId);
+  };
 
-    const handleEdit = () => {
+  const handleEdit = () => {
        navigate(`/create-event/${event._id}`);
-    };
+  };
   
 
   const [approving, setApproving] = useState(false);
@@ -171,6 +175,7 @@ export default function EventCard({ event }) {
       <div style={{ marginTop: "12px", display: "flex", gap: "10px" }}>
 
       <button
+        disabled={hasCoupon(event._id)}
         onClick={() => navigate(`/organiser/events/${event._id}/create-coupon`)}
         style={{
           backgroundColor: "#2e7d32",
@@ -180,8 +185,9 @@ export default function EventCard({ event }) {
           borderRadius: "6px",
           cursor: "pointer"
         }}
+        className={hasCoupon(event._id) ? "coupon-disabled" : "coupon-active"}
         >
-        Create Coupon
+        {hasCoupon(event._id) ? "Coupon Created" : "Create Coupon"}
       </button>
     </div>
   )}
