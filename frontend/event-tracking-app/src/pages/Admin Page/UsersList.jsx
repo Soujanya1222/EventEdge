@@ -24,10 +24,14 @@ export default function UsersList(){
 
        const changeRole=async(id,oldRole)=>{
         const newRole=window.prompt("Enter new role (organiser/user):",oldRole)
-        if(!newRole) return;
+        if(!newRole || newRole === oldRole) return;
             try{
                 const response=await axios.put(`/admin/changeRole/${id}`, { role: newRole },{headers:{Authorization:localStorage.getItem("token")}})
-                setUsers(prev=>prev.map(ele=>ele._id ===id? response.data.user:ele))
+                if(newRole!=="attendee"){
+                    setUsers(prev=>prev.filter(ele=>ele._id !==id))
+                }else{
+                    setUsers(prev=>prev.map(ele=>ele._id ===id? response.data.user:ele))
+                }
                 alert("User updated successfully.")
             }catch(err){
                 console.log(err)

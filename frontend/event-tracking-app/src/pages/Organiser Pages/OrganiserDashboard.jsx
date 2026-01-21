@@ -11,7 +11,7 @@ export default function OrganiserDashboard(props){
     const {users}=useSelector((state)=>{
         return state.users;
     })
-    const {totalTickets:tickets,loading}=useSelector((state)=>{
+    const {totalTickets:tickets,loading,bookedUsersList}=useSelector((state)=>{
         return state.tickets;
     })
 
@@ -61,11 +61,10 @@ export default function OrganiserDashboard(props){
 
                 </div>
                <div className="dashboard-card users">
-                    <h3>Total Users</h3>
-                    <p>{users.length}</p>
-                    <button className="dashboard-btn">View Users</button>
-
-                </div>
+                    <h3>Booked Users</h3>
+                    <p>{bookedUsersList.length}</p>
+                    <button className="dashboard-btn" onClick={()=>navigate("/organiser/bookings")}>View Users</button>
+            </div>
                
                 
                 <div className="dashboard-card">

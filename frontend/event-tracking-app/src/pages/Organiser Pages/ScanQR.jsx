@@ -79,6 +79,11 @@ export default function ScanQR() {
                 if (res.status === "success") {
                   playSuccessSound();
                   vibratePhone();
+
+                if (qrRef.current) {
+                  qrRef.current.stop().catch(() => {});
+                  isRunningRef.current = false;
+                }
                 }
               })
               .catch((err) => {

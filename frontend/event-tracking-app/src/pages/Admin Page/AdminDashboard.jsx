@@ -1,17 +1,30 @@
-import { useContext,  } from "react"
+import { useContext, useEffect,  } from "react"
 import UserContext from "../../context/UserContext"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { fetchUsers ,fetchOrganisers} from "../../slices/userSlice"
+import { fetchAdminEvents } from "../../slices/eventSlice"
 
 export default function AdminDashboard(props){
     const navigate=useNavigate()
+    const dispatch=useDispatch()
     const {users,organisers}=useSelector((state)=>{
         return state.users;
     })
     const {data:events}=useSelector((state)=>{
         return state.events;
     })
+    const {user}=useContext(UserContext)
+
+    useEffect(()=>{
+        dispatch(fetchUsers())    
+        dispatch(fetchOrganisers())
+        dispatch(fetchAdminEvents())
+    },[dispatch])
   
+     if(!user){
+        return <p>Loading...</p>
+    }
        
 
     const approvedEvents = events.filter(
@@ -30,11 +43,7 @@ export default function AdminDashboard(props){
     const pendingCount = pendingEvents.length;
     const rejectedCount=rejectedEvents.length;
 
-
-    const {user}=useContext(UserContext)
-    if(!user){
-        return <p>Loading...</p>
-    }
+   
     return(
         <div className="dashboard-container">
             <h1 className="dashboard-header"><strong>Admin Dashboard</strong></h1>

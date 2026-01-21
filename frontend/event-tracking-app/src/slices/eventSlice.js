@@ -134,7 +134,7 @@ const eventSlice=createSlice({
         isLoading:false,
         errors:null,
         singleEvent: null,
-         nearbyEvents: [],
+        nearbyEvents: [],
     },
     extraReducers:(builder)=>{
         builder.addCase(fetchEvents.pending,(state)=>{
@@ -196,8 +196,8 @@ const eventSlice=createSlice({
             state.isLoading=true
         })
         .addCase(rejectEvent.fulfilled,(state,action)=>{
-             state.isLoading = false
-             const index = state.data.findIndex(ele => ele._id === action.payload._id)
+            state.isLoading = false
+            const index = state.data.findIndex(ele => ele._id === action.payload._id)
             if (index !== -1) {
                 state.data[index] = action.payload
             }
@@ -227,8 +227,8 @@ const eventSlice=createSlice({
         })
         .addCase(deleteEvent.fulfilled,(state,action)=>{
             state.isLoading=false
-            state.data=state.data.filter(event=>event._id!==action.payload._id)
-            state.errors=null
+            const deletedId = action.payload.event?._id || action.payload._id;
+            state.data = state.data.filter(e => e._id !== deletedId);            state.errors=null
         })
         .addCase(deleteEvent.rejected,(state,action)=>{
             state.isLoading=false

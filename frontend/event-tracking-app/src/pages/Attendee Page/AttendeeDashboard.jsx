@@ -27,7 +27,7 @@ export default function AttendeeDashboard(props){
     if(!user){
         return <p>Loading...</p>
     }
-
+    
 
     const approvedEvents = events.filter(e => e.status === "approved")
     const completedEvents = myTickets.filter(t => t.status === "completed");

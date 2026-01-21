@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 const userReducer=(state,action)=>{
     switch(action.type){
         case "LOGIN":{
-            return {...state,isLoggedIn:true,user:action.payload,adminExists: action.payload.role === "admin" ? true : state.adminExists,serverErrors:''}
+            return {...state,isLoggedIn:true,user:action.payload,serverErrors:''}
         }
         case "LOGOUT":{
             return {...state,isLoggedIn:false,user:null}
@@ -18,7 +18,7 @@ const userReducer=(state,action)=>{
             return {...state,user:action.payload}
         }
         case "ADMIN_EXISTS":{
-            return {...state,serverErrors:'',adminExists:true}
+            return {...state,adminExists:action.payload}
         }
         default:{
             return {...state}
@@ -44,10 +44,10 @@ export default function AuthProvider(props){
                 }catch(err){
                     alert(err.message)
                 }
-            }
-            fetchUser();
-            adminExists();
-            
+               
+            } 
+             fetchUser();   
+            checkAdminExists ();     
         }
     },[])
 
@@ -85,14 +85,12 @@ export default function AuthProvider(props){
         }
     }
 
-    const adminExists = async () => {
+    const checkAdminExists  = async () => {
         try {
             const response = await axios.get("/check-admin", {
-                headers: { Authorization:localStorage.getItem("token")} });
-
-            if (response.data.exists) {
-                userDispatch({ type: "ADMIN_EXISTS" });
-            }
+                headers: { Authorization:localStorage.getItem("token")} })  
+                userDispatch({ type: "ADMIN_EXISTS",payload: response.data.exists });
+            
         } catch (err) {
             console.log("admin error:", err.response?.data?.error);
         }
@@ -103,15 +101,17 @@ export default function AuthProvider(props){
     }
 
 
+
     const handleLogout=()=>{
         localStorage.removeItem("token");
         userDispatch({type:"LOGOUT"})
         navigate('/login')
     }
+
     
 
     return (
-        <UserContext.Provider value={{...userState ,handleRegister,handleLogin,handleLogout,adminExists,updateUser}}>
+        <UserContext.Provider value={{...userState ,handleRegister,handleLogin,handleLogout,checkAdminExists ,updateUser}}>
             {props.children}
         </UserContext.Provider>
     )

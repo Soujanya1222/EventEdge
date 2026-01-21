@@ -6,7 +6,7 @@ import { useContext } from "react";
 import UserContext from "../context/UserContext";
 import { Link } from "react-router-dom";
 export default function Register(props){
-    const {handleRegister,serverErrors,adminExists}=useContext(UserContext)
+    const {handleRegister,serverErrors,checkAdminExists }=useContext(UserContext)
 
     const formik=useFormik({
         initialValues:{
@@ -51,9 +51,13 @@ export default function Register(props){
                         className="border rounded p-2 w-full"
                 >
                 <option value="">Select Role</option>
-                {!adminExists&&<option value="admin">Admin</option>}
+                
                 <option value="organiser">Organiser</option>
                 <option value="attendee">Attendee</option>
+
+                {!checkAdminExists && (
+                    <option value="admin">Admin</option>
+                )}
                 </select><br/>
                 <br/>
 
