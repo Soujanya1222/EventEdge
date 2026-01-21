@@ -72,9 +72,14 @@ userCltr.login=async(req,res)=>{
 }
 
 userCltr.checkAdmin = async (req, res) => {
-    const admin = await User.findOne({ role: "admin" });
-    res.json({ adminExists: !!admin });
+    try {
+        const admin = await User.findOne({ role: "admin" });
+        res.json({ adminExists: !!admin });
+    } catch (err) {
+        res.status(500).json({ error: "Something went wrong" });
+    }
 };
+
 
 
 //users Account

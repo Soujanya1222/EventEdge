@@ -27,6 +27,10 @@ const ticketSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    qrExpiresAt: {
+    type: Date,
+    required: true
+    },
     status:{
         type:String,
         enum:["active","used","completed","missed"],

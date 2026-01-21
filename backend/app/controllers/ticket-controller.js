@@ -27,6 +27,7 @@ ticketCltr.book = async (req, res) => {
     }
 
 
+    const qrExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000) 
 
     const existing = await Ticket.findOne({ attendeeId, eventId: value.eventId })
     if (existing) {
@@ -46,7 +47,8 @@ ticketCltr.book = async (req, res) => {
       attendeeId,
       eventId: value.eventId,
       paymentId,
-      qrCode: qrImage
+      qrCode: qrImage,
+      qrExpiresAt: qrExpiry
     })
 
     event.soldTickets += 1
@@ -139,6 +141,7 @@ ticketCltr.verifyQR=async(req,res)=>{
         if(!userId||!eventId){
             return res.status(400).json({status:"invalid",message:"Invalid QR format"})
         }
+
         const ticket=await Ticket.findOne({
             attendeeId:userId,
             eventId:eventId
@@ -146,6 +149,14 @@ ticketCltr.verifyQR=async(req,res)=>{
         if(!ticket){
             return res.status(404).json({status:"invalid",message:"Ticket not found"})
         }
+        if (ticket.qrExpiresAt < new Date()) {
+          return res.status(400).json({
+            status: "expired",
+            message: "QR code expired"
+          })
+        }
+
+
         if(ticket.checkedIn){
             return res.status(400).json({ status: "expired",message: "Ticket already used for entry"})
         }

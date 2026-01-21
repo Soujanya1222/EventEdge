@@ -209,6 +209,8 @@ eventCltr.approve=async(req,res)=>{
     if(!event){
       return res.status(404).json({error:"Record not Found"})
     }
+    await event.save()
+   
     res.json({message:"Event approved",event})
   }catch(err){
     console.log(err)
@@ -217,12 +219,15 @@ eventCltr.approve=async(req,res)=>{
 }
 
 eventCltr.reject=async(req,res)=>{
+
   const id=req.params.id;
   try{
     const event=await Event.findByIdAndUpdate(id,{status:"rejected"},{new:true})
     if(!event){
       return res.status(404).json({error:"Record not Found"})
     }
+    await event.save()
+   
     res.json({message:"Event rejected",event})
 
   }catch(err){
