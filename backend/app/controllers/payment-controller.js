@@ -9,7 +9,7 @@ paymentCltr.createOrder=async (req, res) => {
     const { amount, eventId } = req.body;
     const shortEventId = eventId.toString().slice(-6);
     const options = {
-      amount: amount * 100, // Razorpay works in paise
+      amount: amount * 100, 
       currency: "INR",
       receipt: `event_${shortEventId}_${Date.now().toString().slice(-6)}`
     };
@@ -38,7 +38,6 @@ paymentCltr.createOrder=async (req, res) => {
       couponId   
     } = req.body;
 
-    // Generate signature
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
@@ -49,8 +48,6 @@ paymentCltr.createOrder=async (req, res) => {
     if (expectedSignature !== razorpay_signature) {
       return res.status(400).json({ error: "Payment verification failed" });
     }
-
-    // Save payment to DB
     const payment = await Payment.create({
       attendeeId,
       eventId,
