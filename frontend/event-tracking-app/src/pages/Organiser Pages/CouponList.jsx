@@ -27,7 +27,9 @@ export default function CouponList() {
   if (loading) return <div className="loading-text">Loading coupons...</div>;
 
   return (
+    
     <div className="coupon-list-container">
+ 
       {error && (
         <div className="error-message">{error.error || "Error loading coupons"}</div>
       )}
@@ -101,6 +103,7 @@ export default function CouponList() {
           ))}
         </div>
       )}
+      
     </div>
   );
 }

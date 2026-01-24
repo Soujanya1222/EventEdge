@@ -26,7 +26,7 @@ import Ticket from "./pages/Organiser Pages/Tickets"
 import ReviewPage from "./pages/ReviewPage"
 import OrganiserReviews from "./pages/Organiser Pages/OrganiserReviews"
 import SearchResults from "./pages/SearchResults"
-import CreateCoupon from "./pages/Organiser Pages/createCoupon"
+import CreateCoupon from "./pages/Organiser Pages/CreateCoupon"
 import CouponList from "./pages/Organiser Pages/CouponList"
 export default function App(){
   const {isLoggedIn,user}=useContext(UserContext)
