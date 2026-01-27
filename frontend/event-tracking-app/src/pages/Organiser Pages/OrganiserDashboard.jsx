@@ -1,10 +1,17 @@
 import { useContext } from "react"
 import UserContext from "../../context/UserContext"
-import {useSelector} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react"
+import { fetchEvents } from "../../slices/eventSlice"
 export default function OrganiserDashboard(props){
     const {user}=useContext(UserContext) 
     const navigate=useNavigate()
+    const dispatch=useDispatch()
+
+    useEffect(()=>{
+        dispatch(fetchEvents())
+    },[dispatch])
     const {data}=useSelector((state)=>{
         return state.events;
     })
