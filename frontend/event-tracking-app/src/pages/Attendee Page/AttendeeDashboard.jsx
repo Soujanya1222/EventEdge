@@ -58,22 +58,6 @@ export default function AttendeeDashboard(props){
             </div>
 
         <div className="stats-container" style={{ marginTop: "40px" }}>
-            {upcomingEvents.length === 0 ? (
-            <div className="dashboard-card approved">
-                <h3>Upcoming Events</h3>
-                <p>None</p>
-            </div>
-            ) : (
-            upcomingEvents.map(ticket => (
-                <div key={ticket._id} className="dashboard-card approved">
-                <h3>{ticket.eventId.title}</h3>
-                <p>{new Date(ticket.eventId.datetime).toLocaleDateString()}</p>
-                </div>
-            ))
-            )}
-        </div>
-
-        <div className="stats-container" style={{ marginTop: "40px" }}>
             {completedEvents.length === 0 ? (
             <div className="dashboard-card rejected">
                 <h3>Completed Events</h3>
@@ -108,6 +92,21 @@ export default function AttendeeDashboard(props){
             </div>
             ))
         )}
+        </div>
+        <div className="stats-container" style={{ marginTop: "40px" }}>
+            {upcomingEvents.length === 0 ? (
+            <div className="dashboard-card approved">
+                <h3>Upcoming Events</h3>
+                <p>None</p>
+            </div>
+            ) : (
+            upcomingEvents.map(ticket => (
+                <div key={ticket._id} className="dashboard-card approved">
+                <h3>{ticket.eventId.title}</h3>
+                <p>{new Date(ticket.eventId.datetime).toLocaleDateString()}</p>
+                </div>
+            ))
+            )}
         </div>
 
         </div>

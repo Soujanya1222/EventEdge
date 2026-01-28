@@ -5,50 +5,49 @@ import "../../styles/scanQr.css";
 
 export default function ScanQR() {
   const dispatch = useDispatch();
-
   const qrRef = useRef(null);
   const audioCtxRef = useRef(null);
 
   const isRunningRef = useRef(false);
   const isProcessingRef = useRef(false);
   const errorShownRef = useRef(false);
-
   const lastScanRef = useRef({
     text: null,
     time: 0
   });
-
   const [status, setStatus] = useState(null);
   const [message, setMessage] = useState("");
-
-  const playSuccessSound = () => {
-    try {
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-      }
-
-      const ctx = audioCtxRef.current;
-      if (ctx.state === "suspended") ctx.resume();
-
-      const oscillator = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      oscillator.type = "sine";
-      oscillator.frequency.value = 880;
-
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
-
-      oscillator.connect(gain);
-      gain.connect(ctx.destination);
-
-      oscillator.start();
-      oscillator.stop(ctx.currentTime + 0.3);
-    } catch (err) {
-      console.error("Sound error:", err);
+  const playSuccessSound = async () => {
+  try {
+    if (!audioCtxRef.current) {
+      audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
     }
-  };
+
+    const ctx = audioCtxRef.current;
+
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    oscillator.type = "square";
+    oscillator.frequency.setValueAtTime(900, ctx.currentTime);
+
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.3);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 
   const vibratePhone = () => {
     if ("vibrate" in navigator) navigator.vibrate(200);
@@ -89,16 +88,19 @@ export default function ScanQR() {
 
       dispatch(verifyQR(decodedText))
         .unwrap()
-        .then((res) => {
+        .then(async (res) => {
           setStatus(res.status);
           setMessage(res.message);
 
           if (res.status === "success") {
-            playSuccessSound();
+           await playSuccessSound();
             vibratePhone();
 
-            qrRef.current?.stop().catch(() => {});
-            isRunningRef.current = false;
+            setTimeout(() => {
+              qrRef.current?.stop().catch(()=>{});
+              isRunningRef.current = false;
+            }, 400);
+
           }
         })
         .catch((err) => {

@@ -7,6 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "../../styles/event.css"
 
+
 export default function EventList() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams()
@@ -52,7 +53,6 @@ export default function EventList() {
             />
           ))
         }
-
       </div>
      
     </div>

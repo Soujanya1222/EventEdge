@@ -9,10 +9,9 @@ export default function NearbyEventsMap() {
   const dispatch = useDispatch();
   const { nearbyEvents, isLoading, errors } = useSelector(state => state.events);
 
-  const [userLocation, setUserLocation] = useState(null); // start as null
+  const [userLocation, setUserLocation] = useState(null); 
   const NEARBY_RADIUS_KM = 5;
 
-  // Get user geolocation
   useEffect(() => {
     if (!navigator.geolocation) return;
 
@@ -25,14 +24,12 @@ export default function NearbyEventsMap() {
       },
       (error) => {
         console.error("Geolocation error code:", error.code, "message:", error.message);
-        // fallback location if denied
-        setUserLocation({ latitude: 20.5937, longitude: 78.9629 }); // India center fallback
+        setUserLocation({ latitude: 20.5937, longitude: 78.9629 }); 
       },
       { enableHighAccuracy: true }
     );
   }, []);
 
-  // Fetch nearby events **only if userLocation is set**
   useEffect(() => {
     if (userLocation) {
       dispatch(fetchNearbyEvents({
@@ -59,13 +56,11 @@ export default function NearbyEventsMap() {
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-        {/* User location */}
         <Marker
           position={[userLocation.latitude, userLocation.longitude]}
           icon={defaultIcon}
           eventHandlers={{
             click: (e) => {
-              // Prevent any unexpected navigation and open popup if present
               if (e && e.originalEvent) {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
@@ -78,7 +73,6 @@ export default function NearbyEventsMap() {
           <Popup>You are here</Popup>
         </Marker>
 
-        {/* Nearby events */}
         {nearbyEvents.map((event) => (
           <Marker
             key={event._id}
@@ -118,7 +112,6 @@ export default function NearbyEventsMap() {
           </Marker>
         ))}
 
-        {/* Circle showing radius */}
         <Circle
           center={[userLocation.latitude, userLocation.longitude]}
           radius={NEARBY_RADIUS_KM * 1000}

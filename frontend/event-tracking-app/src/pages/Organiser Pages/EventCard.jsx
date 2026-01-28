@@ -174,52 +174,42 @@ export default function EventCard({ event }) {
       {user?.role === "organiser" && event.status === "approved" && (
       <div style={{ marginTop: "12px", display: "flex", gap: "10px" }}>
 
-      <button
-        disabled={hasCoupon(event._id)}
-        onClick={() => navigate(`/organiser/events/${event._id}/create-coupon`)}
-        style={{
-          backgroundColor: "#2e7d32",
+          <button
+            disabled={hasCoupon(event._id)}
+            onClick={() => navigate(`/organiser/events/${event._id}/create-coupon`)}
+            style={{
+              backgroundColor: "#2e7d32",
+              color: "white",
+              padding: "8px 12px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer"
+            }}
+            className={hasCoupon(event._id) ? "coupon-disabled" : "coupon-active"}
+            >
+            {hasCoupon(event._id) ? "Coupon Created" : "Create Coupon"}
+          </button>
+        </div>
+      )}
+
+
+
+
+      {user?.role === "attendee" && event.status === "approved" && (
+        <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>              
+        <button
+          onClick={() => navigate(`/events/${event._id}`)}
+          style={{
+          backgroundColor: "#6a1b9a",
           color: "white",
           padding: "8px 12px",
           border: "none",
           borderRadius: "6px",
           cursor: "pointer"
         }}
-        className={hasCoupon(event._id) ? "coupon-disabled" : "coupon-active"}
-        >
-        {hasCoupon(event._id) ? "Coupon Created" : "Create Coupon"}
-      </button>
-    </div>
-  )}
-
-
-
-
-     {user?.role === "attendee" && event.status === "approved" && (
-    <div style={{ display: "flex", gap: "10px", marginTop: "12px" }}>
-    <button
-      onClick={() => navigate(`/events/${event._id}`)}
-      style={{
-        backgroundColor: "#6a1b9a",
-        color: "white",
-        padding: "8px 12px",
-        border: "none",
-        borderRadius: "6px",
-        cursor: "pointer"
-      }}
-    >
-      View
-    </button>
-    
-
-    
-  </div>
-)}
-
-
-
-     
-
+        >View</button> 
+      </div>
+    )}
 
   </div>
   

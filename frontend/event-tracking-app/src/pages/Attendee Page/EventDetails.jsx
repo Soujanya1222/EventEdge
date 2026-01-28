@@ -42,21 +42,21 @@ export default function EventDetails() {
 
 
   useEffect(() => {
-  if (!singleEvent) return;
+    if (!singleEvent) return;
 
-  const eventDate =
-    singleEvent?.datetime ||
-    singleEvent?.date ||
-    singleEvent?.eventDate;
+    const eventDate =
+      singleEvent?.datetime ||
+      singleEvent?.date ||
+      singleEvent?.eventDate;
 
-  if (!eventDate) {
-    setIsCompleted(false);
-    return;
-  }
+    if (!eventDate) {
+      setIsCompleted(false);
+      return;
+    }
 
-  const now = new Date();
-  setIsCompleted(now.getTime() > new Date(eventDate).getTime());
-  }, [singleEvent]);
+    const now = new Date();
+    setIsCompleted(now.getTime() > new Date(eventDate).getTime());
+    }, [singleEvent]);
 
 
   if (isLoading) return <p>Loading...</p>;
@@ -170,7 +170,6 @@ const handleApplyCoupon = async () => {
       <p>{singleEvent.description}</p>
       <p>{singleEvent.venue}</p>
       <p>₹{singleEvent.price}</p>
-             {/* Coupon Section */}
           <div className="coupon-container">
             <div className="coupon-input-group">
               <input

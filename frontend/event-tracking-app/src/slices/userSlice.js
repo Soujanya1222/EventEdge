@@ -2,15 +2,15 @@ import {createSlice,createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "../config/axios";
 
 
-export const fetchOrganisers=createAsyncThunk("users/fetchOrgnisers",async(undefined,{rejiectWithValue})=>{
+export const fetchOrganisers=createAsyncThunk("users/fetchOrgnisers",async(page=1,{rejectWithValue})=>{
     try{
-        const response=await axios.get("/admin/organisers",{headers:{Authorization:localStorage.getItem("token")}})
+        const response=await axios.get(`/admin/organisers?page=${page}&limit=5`,{headers:{Authorization:localStorage.getItem("token")}})
         //console.log(response.data)
         return response.data;
 
     }catch(err){
         console.log(err.response.data.error);
-        return rejiectWithValue(err.response.data.error)
+        return rejectWithValue(err.response.data.error)
     }
 })
 
@@ -49,11 +49,6 @@ export const changePassword=createAsyncThunk("users/changePassword",async(formDa
 })
 
 
-
-
-
-
-
 const userSlice=createSlice({
     name:"users",
     initialState:{
@@ -69,7 +64,7 @@ const userSlice=createSlice({
         })
         .addCase(fetchOrganisers.fulfilled,(state,action)=>{
             state.isLoading=false;
-            state.organisers=action.payload;
+            state.organisers=action.payload; 
             state.errors=null;  
         })
         .addCase(fetchOrganisers.rejected,(state,action)=>{
