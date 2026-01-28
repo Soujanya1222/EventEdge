@@ -106,8 +106,8 @@ adminCltr.getAllUser=async(req,res)=>{
 
 adminCltr.getAllOragniser = async (req, res) => {
   try {
-    const organisers = await User.find({ role: "organiser" });
-
+    
+    const organisers = await User.find({ role: "organiser" })
     const result = await Promise.all(
       organisers.map(async (org) => {
         const events = await Event.find({ organiserId: org._id }).select("_id title soldTickets");
@@ -128,7 +128,7 @@ adminCltr.getAllOragniser = async (req, res) => {
       })
     );
 
-    res.json(result);
+   res.json(result)
   } catch (err) {
     console.log(err);
     res.status(500).json({ err: "something went wrong" });
@@ -209,31 +209,6 @@ adminCltr.deleteUser=async(req,res)=>{
     }catch(err){
         console.log(err)
         res.status(500).json({err:"Something went wrong"})
-    }
-}
-
-adminCltr.accountUpdate=async(req,res)=>{
-    const id=req.params.id
-    const body=req.body
-    if (body.password) {
-        const salt = await bcryptjs.genSalt();
-        body.password = await bcryptjs.hash(body.password, salt);
-    }
-    
-    try{
-        const user=await User.findByIdAndUpdate(id,body,{new:true})
-        if(!user){
-            return res.status(404).json({err:"User not found"})
-        }
-
-          
-        await user.save();
-        res.status(201).json(user)
-
-    }catch(err){
-        console.log(err)
-        res.status(500).json({err:"Something went wrong"})
-
     }
 }
 

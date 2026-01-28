@@ -80,17 +80,11 @@ ticketCltr.myTickets = async (req, res) => {
 ticketCltr.totalTickets = async (req, res) => {
   try {
     const organiserId = req.userId;
-
-   
     const events = await Event.find({ organiserId }).select("_id");
-
     if (events.length === 0) {
       return res.json({ total: 0 });
     }
-
     const eventIds = events.map(e => e._id);
-
- 
     const total = await Ticket.countDocuments({
       eventId: { $in: eventIds }
     });
@@ -106,18 +100,14 @@ ticketCltr.totalTickets = async (req, res) => {
 ticketCltr.cancel = async (req, res) => {
   try {
     const ticket = await Ticket.findOne({ _id: req.params.id, attendeeId: req.userId })
-
     if (!ticket) {
       return res.status(404).json({ error: "Ticket not found" })
     }
-
     const event = await Event.findById(ticket.eventId)
-
     if (event) {
       event.soldTickets = Math.max(0,event.soldTickets-1)
       await event.save()
     }
-
     await ticket.deleteOne()
     res.json({ message: "Ticket cancelled successfully" })
   } catch (err) {

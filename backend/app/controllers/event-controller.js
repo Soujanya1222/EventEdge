@@ -5,19 +5,18 @@ const eventCltr={}
 const {deleteOldImages}=require('../middlewares/cloudinary')
 
 eventCltr.create=async(req,res)=>{
-
-   const body={
+  const body={
       ...req.body,
       location: req.body.location ? JSON.parse(req.body.location) : undefined
     };
-   const {error,value}=eventValidationSchema.validate(body,{abortEarly:true})
-   if(error){
+  const {error,value}=eventValidationSchema.validate(body,{abortEarly:true})
+  if(error){
     return res.status(400).json({error:error.details[0].message})
-   }
-   try{
+  }
+  try{
     const eventInDb=await Event.findOne({title:value.title, organiserId:req.userId})
     if(eventInDb){
-        return res.status(400).json({err:"Event already exists"})
+      return res.status(400).json({err:"Event already exists"})
     }
 
     const images = req.files.map((file) => file.path);
@@ -38,7 +37,7 @@ eventCltr.create=async(req,res)=>{
 
 eventCltr.list = async (req, res) => {
   try {
-    const events = await Event.find({status:"approved"}) .select("title  description image venue price location status")
+    const events = await Event.find({status:"approved"}).populate("organiserId","name") .select("title  description image venue price location datetime organiserId  status")
     const formatted = events.map(event => {
     const obj = event.toObject();
     obj.remainingTickets = event.totalTickets - event.soldTickets;
@@ -205,7 +204,7 @@ eventCltr.nearby=async (req, res) => {
 eventCltr.approve=async(req,res)=>{
   const id=req.params.id;
   try{
-    const event=await Event.findByIdAndUpdate(id,{status:"approved"},{new:true})
+    const event=await Event.findByIdAndUpdate(id,{status:"approved"},{new:true}).populate("organiserId","name")
     if(!event){
       return res.status(404).json({error:"Record not Found"})
     }
