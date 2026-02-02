@@ -8,6 +8,8 @@ const ticketValidationSchema = Joi.object({
   bookedAt: Joi.date(),
   completedAt:Joi.date(),
   checkedIn:Joi.boolean().default(false),
-  status: Joi.string().valid("active", "used", "completed", "missed").default("active")
+  status: Joi.string().valid("active", "used", "completed", "missed").default("active"),
+  quantity: Joi.number().min(1).default(1)
+
 })
 module.exports={ticketValidationSchema}

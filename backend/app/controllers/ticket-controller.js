@@ -22,17 +22,13 @@ ticketCltr.book = async (req, res) => {
     if (!event) {
       return res.status(404).json({ error: "Event not found" })
     }
-    if (event.soldTickets >= event.totalTickets) {
+    const qty=value.quantity||1
+    if (event.soldTickets+qty > event.totalTickets) {
       return res.status(400).json({ error: "Tickets sold out" })
     }
 
 
     const qrExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000) 
-
-    const existing = await Ticket.findOne({ attendeeId, eventId: value.eventId })
-    if (existing) {
-      return res.status(400).json({ error: "Ticket already booked" })
-    }
 
     const paymentId = value.paymentId || body.paymentId
     const payment = await Payment.findById(paymentId)
@@ -47,11 +43,12 @@ ticketCltr.book = async (req, res) => {
       attendeeId,
       eventId: value.eventId,
       paymentId,
+      quantity:qty,
       qrCode: qrImage,
       qrExpiresAt: qrExpiry
     })
 
-    event.soldTickets += 1
+    event.soldTickets += qty
     await event.save()
 
     res.status(201).json({
@@ -81,13 +78,14 @@ ticketCltr.totalTickets = async (req, res) => {
   try {
     const organiserId = req.userId;
     const events = await Event.find({ organiserId }).select("_id");
-    if (events.length === 0) {
+    if (!events.length ) {
       return res.json({ total: 0 });
     }
     const eventIds = events.map(e => e._id);
-    const total = await Ticket.countDocuments({
+    const tickets = await Ticket.find({
       eventId: { $in: eventIds }
-    });
+    }).select("quantity")
+    const total=tickets.reduce((sum,t)=>sum+(t.quantity||1),0)
 
     res.json({ total });
   } catch (err) {
@@ -105,7 +103,7 @@ ticketCltr.cancel = async (req, res) => {
     }
     const event = await Event.findById(ticket.eventId)
     if (event) {
-      event.soldTickets = Math.max(0,event.soldTickets-1)
+      event.soldTickets = Math.max(0,event.soldTickets-(ticket.quantity||1))
       await event.save()
     }
     await ticket.deleteOne()

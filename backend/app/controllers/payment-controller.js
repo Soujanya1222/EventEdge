@@ -7,6 +7,10 @@ const paymentCltr={}
 paymentCltr.createOrder=async (req, res) => {
   try {
     const { amount, eventId } = req.body;
+    if (!amount || !eventId) {
+      return res.status(400).json({ error: "Amount and Event required" });
+    }
+
     const shortEventId = eventId.toString().slice(-6);
     const options = {
       amount: amount * 100, 
@@ -34,6 +38,7 @@ paymentCltr.createOrder=async (req, res) => {
       attendeeId,
       eventId,
       amount,
+      ticketCount,
       platformFee,
       couponId   
     } = req.body;
@@ -53,6 +58,7 @@ paymentCltr.createOrder=async (req, res) => {
       eventId,
       amount,
       platformFee,
+      ticketCount,
       status: "success"
     });
 
