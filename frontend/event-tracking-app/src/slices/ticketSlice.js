@@ -57,7 +57,7 @@ export const bookedUsers = createAsyncThunk("tickets/bookedUsers",async (undefin
 export const totalTickets=createAsyncThunk("tickets/totalTickets",async(undefined,{rejectWithValue})=>{
     try{
         const res=await axios.get("/organiser/tickets/count",{headers:{Authorization:localStorage.getItem("token")}})
-        return res.data.total;
+        return res.data;
     }catch (err) {
       return rejectWithValue(err.response.data)
     }
@@ -136,7 +136,7 @@ const ticketSlice = createSlice({
     })
     .addCase(totalTickets.fulfilled, (s, a) => {
         s.loading = false;
-        s.totalTickets = a.payload; 
+        s.totalTickets = a.payload.total; 
     })
     .addCase(totalTickets.rejected, (s, a) => {
         s.loading = false;

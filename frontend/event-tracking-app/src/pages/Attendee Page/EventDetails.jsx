@@ -7,11 +7,13 @@ import { createOrder,verifyPayment  } from "../../slices/paymentSlice";
 import { bookTicket } from "../../slices/ticketSlice";
 import { applyCoupon } from "../../slices/couponSlice"
 import "../../styles/coupon.css"
+import Swal from "sweetalert2";
 export default function EventDetails() {
   const { id } = useParams();
   const navigate=useNavigate()
   const dispatch = useDispatch();
   const {user}=useContext(UserContext)
+  const [ticketCount, setTicketCount] = useState(1);
   const [payLoading, setPayLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [couponCode, setCouponCode] = useState("");
@@ -35,10 +37,11 @@ export default function EventDetails() {
   }, [id, dispatch]);
 
   useEffect(() => {
-  if (singleEvent?.price) {
-    setFinalAmount(singleEvent.price);
-  }
-}, [singleEvent]);
+    if (singleEvent?.price) {
+      setFinalAmount(singleEvent.price * ticketCount);
+    }
+  }, [singleEvent, ticketCount]);
+
 
 
   useEffect(() => {
@@ -70,7 +73,8 @@ export default function EventDetails() {
     setPayLoading(true);
     const order= await dispatch(createOrder({
       amount: finalAmount,
-      eventId: singleEvent._id
+      eventId: singleEvent._id,
+      ticketCount
     })).unwrap();
 
     
@@ -92,13 +96,15 @@ export default function EventDetails() {
               eventId: singleEvent._id,
               amount: singleEvent.price,
               platformFee: 20,
-              couponId
+              couponId,
+              ticketCount
           })).unwrap();
 
           const ticket=await dispatch(
             bookTicket({
               eventId:singleEvent._id,
-              paymentId:payment._id
+              paymentId:payment._id,
+              quantity:ticketCount
             })
           ).unwrap();
 
@@ -147,14 +153,17 @@ const handleApplyCoupon = async () => {
 
     setDiscount(result.discount);
     setCouponId(result.couponId);
-
+    const total=singleEvent.price*ticketCount;
     const discountedAmount =
-      singleEvent.price -
-      (singleEvent.price * result.discount) / 100;
+     total-(total*result.discount)/100
 
     setFinalAmount(discountedAmount);
-
-    alert("Coupon applied successfully");
+    Swal.fire({
+      title: "Good job!",
+      text: "Coupon Applied successFully",
+      icon: "success"
+    });
+ 
   } catch (err) {
     alert(err?.error || "Invalid coupon");
   }
@@ -170,6 +179,18 @@ const handleApplyCoupon = async () => {
       <p>{singleEvent.description}</p>
       <p>{singleEvent.venue}</p>
       <p>₹{singleEvent.price}</p>
+      <div style={{ marginTop: "10px" }}>
+      <label>Number of Tickets:</label>
+      <input
+        type="number"
+        min="1"
+        max={singleEvent.totalTickets - singleEvent.soldTickets}
+        value={ticketCount}
+        onChange={(e) => setTicketCount(Number(e.target.value))}
+        style={{ marginLeft: "10px", width: "60px" }}
+      />
+    </div>
+
           <div className="coupon-container">
             <div className="coupon-input-group">
               <input
@@ -215,9 +236,9 @@ const handleApplyCoupon = async () => {
       <button
         className="dashboard-btn"
         onClick={handlePayment}
-        disabled={payLoading}
+        disabled={payLoading|| isCompleted}
       >
-        {payLoading ? "Processing..." : "Proceed to Book"}
+        {isCompleted?"Event Completed":payLoading ? "Processing..." : "Proceed to Book"}
       </button>
 
     </div>

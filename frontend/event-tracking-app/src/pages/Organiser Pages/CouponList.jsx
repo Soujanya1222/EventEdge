@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteCouponAction, fetchCouponsAction } from "../../slices/couponSlice";
 import "../../styles/coupon.css";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../../context/UserContext";
 
 export default function CouponList() {
   const dispatch = useDispatch();
+  const {user}=useContext(UserContext)
   const { data: coupons, loading, error } = useSelector(
     (state) => state.coupon
   );
@@ -48,7 +50,7 @@ export default function CouponList() {
         </div>
       ) : (
         <div className="coupons-grid">
-          {coupons?.map((coupon) => (
+          {coupons?.filter(coupon => coupon.organiserId?._id === user?._id).map((coupon) => (
             <div key={coupon._id} className="coupon-card">
               <div className="coupon-code">{coupon.code}</div>
               

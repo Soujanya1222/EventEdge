@@ -5,7 +5,7 @@ import { createEvents, fetchSingleEvent ,updateEvent} from "../../slices/eventSl
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../styles/event.css"
-
+import Swal from "sweetalert2";
 export default function EventForm(props){
     const navigate=useNavigate()
     const {id}=useParams()
@@ -76,13 +76,34 @@ export default function EventForm(props){
                 });
 
                 if (id) {
-                        dispatch(updateEvent({ id,  formData }));
-                        setMessage("Event updated successfully!");
+                        dispatch(updateEvent({ id,  formData })).then(() => {
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Event Updated Successfully",
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        navigate("/dashboard");
+                    })
+                        
                     } else {
                         dispatch(createEvents(formData));
-                        setMessage("Event created successfully!");
+                       { Swal.fire({
+                            position: "top-end",
+                            icon: "success",
+                            title: "Event Created Successfully",
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                         resetForm();
+                    }
+
                     }           
-                     resetForm();
+                    if (!id) {
+                      resetForm();
+                    }
+
 
         }
     })

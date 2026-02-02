@@ -2,7 +2,7 @@ import { useEffect, useReducer } from "react"
 import UserContext from "../../context/UserContext"
 import axios from "../../config/axios"
 import { useNavigate } from "react-router-dom"
-
+import Swal from 'sweetalert2'
 const userReducer=(state,action)=>{
     switch(action.type){
         case "LOGIN":{
@@ -42,8 +42,13 @@ export default function AuthProvider(props){
                     const response=await axios.get('/user/account',{headers:{Authorization:localStorage.getItem("token")}})
                     userDispatch({type:"LOGIN",payload:response.data})
                 }catch(err){
-                    alert(err.message)
-                }
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Something went wrong!",
+                        footer: '<a href="#">Why do I have this issue?</a>'
+                });
+                                        }
                
             } 
              fetchUser();   
@@ -56,7 +61,11 @@ export default function AuthProvider(props){
         try{
             const response=await axios.post('/users/register',formData)
             console.log("response:",response.data);
-            alert("Successfully Registered")
+            Swal.fire({
+                title: "Successfully Registered",
+                icon: "success",
+                draggable: true
+            });
             resetForm();
             userDispatch({type:"SERVER_ERROR",payload:""})
             navigate('/login')
@@ -75,7 +84,11 @@ export default function AuthProvider(props){
             const userResponse=await axios.get('/user/account',{headers:{Authorization:localStorage.getItem("token")}})
             console.log(userResponse)
             userDispatch({type:"LOGIN" ,payload:userResponse.data})
-            alert("Successfully Logged In")
+            Swal.fire({
+                title: "Successfully Logged In",
+                icon: "success",
+                draggable: true
+            });
             resetForm()
             userDispatch({type:"SERVER_ERROR",payload:""})
             navigate('/dashboard')
