@@ -31,18 +31,17 @@ export default function CreateCoupon() {
   e.preventDefault();
 
   if (couponId) {
-    // Update existing coupon
+   
     const result = await dispatch(
       updateCouponAction({ couponId, code, discount, expiry, eventId })
     );
     if (updateCouponAction.fulfilled.match(result)) {
-      alert("Coupon Updated Successfully");
-      navigate("/coupons"); // Go back to coupon list
+      alert("Coupon Updated ")
     } else {
       alert(result.payload?.error || "Failed to update coupon");
     }
   } else {
-    // Create new coupon
+    
     const result = await dispatch(
       createCouponAction({ code, discount, expiry, eventId })
     );
